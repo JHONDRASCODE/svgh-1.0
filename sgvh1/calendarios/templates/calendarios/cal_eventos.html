@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href='{% static "css/style_calendar.css" %}'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <title>Full Calendar</title>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar con filtros -->
+        <form id="event-filter-form" class="mt-4 mb-4">
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <label for="instructorFilter" class="form-label">Instructor</label>
+                    <select class="form-select" id="instructorFilter">
+                        <option value="">Seleccione un instructor</option>
+                    </select>
+                </div>
+                <div class="col-12 mb-3">
+                    <label for="programaFilter" class="form-label">Programa de Formación</label>
+                    <select class="form-select" id="programaFilter">
+                        <option value="">Seleccione un programa</option>
+                    </select>
+                </div>
+                <div class="col-12 mb-3">
+                    <label for="locationFilter" class="form-label">Ambiente</label>
+                    <select class="form-select" id="locationFilter">
+                        <option value="">Seleccione un ambiente</option>
+                    </select>
+                </div>
+            </div>
+            <div class="text-end">
+                <button type="button" id="clearFilters" class="btn btn-secondary">Limpiar Filtros</button>
+            </div>
+        </form>
+
+        <!-- Calendario -->
+        <div class="mt-4 mb-5" id="calendar"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        crossorigin="anonymous"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    <script src='{% static "js/calendar.js" %}'></script>
+</body>
+
+</html>

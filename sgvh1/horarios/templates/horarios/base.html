@@ -1,0 +1,981 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Gestión de Horarios{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.2/font/bootstrap-icons.min.css">
+    <!-- Enlace a archivo CSS personalizado -->
+    <link type='text/css' href='{% static "css/base.css" %}' rel='stylesheet'/>
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+    
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-hover: #45a049;
+            --secondary-green: #81C784;
+            --light-green: #E8F5E9;
+            --sidebar-width: 250px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* Mejoras al Sidebar */
+        #sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            height: 100vh;
+            position: fixed;
+            padding-top: 60px;
+        }
+
+        #sidebar .nav-link {
+            padding: 0.8rem 1rem;
+            color: #495057;
+            border-radius: 8px;
+            margin: 0.2rem 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        #sidebar .nav-link:hover {
+            background-color: #f8f9fa;
+            color: var(--primary-color);
+            transform: translateX(5px);
+        }
+
+        #sidebar .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Mejoras al Navbar */
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background-color: white !important;
+            height: 70px;  /* Aumentado para dar más espacio al logo */
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            padding: 0;
+        }
+
+        .navbar-brand img {
+            height: 45px;  /* Ajusta esto según el tamaño de tu logo */
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .navbar-brand span {
+            font-weight: 600;
+            color: var(--primary-color) !important;
+            font-size: 1.4rem;
+        }
+
+        /* Mejoras visuales del navbar */
+        .navbar .nav-link {
+            color: #495057 !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar .nav-link:hover {
+            color: var(--primary-color) !important;
+            background-color: var(--light-green);
+        }
+
+        .navbar .btn-link {
+            text-decoration: none;
+        }
+
+        /* Mejoras al Contenido Principal */
+        #content {
+            margin-left: var(--sidebar-width);
+            padding-top: 80px;
+            transition: all 0.3s ease;
+        }
+
+        /* Mejoras a los Botones */
+        .btn {
+            border-radius: 8px;
+            padding: 0.5rem 1.2rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-success {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-success:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Mejoras al Modal */
+        .modal-content {
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-hover));
+            border-bottom: none;
+        }
+
+        /* Animaciones */
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 300ms, transform 300ms;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #sidebar {
+                margin-left: calc(-1 * var(--sidebar-width));
+                position: fixed;
+                z-index: 1000;
+            }
+
+            #sidebar.show {
+                margin-left: 0;
+            }
+
+            #content {
+                margin-left: 0;
+            }
+
+            .navbar-toggler {
+                display: block;
+            }
+        }
+
+        /* Scrollbar personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        /* Estilos para las notificaciones */
+        #icono-notificaciones {
+            font-size: 1.2rem;
+            position: relative;
+        }
+
+        #notification-counter {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            padding: 0.25rem 0.6rem;
+            border-radius: 50%;
+            background-color: #dc3545;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .notification-dropdown {
+            border-radius: 12px !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+            border: none !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+        }
+        
+        /* Animación para el icono de la campana cuando hay nuevas notificaciones */
+        @keyframes bellRing {
+            0% { transform: rotate(0); }
+            10% { transform: rotate(15deg); }
+            20% { transform: rotate(-15deg); }
+            30% { transform: rotate(15deg); }
+            40% { transform: rotate(-15deg); }
+            50% { transform: rotate(0); }
+            100% { transform: rotate(0); }
+        }
+
+        .bell-animation {
+            animation: bellRing 1s ease;
+        }
+
+        /* Estilos específicos para el panel de notificaciones */
+        .notification-header {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-green));
+            color: white;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .notification-header span {
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+        
+        .mark-all-read {
+            color: white;
+            opacity: 0.9;
+            font-size: 0.75rem;
+            background-color: rgba(255,255,255,0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .mark-all-read:hover {
+            opacity: 1;
+            background-color: rgba(255,255,255,0.3);
+            text-decoration: none;
+        }
+        
+        #delete-all-notifications-btn {
+            color: white;
+            opacity: 0.8;
+            background-color: rgba(220, 53, 69, 0.3);
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        #delete-all-notifications-btn:hover {
+            opacity: 1;
+            background-color: rgba(220, 53, 69, 0.5);
+        }
+        
+        #notifications-list {
+            max-height: 350px;
+            overflow-y: auto;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .notification-item {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+            background-color: white;
+        }
+        
+        .notification-item:hover {
+            background-color: #f9f9f9;
+            transform: translateX(4px);
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .notification-item.unread {
+            background-color: rgba(76, 175, 80, 0.05);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .notification-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-green));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-message {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #333;
+            margin-bottom: 0.4rem;
+            line-height: 1.25;
+        }
+        
+        .notification-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+        }
+        
+        .notification-empty {
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+        
+        .notification-empty i {
+            font-size: 2.5rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .notification-empty p {
+            color: #999;
+            font-weight: 500;
+        }
+        
+        .notification-time {
+            color: #888;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+        }
+        
+        .notification-user {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 0.75rem;
+        }
+
+        /* Estilos para SweetAlert2 */
+        .swal2-popup {
+            border-radius: 15px !important;
+            padding: 1.5rem !important;
+        }
+
+        .swal2-title {
+            color: #333 !important;
+            font-size: 1.5rem !important;
+            font-weight: 600 !important;
+        }
+
+        .swal2-styled.swal2-confirm {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+
+        .swal2-styled.swal2-confirm:hover {
+            background-color: var(--primary-hover) !important;
+            border-color: var(--primary-hover) !important;
+        }
+
+        .swal2-styled.swal2-cancel {
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+        }
+
+        .swal2-styled.swal2-cancel:hover {
+            background-color: #5a6268 !important;
+            border-color: #545b62 !important;
+        }
+
+        .swal2-loader {
+            border-color: var(--primary-color) transparent var(--primary-color) transparent !important;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar Superior -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'admin_dashboard' %}">
+                <img src="{% static 'img/logosena.webp' %}" alt="SENA Logo">
+                <span>SGVH</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <!-- Icono de Notificaciones (sin iframe) -->
+                    <li class="nav-item dropdown me-3">
+                        <a class="nav-link position-relative" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i id="icono-notificaciones" class="bi bi-bell-fill" style="font-size: 1.2rem;"></i>
+                            <span id="notification-counter" class="notification-badge" style="display: none;">0</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationsDropdown" style="width: 380px; max-height: 450px; overflow-y: auto;">
+                            <!-- Encabezado de notificaciones -->
+                            <div class="notification-header py-2 px-3 d-flex justify-content-between align-items-center">
+                                <span>NOTIFICACIONES</span>
+                                <div class="d-flex gap-2">
+                                    <a href="#" id="mark-all-read-btn" class="mark-all-read">
+                                        <i class="bi bi-check-all me-1"></i>Leer todas
+                                    </a>
+                                    <a href="#" id="delete-all-notifications-btn">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Contenido de notificaciones -->
+                            <div id="notifications-list">
+                                <div class="notification-empty">
+                                    <i class="bi bi-inbox"></i>
+                                    <p>Cargando notificaciones...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link btn btn-link" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                            <i class="bi bi-box-arrow-right"></i> Opciones
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center" href="{% url 'administrador_list' %}">
+                                <i class="bi bi-people-fill me-2"></i>
+                                <span>Administradores</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center" href="{% url 'instructor_list' %}">
+                                <i class="bi bi-person-badge-fill me-2"></i>
+                                <span>Instructores</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center" href="{% url 'programa_formacion_list' %}">
+                                <i class="bi bi-journal-bookmark-fill me-2"></i>
+                                <span>Programas de Formación</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center" href="{% url 'ambiente_list' %}">
+                                <i class="bi bi-building me-2"></i>
+                                <span>Ambientes</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center" href="{% url 'competencia_list' %}">
+                                <i class="bi bi-award-fill me-2"></i>
+                                <span>Competencias</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center" href="{% url 'calendar_list' %}">
+                                <i class="bi bi-calendar me-2"></i>
+                                <span>Calendarios</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Contenido Principal -->
+            <main id="content" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="container mt-4">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal de Opciones Mejorado -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; overflow: hidden;">
+                <div class="modal-header bg-success py-3 border-0">
+                    <h5 class="modal-title text-white" id="logoutModalLabel">
+                        <i class="bi bi-gear-fill me-2"></i>Opciones del Sistema
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'password_change' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 px-4 border-0">
+                            <div class="icon-wrapper me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: rgba(76, 175, 80, 0.1); border-radius: 10px;">
+                                <i class="bi bi-key-fill text-success" style="font-size: 1.2rem;"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Cambiar Contraseña</h6>
+                                <p class="mb-0 text-muted" style="font-size: 0.85rem;">Actualiza tus credenciales de acceso</p>
+                            </div>
+                            <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                        </a>
+                        <div class="list-group-item py-3 px-4 border-0" data-bs-toggle="collapse" href="#logoutConfirmation" role="button" aria-expanded="false" aria-controls="logoutConfirmation" style="cursor: pointer;">
+                            <div class="d-flex align-items-center">
+                                <div class="icon-wrapper me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: rgba(220, 53, 69, 0.1); border-radius: 10px;">
+                                    <i class="bi bi-box-arrow-right text-danger" style="font-size: 1.2rem;"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Cerrar Sesión</h6>
+                                    <p class="mb-0 text-muted" style="font-size: 0.85rem;">Finalizar sesión en el sistema</p>
+                                </div>
+                                <i class="bi bi-chevron-down ms-auto text-muted"></i>
+                            </div>
+                            
+                            <div class="collapse mt-3" id="logoutConfirmation">
+                                <div class="card card-body border-0 bg-light mt-2">
+                                    <div class="text-center mb-3">
+                                        <div class="icon-wrapper mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgba(220, 53, 69, 0.1); border-radius: 50%;">
+                                            <i class="bi bi-question-circle text-danger" style="font-size: 1.8rem;"></i>
+                                        </div>
+                                        <h5>¿Estás seguro?</h5>
+                                        <p class="text-muted small">Tu sesión actual se cerrará y tendrás que volver a iniciar sesión para acceder al sistema.</p>
+                                    </div>
+                                    <form method="post" action="{% url 'logout' %}">
+                                        {% csrf_token %}
+                                        <div class="d-grid gap-2 d-flex justify-content-between">
+                                            <button type="button" class="btn btn-outline-secondary flex-grow-1" data-bs-toggle="collapse" data-bs-target="#logoutConfirmation" aria-expanded="false" aria-controls="logoutConfirmation">
+                                                <i class="bi bi-x me-2"></i>Cancelar
+                                            </button>
+                                            <button type="submit" class="btn btn-danger flex-grow-1">
+                                                <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0 py-3">
+                    <div class="d-flex align-items-center w-100 justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background-color: #4CAF50; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                                <span class="text-white fw-bold" style="font-size: 14px;">{{ request.user.nombres|first }}{{ request.user.apellidos|first }}</span>
+                            </div>
+                            <div>
+                                <p class="mb-0 fw-medium">{{ request.user.nombres }} {{ request.user.apellidos }}</p>
+                                <p class="mb-0 text-muted" style="font-size: 0.75rem;">{{ request.user.correo_institucional }}</p>
+                            </div>
+                        </div>
+                        <span class="badge bg-success">Administrador</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        // Funciones de utilidad para notificaciones globales
+        window.notificaciones = {
+            // Función para obtener CSRF token
+            getCookie: function(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            },
+            
+            // Función para mostrar una notificación de éxito
+            exito: function(mensaje, titulo = '¡Éxito!', timer = 3000) {
+                return Swal.fire({
+                    title: titulo,
+                    text: mensaje,
+                    icon: 'success',
+                    confirmButtonColor: '#28a745',
+                    confirmButtonText: 'Aceptar',
+                    timer: timer,
+                    timerProgressBar: true
+                });
+            },
+            
+            // Función para mostrar una notificación de error
+            error: function(mensaje, titulo = 'Error', timer = 5000) {
+                return Swal.fire({
+                    title: titulo,
+                    text: mensaje,
+                    icon: 'error',
+                    confirmButtonColor: '#28a745',
+                    confirmButtonText: 'Entendido',
+                    timer: timer,
+                    timerProgressBar: true
+                });
+            },
+            
+            // Función para mostrar una notificación de información
+            info: function(mensaje, titulo = 'Información', timer = 3000) {
+                return Swal.fire({
+                    title: titulo,
+                    text: mensaje,
+                    icon: 'info',
+                    confirmButtonColor: '#28a745',
+                    confirmButtonText: 'Entendido',
+                    timer: timer,
+                    timerProgressBar: true
+                });
+            },
+            
+            // Función para mostrar una confirmación
+            confirmar: function(mensaje, titulo = '¿Estás seguro?', icono = 'warning') {
+                return Swal.fire({
+                    title: titulo,
+                    html: mensaje,
+                    icon: icono,
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, confirmar',
+                    cancelButtonText: 'Cancelar',
+                    reverseButtons: true
+                });
+            },
+            
+            // Función específica para confirmar eliminación
+            confirmarEliminacion: function(mensaje, titulo = '¿Estás seguro?', callback) {
+                Swal.fire({
+                    title: titulo,
+                    html: mensaje,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar',
+                    reverseButtons: true,
+                    showLoaderOnConfirm: true,
+                    preConfirm: callback,
+                    allowOutsideClick: () => !Swal.isLoading()
+                }).then((result) => {
+                    if (result.isConfirmed && result.value && result.value.success) {
+                        this.exito(result.value.message || 'Eliminado correctamente', '¡Eliminado!', 2000).then(() => {
+                            if (result.value.reload) {
+                                window.location.reload();
+                            } else if (result.value.redirect) {
+                                window.location.href = result.value.redirect;
+                            }
+                        });
+                    } else if (result.isConfirmed && result.value && result.value.error) {
+                        this.error(result.value.error);
+                    }
+                });
+            },
+            
+            // Función para mostrar una notificación de carga
+            cargando: function(mensaje = 'Procesando...', titulo = 'Guardando') {
+                return Swal.fire({
+                    title: titulo,
+                    text: mensaje,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    allowEnterKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+            },
+            
+            // Función para cerrar todas las notificaciones abiertas
+            cerrarTodas: function() {
+                Swal.close();
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Procesamiento de mensajes de Django
+            {% if messages %}
+                {% for message in messages %}
+                    Swal.fire({
+                        title: '{% if message.tags == "success" %}¡Éxito!{% elif message.tags == "error" %}Error{% elif message.tags == "warning" %}Advertencia{% else %}Información{% endif %}',
+                        text: '{{ message }}',
+                        icon: '{% if message.tags == "success" %}success{% elif message.tags == "error" %}error{% elif message.tags == "warning" %}warning{% else %}info{% endif %}',
+                        confirmButtonColor: '#28a745',
+                        confirmButtonText: 'Entendido',
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                {% endfor %}
+            {% endif %}
+
+            // Activar el enlace actual en el sidebar
+            const currentPath = window.location.pathname;
+            const sidebarLinks = document.querySelectorAll('#sidebar .nav-link');
+            
+            sidebarLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                // Verificar la ruta exacta o si es una subruta (para secciones)
+                if (href === currentPath || (currentPath.includes(href) && href !== '/')) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Inicializar Select2
+            if ($.fn.select2) {
+                $('.select2').select2({
+                    theme: 'bootstrap-5',
+                    width: '100%'
+                });
+            }
+        });
+    </script>
+    
+    <!-- Scripts para manejar notificaciones directamente -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // URLs para el sistema de notificaciones
+        const notificacionesUrl = "{% url 'obtener_notificaciones' %}";
+        const marcarLeidaUrl = "{% url 'marcar_notificacion_leida' 0 %}".replace('0', '');
+        const marcarTodasLeidasUrl = "{% url 'marcar_todas_leidas' %}";
+        const eliminarTodasUrl = "{% url 'eliminar_todas_notificaciones' %}";
+        
+        // Elementos DOM
+        const counter = document.getElementById('notification-counter');
+        const notificationsList = document.getElementById('notifications-list');
+        const markAllReadBtn = document.getElementById('mark-all-read-btn');
+        const deleteAllBtn = document.getElementById('delete-all-notifications-btn');
+        const bellIcon = document.getElementById('icono-notificaciones');
+        
+        // Función para obtener CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        // Función para cargar notificaciones
+        function cargarNotificaciones() {
+            console.log("Cargando notificaciones...");
+            
+            fetch(notificacionesUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error HTTP: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Datos de notificaciones:", data);
+                    
+                    // Actualizar contador
+                    const count = data.no_leidas;
+                    counter.textContent = count > 99 ? '99+' : count;
+                    counter.style.display = count > 0 ? 'inline-block' : 'none';
+                    
+                    // Animar campana si hay notificaciones
+                    if (count > 0 && !bellIcon.classList.contains('bell-animation')) {
+                        bellIcon.classList.add('bell-animation');
+                        setTimeout(() => bellIcon.classList.remove('bell-animation'), 1000);
+                    }
+                    
+                    // Actualizar lista de notificaciones
+                    if (data.notificaciones.length === 0) {
+                        notificationsList.innerHTML = `
+                            <div class="notification-empty">
+                                <i class="bi bi-bell-slash"></i>
+                                <p>No tienes notificaciones</p>
+                            </div>
+                        `;
+                    } else {
+                        notificationsList.innerHTML = '';
+                        
+                        // Crear elementos para cada notificación
+                        data.notificaciones.forEach(notif => {
+                            const notifItem = document.createElement('a');
+                            notifItem.href = 'javascript:void(0)';
+                            notifItem.className = `notification-item d-flex align-items-start ${notif.leido ? '' : 'unread'}`;
+                            notifItem.dataset.id = notif.id;
+                            notifItem.dataset.url = notif.url;
+                            
+                            notifItem.innerHTML = `
+                                <div class="notification-icon">
+                                    <i class="bi ${notif.icono}"></i>
+                                </div>
+                                <div class="notification-content ms-3">
+                                    <div class="notification-message">${notif.descripcion}</div>
+                                    <div class="notification-meta d-flex justify-content-between align-items-center">
+                                        <span class="notification-user">${notif.usuario}</span>
+                                        <span class="notification-time">${notif.tiempo_transcurrido}</span>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            // Añadir evento click para marcar como leída
+                            notifItem.addEventListener('click', function() {
+                                const id = this.dataset.id;
+                                const url = this.dataset.url;
+                                
+                                fetch(`${marcarLeidaUrl}${id}/`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRFToken': getCookie('csrftoken'),
+                                        'Content-Type': 'application/json'
+                                    }
+                                })
+                                .then(response => {
+                                    // Redirigir a la URL relacionada con la notificación
+                                    window.location.href = url;
+                                })
+                                .catch(error => {
+                                    console.error('Error al marcar como leída:', error);
+                                    // Redirigir de todos modos
+                                    window.location.href = url;
+                                });
+                            });
+                            
+                            notificationsList.appendChild(notifItem);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al cargar notificaciones:", error);
+                    notificationsList.innerHTML = `
+                        <div class="notification-empty">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <p>Error al cargar notificaciones</p>
+                            <small class="text-muted">${error.message}</small>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Evento para marcar todas como leídas
+        if (markAllReadBtn) {
+            markAllReadBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log("Marcando todas como leídas...");
+                
+                fetch(marcarTodasLeidasUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        cargarNotificaciones();
+                        window.notificaciones.exito("Todas las notificaciones han sido marcadas como leídas", "¡Listo!", 1500);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al marcar todas como leídas:", error);
+                    window.notificaciones.error("Error al marcar todas como leídas. Inténtalo de nuevo.");
+                });
+            });
+        }
+        
+        // Evento para eliminar todas las notificaciones
+        if (deleteAllBtn) {
+            deleteAllBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                window.notificaciones.confirmar(
+                    '¿Estás seguro que deseas eliminar todas las notificaciones? Esta acción no se puede deshacer.',
+                    '¿Eliminar todas?'
+                ).then((result) => {
+                    if (result.isConfirmed) {
+                        console.log("Eliminando todas las notificaciones...");
+                        
+                        fetch(eliminarTodasUrl, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': getCookie('csrftoken'),
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                cargarNotificaciones();
+                                window.notificaciones.exito("Todas las notificaciones han sido eliminadas", "¡Listo!", 1500);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error al eliminar notificaciones:", error);
+                            window.notificaciones.error("Error al eliminar notificaciones. Inténtalo de nuevo.");
+                        });
+                    }
+                });
+            });
+        }
+        
+        // Cargar notificaciones al cargar la página
+        cargarNotificaciones();
+        
+        // Cargar notificaciones cada 30 segundos
+        setInterval(cargarNotificaciones, 30000);
+        
+        // También cargar notificaciones cuando se haga clic en el desplegable
+        document.getElementById('notificationsDropdown').addEventListener('click', function() {
+            cargarNotificaciones();
+        });
+    });
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

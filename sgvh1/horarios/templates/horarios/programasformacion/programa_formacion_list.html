@@ -1,0 +1,457 @@
+{% extends 'horarios/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .search-form {
+        width: 100%;
+    }
+
+    .search-wrapper {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    .custom-search-input {
+        width: 100%;
+        padding: 12px 45px 12px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 50px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background: white;
+        outline: none;
+    }
+
+    .custom-search-input:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+    }
+
+    .search-btn {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #28a745;
+        border: none;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .search-btn:hover {
+        background: #218838;
+        transform: translateY(-50%) scale(1.05);
+    }
+
+    .clear-btn {
+        position: absolute;
+        right: 50px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .clear-btn:hover {
+        color: #dc3545;
+    }
+
+    .table {
+        border: 2px solid #dee2e6;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 0;
+    }
+
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;
+        background-color: #f8f9fa;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #495057;
+        padding: 1.25rem 1.5rem;
+        vertical-align: middle;
+    }
+
+    .table tbody td {
+        border-bottom: 1px solid #dee2e6;
+        font-size: 0.95rem;
+        padding: 1.25rem 1.5rem;
+        vertical-align: middle;
+    }
+
+    .table td {
+        font-size: 0.95rem;
+        color: #333;
+        line-height: 1.5;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(40, 167, 69, 0.05);
+        transition: all 0.2s ease;
+    }
+
+    .btn-group .btn {
+        padding: 0.5rem 0.75rem;
+        transition: all 0.3s ease;
+        border-width: 1px;
+    }
+
+    .btn-outline-success {
+        color: #28a745;
+        border-color: #28a745;
+    }
+
+    .btn-outline-success:hover {
+        background-color: #28a745;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.15);
+    }
+
+    .btn-outline-danger {
+        color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.15);
+    }
+
+    .btn-outline-secondary {
+        border: 2px solid #e0e0e0;
+        color: #6c757d;
+        background: none;
+        padding: 8px 12px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-secondary:hover {
+        border-color: #dc3545;
+        color: #dc3545;
+        background: none;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        border-bottom: 0;
+        border-radius: 15px 15px 0 0 !important;
+    }
+
+    .card-body {
+        border-radius: 0 0 15px 15px;
+        padding: 2rem;
+        background-color: #fff;
+        box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    .table-responsive {
+        border-radius: 12px;
+        margin-top: 1rem;
+        overflow: hidden;
+    }
+
+    .table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .custom-select {
+        height: 100%;
+        padding: 12px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 50px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background-color: white;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .custom-select:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+    }
+
+    /* Ajustes responsivos */
+    @media (max-width: 768px) {
+        .table td, .table th {
+            padding: 1rem 1.25rem;
+        }
+    }
+
+    /* Estilos del badge de jornada */
+    .badge {
+        font-weight: 500;
+        padding: 0.5em 1em;
+        font-size: 0.85rem;
+        border-radius: 50rem;
+    }
+
+    .bg-secondary {
+        background-color: #6c757d !important;
+    }
+
+    /* Estilos para el botón X del select */
+    .clear-select-btn {
+        padding: 8px !important;
+        border-radius: 50% !important;
+        width: 35px !important;
+        height: 35px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border: 2px solid #dee2e6 !important;
+        color: #6c757d !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .clear-select-btn:hover {
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+        color: white !important;
+    }
+
+    .select-wrapper {
+        min-width: 250px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Ajuste del ancho del select cuando está el botón X */
+    .select-wrapper select {
+        flex: 1;
+    }
+    
+    /* Estilos para SweetAlert2 */
+    .swal2-popup {
+        border-radius: 15px !important;
+        padding: 2rem;
+    }
+
+    .swal2-title {
+        color: #333 !important;
+        font-size: 1.5rem !important;
+        font-weight: 600 !important;
+    }
+
+    .swal2-styled.swal2-confirm {
+        background-color: #28a745 !important;
+        border-color: #28a745 !important;
+        border-radius: 4px !important;
+    }
+
+    .swal2-styled.swal2-confirm:hover {
+        background-color: #218838 !important;
+        border-color: #1e7e34 !important;
+    }
+
+    .swal2-styled.swal2-cancel {
+        background-color: #6c757d !important;
+        border-color: #6c757d !important;
+        border-radius: 4px !important;
+    }
+
+    .swal2-styled.swal2-cancel:hover {
+        background-color: #5a6268 !important;
+        border-color: #545b62 !important;
+    }
+
+    .swal2-loader {
+        border-color: #28a745 transparent #28a745 transparent !important;
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white py-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0 fs-4">
+                    <i class="bi bi-book me-2"></i>Programas de Formación
+                </h2>
+                <a href="{% url 'programa_formacion_create' %}" class="btn btn-light">
+                    <i class="bi bi-plus-circle me-2"></i>Nuevo Programa
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body p-5">
+            <!-- Search Row -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-8">
+                    <form method="get" class="search-form d-flex gap-3" autocomplete="off">
+                        <div class="search-wrapper flex-grow-1">
+                            <input type="text" 
+                                   name="search" 
+                                   class="custom-search-input" 
+                                   placeholder="Buscar por nombre o código del programa..."
+                                   value="{{ search }}"
+                                   autocomplete="off"
+                                   autocorrect="off"
+                                   autocapitalize="off"
+                                   spellcheck="false">
+                            {% if search %}
+                                <button type="button" class="clear-btn" onclick="window.location.href='{% url 'programa_formacion_list' %}'">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            {% endif %}
+                            <button type="submit" class="search-btn" title="Buscar">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                        <div class="select-wrapper d-flex align-items-center gap-2" style="min-width: 200px;">
+                            <select name="jornada" class="form-select custom-select h-100" onchange="this.form.submit()">
+                                <option value="">Todas las jornadas</option>
+                                <option value="Mañana" {% if request.GET.jornada == 'Mañana' %}selected{% endif %}>Mañana</option>
+                                <option value="Tarde" {% if request.GET.jornada == 'Tarde' %}selected{% endif %}>Tarde</option>
+                                <option value="Noche" {% if request.GET.jornada == 'Noche' %}selected{% endif %}>Noche</option>
+                            </select>
+                            {% if request.GET.jornada %}
+                                <a href="{% url 'programa_formacion_list' %}" class="btn btn-outline-secondary clear-select-btn">
+                                    <i class="bi bi-x-lg"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tabla de programas -->
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center">Código</th>
+                            <th class="text-center">Nombre del Programa</th>
+                            <th class="text-center">Jornada</th>
+                            <th class="text-center">Fecha de Inicio</th>
+                            <th class="text-center">Fecha de Fin</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for programa in programas %}
+                        <tr>
+                            <td class="text-center">{{ programa.codigo_programa }}</td>
+                            <td class="text-center">{{ programa.nombre_programa }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-secondary">{{ programa.jornada }}</span>
+                            </td>
+                            <td class="text-center">{{ programa.fecha_inicio }}</td>
+                            <td class="text-center">{{ programa.fecha_fin }}</td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <a href="{% url 'programa_formacion_edit' programa.pk %}" class="btn btn-sm btn-outline-success">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-danger delete-programa" 
+                                            data-id="{{ programa.pk }}"
+                                            data-nombre="{{ programa.nombre_programa }}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">
+                                <div class="text-muted">
+                                    <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                    No se encontraron programas de formación
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Manejador para botones de eliminación individual
+    const deleteButtons = document.querySelectorAll('.delete-programa');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const programaId = this.getAttribute('data-id');
+            const programaNombre = this.getAttribute('data-nombre');
+            
+            Swal.fire({
+                title: '¿Estás seguro?',
+                html: `¿Deseas eliminar el programa <strong>${programaNombre}</strong>?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true,
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    return new Promise((resolve) => {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = `/programas/${programaId}/delete/`;
+                        
+                        const csrf = document.createElement('input');
+                        csrf.type = 'hidden';
+                        csrf.name = 'csrfmiddlewaretoken';
+                        csrf.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                        
+                        form.appendChild(csrf);
+                        document.body.appendChild(form);
+                        form.submit();
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            });
+        });
+    });
+
+    // Prevenir el historial y sugerencias
+    document.querySelector('.custom-search-input').addEventListener('input', function(e) {
+        e.target.setAttribute('autocomplete', 'off');
+    });
+
+    // Limpiar el historial al cargar la página
+    const input = document.querySelector('.custom-search-input');
+    input.value = input.value;
+});
+</script>
+{% endblock scripts %}

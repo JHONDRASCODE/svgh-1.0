@@ -1,0 +1,265 @@
+{% extends "horarios/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5 mb-5">
+    <!-- Header Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-success text-white py-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-calendar-week fs-2 me-3"></i>
+                    <h2 class="mb-0 fs-4">Calendarios</h2>
+                </div>
+                <a href="{% url 'calendar_create' %}" class="btn btn-light">
+                    <i class="bi bi-plus-circle me-2"></i>Crear Nuevo Calendario
+                </a>
+            </div>
+        </div>
+        
+        <div class="card-body p-4">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Gestiona los calendarios para instructores, ambientes y programas de formación
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-calendar3 me-2"></i>
+                        {{ current_date|date:"D d M Y" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cards de categorías -->
+    <div class="row g-4">
+        <!-- Calendarios de Instructores -->
+        <div class="col-md-4">
+            <div class="card category-card h-100 shadow-sm border-0">
+                <div class="card-body p-4 text-center">
+                    <div class="icon-container mb-3">
+                        <i class="bi bi-person-badge-fill"></i>
+                    </div>
+                    <h3 class="card-title fs-5 mb-3">Calendarios de Instructores</h3>
+                    <p class="card-text text-muted mb-4">
+                        Gestiona los horarios y disponibilidad de los instructores en el centro de formación.
+                    </p>
+                </div>
+                <div class="card-footer border-0 bg-transparent p-4 pt-0 text-center">
+                    <a href="{% url 'calinst_list' %}" class="btn btn-success w-75 rounded-pill">
+                        <i class="bi bi-arrow-right-circle me-2"></i>Gestionar
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Calendarios de Ambientes -->
+        <div class="col-md-4">
+            <div class="card category-card h-100 shadow-sm border-0">
+                <div class="card-body p-4 text-center">
+                    <div class="icon-container mb-3">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <h3 class="card-title fs-5 mb-3">Calendarios de Ambientes</h3>
+                    <p class="card-text text-muted mb-4">
+                        Administra la disponibilidad y ocupación de los ambientes y espacios de formación.
+                    </p>
+                </div>
+                <div class="card-footer border-0 bg-transparent p-4 pt-0 text-center">
+                    <a href="{% url 'calamb_list' %}" class="btn btn-success w-75 rounded-pill">
+                        <i class="bi bi-arrow-right-circle me-2"></i>Gestionar
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Calendarios de Programas de Formación -->
+        <div class="col-md-4">
+            <div class="card category-card h-100 shadow-sm border-0">
+                <div class="card-body p-4 text-center">
+                    <div class="icon-container mb-3">
+                        <i class="bi bi-book-fill"></i>
+                    </div>
+                    <h3 class="card-title fs-5 mb-3">Calendarios de Programas</h3>
+                    <p class="card-text text-muted mb-4">
+                        Organiza los horarios para los diferentes programas de formación que se imparten.
+                    </p>
+                </div>
+                <div class="card-footer border-0 bg-transparent p-4 pt-0 text-center">
+                    <a href="{% url 'calpf_list' %}" class="btn btn-success w-75 rounded-pill">
+                        <i class="bi bi-arrow-right-circle me-2"></i>Gestionar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enlaces a recursos -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+/* Estilos generales */
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.card-header {
+    border-bottom: 0;
+}
+
+/* Estilos para las tarjetas de categoría */
+.category-card {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12) !important;
+}
+
+.category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: #28a745;
+    transition: all 0.3s ease;
+}
+
+.category-card:hover::before {
+    height: 8px;
+}
+
+.icon-container {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e8f5e9;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.category-card:hover .icon-container {
+    background-color: #28a745;
+}
+
+.icon-container i {
+    font-size: 2.5rem;
+    color: #28a745;
+    transition: all 0.3s ease;
+}
+
+.category-card:hover .icon-container i {
+    color: white;
+}
+
+.card-title {
+    font-weight: 600;
+    color: #2c3e50;
+    position: relative;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.card-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 3px;
+    background-color: #28a745;
+    border-radius: 3px;
+}
+
+.card-text {
+    color: #6c757d;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.25);
+    transform: translateY(-2px);
+}
+
+.btn-light {
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-light:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Animación para las tarjetas */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.col-md-4:nth-child(1) {
+    animation: fadeInUp 0.5s ease-out 0.1s forwards;
+}
+
+.col-md-4:nth-child(2) {
+    animation: fadeInUp 0.5s ease-out 0.3s forwards;
+}
+
+.col-md-4:nth-child(3) {
+    animation: fadeInUp 0.5s ease-out 0.5s forwards;
+}
+
+.col-md-4 {
+    opacity: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .icon-container {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .icon-container i {
+        font-size: 2rem;
+    }
+}
+</style>
+{% endblock content %}

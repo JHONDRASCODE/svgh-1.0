@@ -1,0 +1,606 @@
+{% extends 'horarios/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block extra_css %}
+<style>
+/* Estilos para el formulario */
+.form-control, .input-group-text {
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+}
+
+.form-control {
+    border-left: none;
+}
+
+.input-group:focus-within .input-group-text {
+    border-color: #28a745;
+    background-color: #f8fff9;
+}
+
+.input-group:focus-within .form-control {
+    border-color: #28a745;
+}
+
+.form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.15);
+}
+
+.form-label {
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+/* Estilos para los botones */
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+    box-shadow: 0 2px 6px rgba(40, 167, 69, 0.2);
+}
+
+.btn-outline-secondary:hover {
+    box-shadow: 0 2px 6px rgba(108, 117, 125, 0.2);
+}
+
+/* Estilos para la tarjeta */
+.card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: #28a745;
+    border-bottom: 0;
+}
+
+/* Estilos para alertas y mensajes */
+.alert {
+    border: none;
+    border-radius: 10px;
+}
+
+.invalid-feedback {
+    font-size: 0.875rem;
+}
+
+.form-text {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* Animaciones para los campos del formulario */
+.animate-field {
+    opacity: 0;
+    transform: translateX(-10px);
+    animation: fadeInField 0.5s ease forwards;
+}
+
+/* Aplicar retraso a cada campo secuencialmente */
+.animate-field:nth-child(1) { animation-delay: 0.1s; }
+.animate-field:nth-child(2) { animation-delay: 0.2s; }
+.animate-field:nth-child(3) { animation-delay: 0.3s; }
+.animate-field:nth-child(4) { animation-delay: 0.4s; }
+.animate-field:nth-child(5) { animation-delay: 0.5s; }
+.animate-field:nth-child(6) { animation-delay: 0.6s; }
+.animate-field:nth-child(7) { animation-delay: 0.7s; }
+.animate-field:nth-child(8) { animation-delay: 0.8s; }
+.animate-field:nth-child(9) { animation-delay: 0.9s; }
+.animate-field:nth-child(10) { animation-delay: 1s; }
+
+@keyframes fadeInField {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Efecto hover en las etiquetas */
+.form-group:hover .form-label {
+    color: #28a745;
+}
+
+/* Estilos específicos para días de recurrencia */
+.days-container {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.day-checkbox {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid #e0e0e0;
+}
+
+.day-checkbox:hover {
+    background-color: #e9ecef;
+    border-color: #28a745;
+}
+
+.day-checkbox input {
+    margin-right: 0.5rem;
+}
+
+.day-checkbox input:checked + span {
+    font-weight: 600;
+    color: #28a745;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem !important;
+    }
+    
+    .btn {
+        padding: 0.625rem 1.25rem;
+    }
+    
+    .form-control, .input-group-text {
+        padding: 0.625rem 0.875rem;
+    }
+    
+    /* Ajustar animaciones para móviles */
+    .animate-field {
+        animation-duration: 0.3s;
+    }
+    
+    .days-container {
+        flex-direction: column;
+    }
+    
+    .day-checkbox {
+        width: 100%;
+    }
+}
+
+/* Estilos para SweetAlert2 */
+.swal2-popup {
+    border-radius: 15px !important;
+    padding: 2rem;
+}
+
+.swal2-title {
+    color: #333 !important;
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+}
+
+.swal2-styled.swal2-confirm {
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+}
+
+.swal2-styled.swal2-confirm:hover {
+    background-color: #218838 !important;
+    border-color: #1e7e34 !important;
+}
+
+.swal2-styled.swal2-cancel {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+}
+
+.swal2-styled.swal2-cancel:hover {
+    background-color: #5a6268 !important;
+    border-color: #545b62 !important;
+}
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow">
+                <!-- Encabezado del formulario -->
+                <div class="card-header bg-success text-white py-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="mb-0 fs-4">
+                            <i class="bi bi-calendar-check me-2"></i>
+                            {% if object %}Editar Calendario{% else %}Crear Nuevo Calendario{% endif %}
+                        </h2>
+                        <a href="{% url 'calendar_list' %}" class="btn btn-outline-light">
+                            <i class="bi bi-arrow-left me-2"></i>Volver
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Cuerpo del formulario -->
+                <div class="card-body p-4 p-md-5">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                            {% for error in form.non_field_errors %}
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endif %}
+
+                        <div class="row g-4">
+                            <!-- Instructor -->
+                            <div class="col-md-6 animate-field">
+                                <div class="form-group">
+                                    <label for="{{ form.instructor.id_for_label }}" class="form-label">
+                                        {{ form.instructor.label }}
+                                        {% if form.instructor.field.required %}
+                                            <span class="text-danger">*</span>
+                                        {% endif %}
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text rounded-start-pill">
+                                            <i class="bi bi-person-badge"></i>
+                                        </span>
+                                        {{ form.instructor|add_class:"form-control rounded-end-pill" }}
+                                    </div>
+                                    {% if form.instructor.errors %}
+                                        <div class="invalid-feedback d-block mt-2">
+                                            {% for error in form.instructor.errors %}
+                                                <div class="d-flex align-items-center text-danger">
+                                                    <i class="bi bi-exclamation-circle me-2"></i>
+                                                    {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Programa -->
+                            <div class="col-md-6 animate-field">
+                                <div class="form-group">
+                                    <label for="{{ form.programa.id_for_label }}" class="form-label">
+                                        {{ form.programa.label }}
+                                        {% if form.programa.field.required %}
+                                            <span class="text-danger">*</span>
+                                        {% endif %}
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text rounded-start-pill">
+                                            <i class="bi bi-journal-bookmark"></i>
+                                        </span>
+                                        {{ form.programa|add_class:"form-control rounded-end-pill" }}
+                                    </div>
+                                    {% if form.programa.errors %}
+                                        <div class="invalid-feedback d-block mt-2">
+                                            {% for error in form.programa.errors %}
+                                                <div class="d-flex align-items-center text-danger">
+                                                    <i class="bi bi-exclamation-circle me-2"></i>
+                                                    {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Ambiente -->
+                            <div class="col-md-6 animate-field">
+                                <div class="form-group">
+                                    <label for="{{ form.ambiente.id_for_label }}" class="form-label">
+                                        {{ form.ambiente.label }}
+                                        {% if form.ambiente.field.required %}
+                                            <span class="text-danger">*</span>
+                                        {% endif %}
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text rounded-start-pill">
+                                            <i class="bi bi-building"></i>
+                                        </span>
+                                        {{ form.ambiente|add_class:"form-control rounded-end-pill" }}
+                                    </div>
+                                    {% if form.ambiente.errors %}
+                                        <div class="invalid-feedback d-block mt-2">
+                                            {% for error in form.ambiente.errors %}
+                                                <div class="d-flex align-items-center text-danger">
+                                                    <i class="bi bi-exclamation-circle me-2"></i>
+                                                    {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Competencia -->
+                            <div class="col-md-6 animate-field">
+                                <div class="form-group">
+                                    <label for="{{ form.competencia.id_for_label }}" class="form-label">
+                                        {{ form.competencia.label }}
+                                        {% if form.competencia.field.required %}
+                                            <span class="text-danger">*</span>
+                                        {% endif %}
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text rounded-start-pill">
+                                            <i class="bi bi-award"></i>
+                                        </span>
+                                        {{ form.competencia|add_class:"form-control rounded-end-pill" }}
+                                    </div>
+                                    {% if form.competencia.errors %}
+                                        <div class="invalid-feedback d-block mt-2">
+                                            {% for error in form.competencia.errors %}
+                                                <div class="d-flex align-items-center text-danger">
+                                                    <i class="bi bi-exclamation-circle me-2"></i>
+                                                    {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Inicio -->
+                            <div class="col-md-6 animate-field">
+                                <div class="form-group">
+                                    <label for="{{ form.start.id_for_label }}" class="form-label">
+                                        {{ form.start.label }}
+                                        {% if form.start.field.required %}
+                                            <span class="text-danger">*</span>
+                                        {% endif %}
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text rounded-start-pill">
+                                            <i class="bi bi-calendar-plus"></i>
+                                        </span>
+                                        {{ form.start|add_class:"form-control rounded-end-pill" }}
+                                    </div>
+                                    {% if form.start.errors %}
+                                        <div class="invalid-feedback d-block mt-2">
+                                            {% for error in form.start.errors %}
+                                                <div class="d-flex align-items-center text-danger">
+                                                    <i class="bi bi-exclamation-circle me-2"></i>
+                                                    {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Fin -->
+                            <div class="col-md-6 animate-field">
+                                <div class="form-group">
+                                    <label for="{{ form.end.id_for_label }}" class="form-label">
+                                        {{ form.end.label }}
+                                        {% if form.end.field.required %}
+                                            <span class="text-danger">*</span>
+                                        {% endif %}
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text rounded-start-pill">
+                                            <i class="bi bi-calendar-minus"></i>
+                                        </span>
+                                        {{ form.end|add_class:"form-control rounded-end-pill" }}
+                                    </div>
+                                    {% if form.end.errors %}
+                                        <div class="invalid-feedback d-block mt-2">
+                                            {% for error in form.end.errors %}
+                                                <div class="d-flex align-items-center text-danger">
+                                                    <i class="bi bi-exclamation-circle me-2"></i>
+                                                    {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Días de recurrencia -->
+                            <div class="col-12 animate-field">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        {{ form.dias_recurrencia.label }}
+                                        {% if form.dias_recurrencia.field.required %}
+                                            <span class="text-danger">*</span>
+                                        {% endif %}
+                                    </label>
+                                    
+                                    <div class="days-container">
+                                        {% for checkbox in form.dias_recurrencia %}
+                                            <label class="day-checkbox">
+                                                {{ checkbox.tag }}
+                                                <span>{{ checkbox.choice_label }}</span>
+                                            </label>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                    {% if form.dias_recurrencia.errors %}
+                                        <div class="invalid-feedback d-block mt-2">
+                                            {% for error in form.dias_recurrencia.errors %}
+                                                <div class="d-flex align-items-center text-danger">
+                                                    <i class="bi bi-exclamation-circle me-2"></i>
+                                                    {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="form-text mt-2">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Seleccione los días en que se repetirá este evento
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 mt-5">
+                            <a href="{% url 'calendar_list' %}" class="btn btn-outline-secondary px-4 rounded-pill">
+                                <i class="bi bi-x-lg me-2"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-success px-4 rounded-pill" id="save-button">
+                                <i class="bi bi-check-lg me-2"></i>Guardar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Efecto visual para los checkboxes de días
+    const dayCheckboxes = document.querySelectorAll('.day-checkbox input[type="checkbox"]');
+    dayCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const label = this.closest('.day-checkbox');
+            if (this.checked) {
+                label.style.backgroundColor = '#e8f5e9';
+                label.style.borderColor = '#28a745';
+            } else {
+                label.style.backgroundColor = '#f8f9fa';
+                label.style.borderColor = '#e0e0e0';
+            }
+        });
+        
+        // Establecer el estilo inicial si está marcado
+        if(checkbox.checked) {
+            const label = checkbox.closest('.day-checkbox');
+            label.style.backgroundColor = '#e8f5e9';
+            label.style.borderColor = '#28a745';
+        }
+    });
+    
+    // Validación mejorada para fechas
+    const startDateField = document.querySelector('input[name="start"]');
+    const endDateField = document.querySelector('input[name="end"]');
+    
+    if(startDateField && endDateField) {
+        endDateField.addEventListener('change', function() {
+            const startDate = new Date(startDateField.value);
+            const endDate = new Date(this.value);
+            
+            if(endDate <= startDate) {
+                this.setCustomValidity('La fecha de finalización debe ser posterior a la fecha de inicio');
+                
+                // Mostrar alerta personalizada
+                const formGroup = this.closest('.form-group');
+                let errorDiv = formGroup.querySelector('.invalid-feedback');
+                
+                if (!errorDiv) {
+                    errorDiv = document.createElement('div');
+                    errorDiv.className = 'invalid-feedback d-block mt-2';
+                    formGroup.appendChild(errorDiv);
+                }
+                
+                errorDiv.innerHTML = '<div class="d-flex align-items-center text-danger"><i class="bi bi-exclamation-circle me-2"></i>La fecha de finalización debe ser posterior a la fecha de inicio</div>';
+            } else {
+                this.setCustomValidity('');
+                
+                // Eliminar alerta si existe
+                const errorDiv = this.closest('.form-group').querySelector('.invalid-feedback');
+                if(errorDiv) {
+                    errorDiv.innerHTML = '';
+                }
+            }
+        });
+    }
+    
+    // Añadir notificación al guardar el formulario
+    const form = document.querySelector('form.needs-validation');
+    const saveButton = document.getElementById('save-button');
+    
+    if (form && saveButton) {
+        form.addEventListener('submit', function(e) {
+            if (!form.checkValidity()) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Encontrar el primer campo con error y hacer scroll hasta él
+                const firstInvalidField = form.querySelector(':invalid');
+                if (firstInvalidField) {
+                    firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                // Notificar al usuario
+                Swal.fire({
+                    title: 'Formulario incompleto',
+                    text: 'Por favor, complete todos los campos requeridos correctamente.',
+                    icon: 'warning',
+                    confirmButtonColor: '#28a745'
+                });
+                
+                form.classList.add('was-validated');
+                return false;
+            }
+            
+            // Si el formulario es válido, mostrar un mensaje de carga
+            Swal.fire({
+                title: 'Guardando...',
+                text: 'Procesando los datos del calendario',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // El formulario se enviará normalmente
+            return true;
+        });
+    }
+    
+    // Inicializar flatpickr para las fechas si está disponible
+    if (typeof flatpickr !== 'undefined') {
+        flatpickr('input[type="datetime-local"]', {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            time_24hr: true,
+            locale: {
+                firstDayOfWeek: 1,
+                weekdays: {
+                    shorthand: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+                    longhand: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+                },
+                months: {
+                    shorthand: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    longhand: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock scripts %}
