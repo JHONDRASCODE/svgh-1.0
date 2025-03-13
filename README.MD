@@ -21,7 +21,7 @@ SGVH is an educational schedule manager designed to facilitate and optimize the 
 <!-- Autores del proyecto -->
 ## 👨‍💻Authors
 
-- [@Sebxzttian](https://github.com/Sebxzttian)
+- [@JHONDRASCODE](https://github.com/JHONDRASCODE)
 
 ## 👨‍🏫Leaders Instructors
 - 
