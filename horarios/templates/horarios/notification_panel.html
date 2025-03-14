@@ -1,0 +1,360 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Notificaciones</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.2/font/bootstrap-icons.min.css">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: white;
+            overflow: hidden;
+        }
+        
+        /* Estilos para notificaciones */
+        :root {
+            --primary-color: #4CAF50;
+            --primary-hover: #45a049;
+            --secondary-green: #81C784;
+        }
+        
+        .notification-header {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-green));
+            color: white;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .notification-header span {
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+        
+        .mark-all-read {
+            color: white;
+            opacity: 0.9;
+            font-size: 0.75rem;
+            background-color: rgba(255,255,255,0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .mark-all-read:hover {
+            opacity: 1;
+            background-color: rgba(255,255,255,0.3);
+            text-decoration: none;
+        }
+        
+        #delete-all-notifications-btn {
+            color: white;
+            opacity: 0.8;
+            background-color: rgba(220, 53, 69, 0.3);
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        #delete-all-notifications-btn:hover {
+            opacity: 1;
+            background-color: rgba(220, 53, 69, 0.5);
+        }
+        
+        #notifications-list {
+            max-height: 350px;
+            overflow-y: auto;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .notification-item {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+            background-color: white;
+        }
+        
+        .notification-item:hover {
+            background-color: #f9f9f9;
+            transform: translateX(4px);
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .notification-item.unread {
+            background-color: rgba(76, 175, 80, 0.05);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .notification-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-green));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-message {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #333;
+            margin-bottom: 0.4rem;
+            line-height: 1.25;
+        }
+        
+        .notification-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+        }
+        
+        .notification-empty {
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+        
+        .notification-empty i {
+            font-size: 2.5rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .notification-empty p {
+            color: #999;
+            font-weight: 500;
+        }
+        
+        .notification-time {
+            color: #888;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+        }
+        
+        .notification-user {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="notification-header">
+        <span>NOTIFICACIONES</span>
+        <div class="d-flex align-items-center gap-2">
+            <a id="mark-all-read-btn" class="mark-all-read">
+                <i class="bi bi-check-all me-1"></i>Leer todas
+            </a>
+            <a id="delete-all-notifications-btn">
+                <i class="bi bi-trash"></i>
+            </a>
+        </div>
+    </div>
+    <div id="notifications-list">
+        <div class="notification-empty">
+            <i class="bi bi-inbox"></i>
+            <p>Cargando notificaciones...</p>
+        </div>
+    </div>
+
+    <!-- Scripts básicos -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        // URLs para el sistema de notificaciones
+        var notificacionesUrl = "{% url 'obtener_notificaciones' %}";
+        var marcarLeidaUrl = "{% url 'marcar_notificacion_leida' 0 %}";
+        var marcarTodasLeidasUrl = "{% url 'marcar_todas_leidas' %}";
+        var eliminarTodasUrl = "{% url 'eliminar_todas_notificaciones' %}";
+        
+        // Token CSRF para peticiones POST
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+        
+        // Configurar AJAX para incluir CSRF token en peticiones POST
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        
+        // Función para cargar notificaciones
+        function cargarNotificaciones() {
+            $.ajax({
+                url: notificacionesUrl,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    console.log("Respuesta de notificaciones:", data);
+                    
+                    // Informar al padre sobre el contador
+                    if (window.parent && window.parent.postMessage) {
+                        window.parent.postMessage({
+                            type: 'notificationCount',
+                            count: data.no_leidas
+                        }, '*');
+                    }
+                    
+                    // Actualizar lista
+                    var $lista = $('#notifications-list');
+                    $lista.empty();
+                    
+                    if (data.notificaciones.length === 0) {
+                        $lista.html(`
+                            <div class="notification-empty">
+                                <i class="bi bi-bell-slash"></i>
+                                <p>No tienes notificaciones</p>
+                            </div>
+                        `);
+                    } else {
+                        // Añadir cada notificación
+                        $.each(data.notificaciones, function(index, notif) {
+                            var $notifItem = $(`
+                                <a href="javascript:void(0)" class="notification-item d-flex align-items-start ${notif.leido ? '' : 'unread'}" 
+                                   data-id="${notif.id}" data-url="${notif.url}">
+                                    <div class="notification-icon">
+                                        <i class="bi ${notif.icono}"></i>
+                                    </div>
+                                    <div class="notification-content ms-3">
+                                        <div class="notification-message">${notif.descripcion}</div>
+                                        <div class="notification-meta d-flex justify-content-between align-items-center">
+                                            <span class="notification-user">${notif.usuario}</span>
+                                            <span class="notification-time">${notif.tiempo_transcurrido}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            `);
+                            
+                            // Añadir evento de clic
+                            $notifItem.on('click', function() {
+                                var id = $(this).data('id');
+                                var url = $(this).data('url');
+                                
+                                // Marcar como leída
+                                $.ajax({
+                                    url: marcarLeidaUrl.replace('0', id),
+                                    type: 'POST',
+                                    success: function() {
+                                        // Redirigir al padre
+                                        window.parent.location.href = url;
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error("Error al marcar notificación:", error);
+                                        // Redirigir de todos modos
+                                        window.parent.location.href = url;
+                                    }
+                                });
+                            });
+                            
+                            $lista.append($notifItem);
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al obtener notificaciones:", error);
+                    $('#notifications-list').html(`
+                        <div class="notification-empty">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <p>Error al cargar notificaciones</p>
+                        </div>
+                    `);
+                }
+            });
+        }
+        
+        // Evento para marcar todas como leídas
+        $('#mark-all-read-btn').on('click', function() {
+            $.ajax({
+                url: marcarTodasLeidasUrl,
+                type: 'POST',
+                success: function(data) {
+                    if (data.success) {
+                        cargarNotificaciones();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al marcar todas como leídas:", error);
+                    alert("Hubo un error al marcar todas las notificaciones como leídas");
+                }
+            });
+        });
+        
+        // Evento para eliminar todas las notificaciones
+        $('#delete-all-notifications-btn').on('click', function() {
+            if (confirm('¿Estás seguro que deseas eliminar todas las notificaciones? Esta acción no se puede deshacer.')) {
+                $.ajax({
+                    url: eliminarTodasUrl,
+                    type: 'POST',
+                    success: function(data) {
+                        if (data.success) {
+                            cargarNotificaciones();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error al eliminar notificaciones:", error);
+                        alert("Hubo un error al eliminar las notificaciones");
+                    }
+                });
+            }
+        });
+        
+        // Cargar notificaciones al inicio
+        cargarNotificaciones();
+        
+        // Actualizar cada 30 segundos (reducido de 60s para mejor experiencia)
+        setInterval(cargarNotificaciones, 30000);
+    });
+    </script>
+</body>
+</html>
