@@ -83,6 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isLoading) return;
         isLoading = true;
         
+        console.log("Intentando cargar opciones de filtro desde:", requestFilterOptions);
+        
         // Mostrar estado de carga en los selectores
         ['instructorFilter', 'programaFilter', 'locationFilter'].forEach(id => {
             const select = document.getElementById(id);
@@ -95,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Intentar usar el nuevo endpoint para opciones de filtro
         fetch(requestFilterOptions)
             .then(response => {
+                console.log("Respuesta del servidor:", response.status);
                 if (!response.ok) {
                     throw new Error(`Error HTTP: ${response.status}`);
                 }
@@ -105,25 +108,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Poblar instructores
                 if (data.instructores && Array.isArray(data.instructores)) {
+                    console.log(`Procesando ${data.instructores.length} instructores`);
                     populateSelectOptions('instructorFilter', data.instructores, 'id', 'nombre', 'Todos los instructores');
+                } else {
+                    console.warn("No se encontraron instructores en la respuesta");
+                    initializeFilterDefault('instructorFilter', 'Todos los instructores');
                 }
                 
                 // Poblar programas
                 if (data.programas && Array.isArray(data.programas)) {
+                    console.log(`Procesando ${data.programas.length} programas`);
                     populateSelectOptions('programaFilter', data.programas, 'id', 'nombre', 'Todos los programas');
+                } else {
+                    console.warn("No se encontraron programas en la respuesta");
+                    initializeFilterDefault('programaFilter', 'Todos los programas');
                 }
                 
                 // Poblar ambientes
                 if (data.ambientes && Array.isArray(data.ambientes)) {
+                    console.log(`Procesando ${data.ambientes.length} ambientes`);
                     populateSelectOptions('locationFilter', data.ambientes, 'id', 'nombre', 'Todos los ambientes');
+                } else {
+                    console.warn("No se encontraron ambientes en la respuesta");
+                    initializeFilterDefault('locationFilter', 'Todos los ambientes');
                 }
                 
                 // Restaurar filtros guardados
                 restoreSavedFilters();
             })
             .catch(error => {
-                console.error('Error al cargar filtros del nuevo endpoint:', error);
-                console.log('Intentando cargar filtros usando el método anterior...');
+                console.error('Error al cargar filtros del endpoint:', error);
+                console.log('Intentando cargar filtros usando el método alternativo...');
+                
+                // Inicializar filtros con valores por defecto
+                initializeFilterDefaults();
                 
                 // Fallback al método anterior si el nuevo endpoint falla
                 loadFilterOptionsFromEvents();
@@ -133,10 +151,31 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
     
+    // Inicializar un filtro con valor por defecto
+    function initializeFilterDefault(filterId, defaultText) {
+        const select = document.getElementById(filterId);
+        if (select) {
+            select.disabled = false;
+            select.innerHTML = `<option value="">${defaultText}</option>`;
+        }
+    }
+    
+    // Inicializar todos los filtros con valores por defecto
+    function initializeFilterDefaults() {
+        // Función de emergencia para garantizar que los filtros tengan al menos las opciones por defecto
+        initializeFilterDefault('instructorFilter', 'Todos los instructores');
+        initializeFilterDefault('programaFilter', 'Todos los programas');
+        initializeFilterDefault('locationFilter', 'Todos los ambientes');
+        
+        console.log("Inicializados filtros con valores por defecto");
+    }
+    
     // Método de respaldo: cargar opciones de filtro desde los eventos
     function loadFilterOptionsFromEvents() {
         if (isLoading) return;
         isLoading = true;
+        
+        console.log("Intentando cargar opciones de filtro desde eventos:", requestEvents);
         
         fetch(requestEvents)
             .then(response => {
@@ -150,6 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const events = data.events || [];
                 console.log(`Datos recibidos: ${events.length} eventos para filtros`);
                 
+                if (events.length === 0) {
+                    console.warn("No se encontraron eventos para extraer filtros");
+                    initializeFilterDefaults();
+                    return;
+                }
+                
                 // Poblar los selectores con opciones únicas
                 populateFilter('instructorFilter', events, 'id_instructor', 'instructor');
                 populateFilter('programaFilter', events, 'id_programa', 'programa');
@@ -159,17 +204,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 restoreSavedFilters();
             })
             .catch(error => {
-                console.error('Error al cargar los filtros:', error);
+                console.error('Error al cargar los filtros desde eventos:', error);
                 showNotification('Error al cargar opciones de filtro', 'error');
                 
-                // Restablecer los selectores
-                ['instructorFilter', 'programaFilter', 'locationFilter'].forEach(id => {
-                    const select = document.getElementById(id);
-                    if (select) {
-                        select.disabled = false;
-                        select.innerHTML = '<option value="">Error al cargar</option>';
-                    }
-                });
+                // Inicializar con valores por defecto en caso de error
+                initializeFilterDefaults();
             })
             .finally(() => {
                 isLoading = false;
@@ -255,11 +294,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function restoreSavedFilters() {
         if (Object.keys(savedFilters).length === 0) return;
         
+        console.log("Restaurando filtros guardados:", savedFilters);
+        
         // Restaurar valores de los filtros
         Object.entries(savedFilters).forEach(([id, value]) => {
             const element = document.getElementById(id);
             if (element && value) {
                 element.value = value;
+                console.log(`Restaurado filtro ${id} al valor ${value}`);
             }
         });
         
@@ -807,6 +849,10 @@ document.addEventListener('DOMContentLoaded', () => {
         setInterval(() => {
             calendar.refetchEvents();
         }, 300000);
+        
+        // Garantizar que los filtros tengan al menos las opciones por defecto
+        // si después de 2 segundos no se han cargado correctamente
+        setTimeout(initializeFilterDefaults, 2000);
         
         console.log('Calendario inicializado correctamente');
     }

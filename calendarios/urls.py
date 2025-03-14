@@ -10,5 +10,5 @@ urlpatterns = [
     path('get_all_events/', get_all_events, name='get_all_events'),
     
     # Ruta opcional para obtener opciones de filtros (puedes añadirla si la implementas)
-    path('get_filter_options/', get_filter_options, name='get_filter_options'),
+   path('get_filter_options/', get_filter_options, name='get_filter_options'),
 ]
