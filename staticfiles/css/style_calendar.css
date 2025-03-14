@@ -1,0 +1,81 @@
+/* Estilos para el calendario */
+#calendar {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+#calendar a {
+  color: #000;
+  text-decoration: none;
+}
+
+/* Estilos para los filtros en el sidebar izquierdo */
+.container {
+  display: flex;
+}
+
+#event-filter-form {
+  flex-basis: 250px;
+  background-color: #e8f5e9; /* Fondo verde suave */
+  padding: 15px;
+  border-radius: 8px;
+}
+
+#event-filter-form label {
+  font-weight: bold;
+  color: #2e7d32; /* Verde oscuro */
+}
+
+#event-filter-form .form-select {
+  background-color: #ffffff;
+  border: 1px solid #81c784; /* Borde verde claro */
+}
+
+#event-filter-form .btn-secondary {
+  background-color: #66bb6a; /* Botón verde */
+  border: none;
+}
+
+#event-filter-form .btn-secondary:hover {
+  background-color: #4caf50; /* Verde más oscuro al pasar el mouse */
+}
+
+/* Estilos para el calendario */
+#calendar {
+  flex-grow: 1;
+  margin-left: 20px;
+  padding: 10px;
+  background-color: #f1f8e9; /* Fondo verde muy claro */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.fc-toolbar {
+  background-color: #388e3c; /* Color de la barra del calendario */
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.fc-toolbar .fc-button {
+  background-color: #66bb6a;
+  border: none;
+  color: white;
+}
+
+.fc-toolbar .fc-button:hover {
+  background-color: #43a047;
+}
+
+/* Estilos de los eventos */
+.fc-event {
+  background-color: #2e7d32; /* Color verde oscuro para los eventos */
+  border: none;
+}
+
+.fc-event:hover {
+  background-color: #1b5e20; /* Verde más oscuro al pasar el mouse */
+}

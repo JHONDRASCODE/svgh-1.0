@@ -1,0 +1,374 @@
+{% extends 'horarios/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    /* Estilos para la card */
+    .card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        border-bottom: 0;
+        border-radius: 15px 15px 0 0 !important;
+    }
+
+    .card-body {
+        border-radius: 0 0 15px 15px;
+        padding: 2rem;
+        background-color: #fff;
+        box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    /* Estilos para la tabla */
+    .table-responsive {
+        border-radius: 12px;
+        margin-top: 1rem;
+        overflow: hidden;
+    }
+
+    .table {
+        border: 2px solid #dee2e6;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 0;
+    }
+
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;
+        background-color: #f8f9fa;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #495057;
+        padding: 1.25rem 0.75rem;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .table tbody td {
+        border-bottom: 1px solid #dee2e6;
+        font-size: 0.9rem;
+        padding: 1.25rem 0.75rem;
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    /* Estilos para el buscador */
+    .search-form {
+        width: 100%;
+        display: flex;
+        gap: 1rem;
+    }
+
+    .search-wrapper {
+        position: relative;
+        flex-grow: 1;
+    }
+
+    .select-wrapper {
+        min-width: 200px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .custom-search-input {
+        width: 100%;
+        padding: 12px 45px 12px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 50px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background: white;
+        outline: none;
+    }
+
+    .custom-search-input:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+    }
+
+    /* Estilos para el select */
+    .custom-select {
+        height: 100%;
+        padding: 12px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 50px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background-color: white;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .custom-select:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+    }
+
+    /* Estilos para los botones de búsqueda */
+    .search-btn {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #28a745;
+        border: none;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .search-btn:hover {
+        background: #218838;
+        transform: translateY(-50%) scale(1.05);
+    }
+
+    .clear-btn {
+        position: absolute;
+        right: 50px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .clear-btn:hover {
+        color: #dc3545;
+    }
+
+    /* Estilos para los badges */
+    .badge {
+        font-weight: 500;
+        padding: 0.5em 1em;
+        font-size: 0.85rem;
+        border-radius: 50rem;
+    }
+
+    .bg-secondary {
+        background-color: #6c757d !important;
+    }
+
+    /* Estilos para SweetAlert2 */
+    .swal2-popup {
+        border-radius: 15px !important;
+        padding: 2rem;
+    }
+
+    .swal2-title {
+        color: #333 !important;
+        font-size: 1.5rem !important;
+        font-weight: 600 !important;
+    }
+
+    .swal2-styled.swal2-confirm {
+        background-color: #28a745 !important;
+        border-color: #28a745 !important;
+    }
+
+    .swal2-styled.swal2-confirm:hover {
+        background-color: #218838 !important;
+        border-color: #1e7e34 !important;
+    }
+
+    .swal2-styled.swal2-cancel {
+        background-color: #6c757d !important;
+        border-color: #6c757d !important;
+    }
+
+    /* Estilos para el botón X del select */
+    .clear-select-btn {
+        padding: 8px;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #dee2e6;
+        color: #6c757d;
+        transition: all 0.3s ease;
+    }
+
+    .clear-select-btn:hover {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1rem !important;
+        }
+        
+        .table td, .table th {
+            padding: 1rem 0.75rem;
+        }
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white py-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0 fs-4">
+                    <i class="bi bi-building me-2"></i>Ambientes
+                </h2>
+                <a href="{% url 'ambiente_create' %}" class="btn btn-light">
+                    <i class="bi bi-plus-circle me-2"></i>Nuevo Ambiente
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body p-5">
+            <!-- Search Row -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-8">
+                    <form method="get" class="search-form d-flex gap-3" autocomplete="off">
+                        <div class="search-wrapper flex-grow-1">
+                            <input type="text" 
+                                   name="q" 
+                                   class="custom-search-input" 
+                                   placeholder="Buscar por código del ambiente..."
+                                   value="{{ request.GET.q }}"
+                                   autocomplete="off"
+                                   autocorrect="off"
+                                   autocapitalize="off"
+                                   spellcheck="false">
+                            {% if request.GET.q %}
+                                <button type="button" class="clear-btn" onclick="window.location.href='{% url 'ambiente_list' %}'">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            {% endif %}
+                            <button type="submit" class="search-btn" title="Buscar">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                        <div class="select-wrapper d-flex align-items-center gap-2" style="min-width: 200px;">
+                            <select name="sede" class="form-select custom-select h-100" onchange="this.form.submit()">
+                                <option value="">Todas las sedes</option>
+                                <option value="Principal" {% if request.GET.sede == 'Principal' %}selected{% endif %}>Principal</option>
+                                <option value="Alternativa" {% if request.GET.sede == 'Alternativa' %}selected{% endif %}>Alternativa</option>
+                                <option value="Granja" {% if request.GET.sede == 'Granja' %}selected{% endif %}>Granja</option>
+                            </select>
+                            {% if request.GET.sede %}
+                                <a href="{% url 'ambiente_list' %}" class="btn btn-outline-secondary clear-select-btn">
+                                    <i class="bi bi-x-lg"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tabla de Ambientes -->
+            <div class="table-responsive mb-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="py-3 text-center">Código del Ambiente</th>
+                            <th class="py-3 text-center">Nombre del Ambiente</th>
+                            <th class="py-3 text-center">Sede</th>
+                            <th class="py-3 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ambiente in ambientes %}
+                        <tr>
+                            <td class="text-center">{{ ambiente.codigo_ambiente }}</td>
+                            <td class="text-center">{{ ambiente.nombre_ambiente }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-secondary">{{ ambiente.sede }}</span>
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <a href="{% url 'ambiente_edit' ambiente.pk %}" class="btn btn-sm btn-outline-success">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-danger delete-ambiente" 
+                                            data-id="{{ ambiente.pk }}"
+                                            data-nombre="{{ ambiente.nombre_ambiente }}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted">
+                                <i class="bi bi-inbox-fill display-4 d-block mb-3"></i>
+                                No hay ambientes registrados
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Manejador para botones de eliminación
+    const deleteButtons = document.querySelectorAll('.delete-ambiente');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const ambienteId = this.getAttribute('data-id');
+            const ambienteNombre = this.getAttribute('data-nombre');
+            
+            Swal.fire({
+                title: '¿Estás seguro?',
+                html: `¿Deseas eliminar el ambiente <strong>${ambienteNombre}</strong>?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true,
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    return new Promise((resolve) => {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = `/ambientes/${ambienteId}/delete/`;
+                        
+                        const csrf = document.createElement('input');
+                        csrf.type = 'hidden';
+                        csrf.name = 'csrfmiddlewaretoken';
+                        csrf.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                        
+                        form.appendChild(csrf);
+                        document.body.appendChild(form);
+                        form.submit();
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            });
+        });
+    });
+});
+</script>
+{% endblock scripts %}

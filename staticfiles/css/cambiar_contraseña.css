@@ -1,0 +1,84 @@
+/* Estilo para el contenedor principal */
+.container {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Título de la página */
+h1 {
+    color: #39A900; /* Color verde para el título */
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Botón de Crear Nuevo Administrador */
+.btn-primary {
+    background-color: #39A900; /* Fondo verde */
+    border-color: #39A900; /* Borde verde */
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+
+.table thead {
+    background-color: #39A900; /* Encabezado verde */
+    color: white;
+}
+
+.table thead th {
+    font-weight: bold;
+    text-align: center;
+}
+
+.table tbody td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Botones de acciones (editar y eliminar) */
+.btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #d9534f;
+    border-color: #d9534f;
+    color: white;
+}
+
+/* Estilos de hover para botones */
+.btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+
+.btn-danger:hover {
+    background-color: #c9302c;
+    border-color: #ac2925;
+}
+
+/* Modal de Confirmación de Eliminación */
+.modal-header {
+    background-color: #39A900;
+    color: white;
+}
+
+.modal-footer .btn-danger {
+    background-color: #d9534f;
+    border-color: #d9534f;
+}
+
+.modal-footer .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+/* Estilo para el texto dentro del modal */
+.modal-body {
+    font-size: 16px;
+    color: #333;
+}

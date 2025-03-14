@@ -1,0 +1,61 @@
+body {
+    background-image: url("{% static 'img/Sena-Garzón.jpg' %}");
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.header {
+    background-color: #6cbf22;
+    color: white;
+    padding: 15px 0;
+}
+.header .logo {
+    max-height: 80px;
+}
+.header .ministerio-logo {
+    max-height: 60px;
+}
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+}
+.login-container {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.form-control {
+    font-size: 1.1rem;
+    padding: 12px;
+}
+.btn-primary {
+    background-color: #6cbf22;
+    border-color: #6cbf22;
+    font-size: 1.2rem;
+}
+.btn-primary:hover {
+    background-color: #5aa41d;
+    border-color: #5aa41d;
+}
+.footer {
+    background-color: #5aa41d;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+.social-icons .bi {
+    font-size: 1.5rem;
+    margin-right: 15px;
+    color: white;
+}

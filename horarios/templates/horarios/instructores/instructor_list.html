@@ -1,0 +1,787 @@
+{% extends 'horarios/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<!-- Estilos específicos para la página de instructores -->
+<style>
+    /* Estilos para la card */
+    .card {
+        border: none;
+        border-radius: 15px;  /* Bordes más redondeados para la card */
+        overflow: hidden;
+    }
+
+    .card-header {
+        border-bottom: 0;
+        border-radius: 15px 15px 0 0 !important;  /* Bordes redondeados superiores */
+    }
+
+    .card-body {
+        border-radius: 0 0 15px 15px;  /* Bordes redondeados inferiores */
+        padding: 2rem;  /* Padding más generoso */
+        background-color: #fff;
+        box-shadow: 0 0 20px rgba(0,0,0,0.05);  /* Sombra suave */
+    }
+
+    /* Ajuste para la tabla dentro de la card */
+    .table-responsive {
+        border-radius: 12px;  /* Bordes redondeados para la tabla */
+        margin-top: 1rem;
+        overflow: hidden;
+    }
+
+    /* Mantener los estilos existentes de la tabla */
+    .table {
+        border: 2px solid #dee2e6;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 0;
+    }
+
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;  /* Borde inferior del encabezado más pronunciado */
+        background-color: #f8f9fa;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #495057;
+        padding: 1.25rem 0.75rem;
+    }
+
+    .table tbody td {
+        border-bottom: 1px solid #dee2e6;  /* Borde entre filas */
+        font-size: 0.9rem;
+        padding: 1.25rem 0.75rem;
+        vertical-align: middle;
+    }
+
+    /* Quitar el borde inferior de la última fila */
+    .table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Hover en las filas */
+    .table-hover tbody tr:hover {
+        background-color: rgba(40, 167, 69, 0.05);
+    }
+
+    .form-select, .form-control {
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+
+    .form-select:focus, .form-control:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+
+    .table-responsive {
+        margin-bottom: 0;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1rem;
+        }
+        
+        .table td, .table th {
+            padding: 1rem 0.75rem;
+        }
+    }
+
+    .error-container {
+        max-height: 300px;
+        overflow-y: auto;
+        border-radius: 8px;
+        margin-top: 1rem !important;
+    }
+
+    .alert {
+        border: none;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .alert-danger {
+        background-color: #fff2f2;
+        color: #dc3545;
+        border-left: 4px solid #dc3545;
+    }
+
+    .alert-warning {
+        background-color: #fff8e1;
+        color: #856404;
+        border-left: 4px solid #ffc107;
+    }
+
+    .alert i {
+        font-size: 1.1rem;
+    }
+
+    .alert strong {
+        font-weight: 600;
+    }
+
+    .alert .btn-close {
+        padding: 1.05rem;
+    }
+
+    .alert-dismissible .btn-close {
+        opacity: 0.5;
+        transition: opacity 0.2s;
+    }
+
+    .alert-dismissible .btn-close:hover {
+        opacity: 1;
+    }
+
+    /* Estilos adicionales para la carga masiva */
+    .card.bg-light {
+        background-color: #f8f9fa !important;
+        border-radius: 8px;
+    }
+
+    .input-group {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .input-group .form-control {
+        border: 1px solid #ced4da;
+        border-left: none;
+        padding: 0.75rem 1rem;
+    }
+
+    .input-group .form-control:focus {
+        box-shadow: none;
+        border-color: #28a745;
+    }
+
+    .input-group-text {
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-right: none;
+        color: #6c757d;
+    }
+
+    .input-group .btn-outline-secondary {
+        border: 1px solid #ced4da;
+        border-left: none;
+    }
+
+    .input-group .btn-outline-secondary:hover {
+        background-color: #f8f9fa;
+        color: #dc3545;
+    }
+
+    .form-text {
+        color: #6c757d;
+        font-size: 0.75rem;
+    }
+
+    /* Ajustes responsivos */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1rem !important;
+        }
+        
+        .input-group {
+            flex-direction: column;
+        }
+        
+        .input-group > * {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+    }
+
+    /* Estilos para el modal de eliminación */
+    .modal-content {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        padding: 1rem 1.5rem;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+        font-size: 1rem;
+    }
+
+    .modal-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .btn-close-white {
+        filter: brightness(0) invert(1);
+    }
+
+    .delete-instructor {
+        transition: all 0.3s ease;
+    }
+
+    .delete-instructor:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .search-form {
+        width: 100%;
+    }
+
+    .search-wrapper {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    .custom-search-input {
+        width: 100%;
+        padding: 12px 45px 12px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 50px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background: white;
+        outline: none;
+    }
+
+    .custom-search-input:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+    }
+
+    .search-btn {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #28a745;
+        border: none;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .search-btn:hover {
+        background: #218838;
+        transform: translateY(-50%) scale(1.05);
+    }
+
+    .clear-btn {
+        position: absolute;
+        right: 50px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .clear-btn:hover {
+        color: #dc3545;
+    }
+
+    /* Eliminar todas las decoraciones del navegador */
+    .custom-search-input::-webkit-search-decoration,
+    .custom-search-input::-webkit-search-cancel-button,
+    .custom-search-input::-webkit-search-results-button,
+    .custom-search-input::-webkit-search-results-decoration,
+    .custom-search-input::-ms-clear,
+    .custom-search-input::-ms-reveal {
+        display: none;
+    }
+
+    .custom-search-input:-webkit-autofill,
+    .custom-search-input:-webkit-autofill:hover,
+    .custom-search-input:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0px 1000px white inset;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
+    /* Estilos para el paginador moderno */
+    .pagination-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .pagination-info {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .pagination-modern {
+        display: flex;
+        padding-left: 0;
+        list-style: none;
+        margin-bottom: 0;
+    }
+
+    .pagination-modern .page-item .page-link {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #28a745;
+        text-decoration: none;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        margin: 0 3px;
+        height: 38px;
+        min-width: 38px;
+        border-radius: 50%;
+        font-size: 0.9rem;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .pagination-modern .page-item.active .page-link {
+        z-index: 3;
+        color: #fff;
+        background-color: #28a745;
+        border-color: #28a745;
+        box-shadow: 0 0 10px rgba(40, 167, 69, 0.2);
+    }
+
+    .pagination-modern .page-item.disabled .page-link {
+        color: #6c757d;
+        pointer-events: none;
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+    }
+
+    .pagination-modern .page-item .page-link:hover {
+        color: #1e7e34;
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+        transform: scale(1.1);
+    }
+
+    .pagination-modern .page-item.active .page-link:hover {
+        color: #fff;
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+
+    /* Animación para cambio de página */
+    @keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(10px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .table tbody tr {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    /* Estilos responsivos para el paginador */
+    @media (max-width: 576px) {
+        .pagination-container {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .pagination-modern .page-item .page-link {
+            height: 32px;
+            min-width: 32px;
+            font-size: 0.8rem;
+        }
+    }
+    
+    /* Estilos para SweetAlert2 */
+    .swal2-popup {
+        border-radius: 15px !important;
+        padding: 2rem;
+    }
+
+    .swal2-title {
+        color: #333 !important;
+        font-size: 1.5rem !important;
+        font-weight: 600 !important;
+    }
+
+    .swal2-styled.swal2-confirm {
+        background-color: #28a745 !important;
+        border-color: #28a745 !important;
+    }
+
+    .swal2-styled.swal2-confirm:hover {
+        background-color: #218838 !important;
+        border-color: #1e7e34 !important;
+    }
+
+    .swal2-styled.swal2-cancel {
+        background-color: #6c757d !important;
+        border-color: #6c757d !important;
+    }
+
+    .swal2-styled.swal2-cancel:hover {
+        background-color: #5a6268 !important;
+        border-color: #545b62 !important;
+    }
+
+    /* Loading personalizado */
+    .swal2-loader {
+        border-color: #28a745 transparent #28a745 transparent !important;
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white py-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0 fs-4">
+                    <i class="bi bi-person-badge me-2"></i>Instructores
+                </h2>
+                <a href="{% url 'instructor_create' %}" class="btn btn-light">
+                    <i class="bi bi-plus-circle me-2"></i>Nuevo Instructor
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body p-5">
+            <!-- Search Row -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-8">
+                    <form method="get" action="{% url 'instructor_list' %}" class="search-form" autocomplete="off">
+                        <div class="search-wrapper">
+                            <input type="text" 
+                                   name="search" 
+                                   class="custom-search-input" 
+                                   placeholder="Buscar por nombre, apellido, correo, celular o cédula..."
+                                   value="{{ search }}"
+                                   autocomplete="off"
+                                   autocorrect="off"
+                                   autocapitalize="off"
+                                   spellcheck="false">
+                            {% if search %}
+                                <button type="button" class="clear-btn" onclick="window.location.href='{% url 'instructor_list' %}'">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            {% endif %}
+                            <button type="submit" class="search-btn" title="Buscar">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Carga Masiva -->
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 bg-light">
+                        <div class="card-body p-3">
+                            <div class="d-flex flex-column gap-3">
+                                <h6 class="card-title mb-0">Carga Masiva de Instructores</h6>
+                                <form method="post" enctype="multipart/form-data" action="{% url 'upload_instructors_excel' %}" class="d-flex flex-column gap-2">
+                                    {% csrf_token %}
+                                    <div class="input-group">
+                                        <input type="file" name="file" class="form-control form-control-sm" accept=".xlsx,.xls" required>
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="bi bi-upload me-1"></i>Cargar
+                                        </button>
+                                    </div>
+                                    <div class="form-text small mb-0">Formatos: .xlsx, .xls</div>
+                                </form>
+                                <a href="{% url 'download_instructor_template' %}" class="btn btn-outline-success btn-sm">
+                                    <i class="bi bi-download me-1"></i>Descargar Plantilla
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Delete All Button -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <button id="deleteAllBtn" class="btn btn-outline-danger">
+                        <i class="bi bi-trash-fill me-1"></i>Eliminar Todos los Instructores
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabla de Instructores -->
+            <div class="table-responsive mb-4">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="py-3 text-center">Nombres</th>
+                            <th class="py-3 text-center">Apellidos</th>
+                            <th class="py-3 text-center">Correo Institucional</th>
+                            <th class="py-3 text-center">Celular</th>
+                            <th class="py-3 text-center">Cédula</th>
+                            <th class="py-3 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for instructor in page_obj %}
+                        <tr>
+                            <td class="text-center">{{ instructor.nombres }}</td>
+                            <td class="text-center">{{ instructor.apellidos }}</td>
+                            <td class="text-center">{{ instructor.correo_institucional }}</td>
+                            <td class="text-center">{{ instructor.numero_celular }}</td>
+                            <td class="text-center">{{ instructor.numero_cedula }}</td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <a href="{% url 'instructor_edit' instructor.id %}" class="btn btn-sm btn-outline-success">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-danger delete-instructor" 
+                                            data-id="{{ instructor.id }}"
+                                            data-nombre="{{ instructor.nombres }} {{ instructor.apellidos }}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">
+                                <i class="bi bi-inbox-fill display-4 d-block mb-3"></i>
+                                No hay instructores registrados
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginador Moderno -->
+            {% if page_obj.has_other_pages %}
+            <div class="pagination-container">
+                <div class="pagination-info">
+                    Mostrando {{ page_obj.start_index }} a {{ page_obj.end_index }} de {{ paginator.count }} instructores
+                </div>
+                <nav aria-label="Paginación de instructores">
+                    <ul class="pagination pagination-modern">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}" aria-label="Primera">
+                                    <i class="bi bi-chevron-double-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}" aria-label="Anterior">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="bi bi-chevron-double-left"></i>
+                                </span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="bi bi-chevron-left"></i>
+                                </span>
+                            </li>
+                        {% endif %}
+
+                        <!-- Páginas numeradas -->
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}" aria-label="Siguiente">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}" aria-label="Última">
+                                    <i class="bi bi-chevron-double-right"></i>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="bi bi-chevron-double-right"></i>
+                                </span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmación de Eliminación -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Está seguro que desea eliminar este instructor?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="post" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Manejador para botones de eliminación individual
+    const deleteButtons = document.querySelectorAll('.delete-instructor');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const instructorId = this.getAttribute('data-id');
+            const instructorNombre = this.getAttribute('data-nombre');
+            
+            Swal.fire({
+                title: '¿Estás seguro?',
+                html: `¿Deseas eliminar al instructor <strong>${instructorNombre}</strong>?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',  // Cambiado a verde
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true,
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    return new Promise((resolve) => {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = `/instructores/${instructorId}/delete/`;
+                        
+                        const csrf = document.createElement('input');
+                        csrf.type = 'hidden';
+                        csrf.name = 'csrfmiddlewaretoken';
+                        csrf.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                        
+                        form.appendChild(csrf);
+                        document.body.appendChild(form);
+                        form.submit();
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            });
+        });
+    });
+
+    // Manejador para el botón de eliminar todos
+    document.getElementById('deleteAllBtn').addEventListener('click', function() {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¡Se eliminarán todos los instructores! Esta acción no se puede deshacer.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',  // Cambiado a verde
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, eliminar todos',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true,
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                return fetch('{% url "delete_all_instructors" %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(response.statusText)
+                    }
+                    return response.json()
+                })
+                .catch(error => {
+                    Swal.showValidationMessage(`Error: ${error}`)
+                })
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: '¡Eliminados!',
+                    text: 'Todos los instructores han sido eliminados.',
+                    icon: 'success',
+                    confirmButtonColor: '#28a745',  // Cambiado a verde
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.reload();
+                });
+            }
+        });
+    });
+
+    // Prevenir el historial y sugerencias
+    document.querySelector('.custom-search-input').addEventListener('input', function(e) {
+        e.target.setAttribute('autocomplete', 'off');
+    });
+
+    // Limpiar el historial al cargar la página
+    const input = document.querySelector('.custom-search-input');
+    input.value = input.value;
+});
+</script>
+{% endblock scripts %}

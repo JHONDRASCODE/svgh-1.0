@@ -1,0 +1,11 @@
+{% extends 'horarios/base.html' %}
+
+{% block content %}
+<h2>Eliminar Administrador</h2>
+<p>¿Estás seguro de que quieres eliminar a {{ object }}?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Confirmar</button>
+    <a href="{% url 'administrador_list' %}">Cancelar</a>
+</form>
+{% endblock %}

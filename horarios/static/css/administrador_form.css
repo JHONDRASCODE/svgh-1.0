@@ -1,0 +1,72 @@
+/* Estilo para el contenedor principal del formulario */
+.container {
+    background-color: #f9f9f9; /* Fondo gris claro */
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para el encabezado del formulario */
+.card-header {
+    background-color: #39A900; /* Fondo verde */
+    color: white;
+}
+
+/* Estilo para los títulos dentro del formulario */
+h2 {
+    color: white; /* Color blanco para el título dentro del encabezado */
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Estilo para las etiquetas de los campos */
+.form-label {
+    color: #333; /* Color de texto para las etiquetas */
+}
+
+/* Estilo para los campos del formulario */
+.form-control {
+    border: 1px solid #ccc; /* Borde gris claro */
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #39A900; /* Borde verde al enfocar */
+    box-shadow: 0 0 5px rgba(57, 169, 0, 0.5); /* Sombra verde suave */
+}
+
+/* Estilo para los mensajes de error */
+.invalid-feedback {
+    color: #d9534f; /* Color rojo para mensajes de error */
+}
+
+/* Estilo para el botón de Guardar */
+.btn-success {
+    background-color: #39A900; /* Fondo verde */
+    border-color: #39A900; /* Borde verde */
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.btn-success:hover {
+    background-color: #2e8700; /* Fondo más oscuro al hacer hover */
+    border-color: #2e8700;
+}
+
+/* Estilo para el botón de Cancelar */
+.btn-secondary {
+    background-color: #6c757d; /* Fondo gris oscuro */
+    border-color: #6c757d; /* Borde gris oscuro */
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268; /* Fondo más oscuro al hacer hover */
+    border-color: #545b62;
+}
+
+/* Estilo adicional para los botones */
+.btn {
+    font-weight: bold; /* Aumentar el grosor de la fuente */
+}

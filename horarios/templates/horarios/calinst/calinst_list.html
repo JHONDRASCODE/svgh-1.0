@@ -1,0 +1,492 @@
+{% extends 'horarios/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    /* Estilos para la tarjeta principal */
+    .card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+    }
+
+    .card-header {
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-green));
+        border-bottom: 0;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .card-header h2 {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* Estilos para la tabla */
+    .table-container {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    /* Estilos para centrar contenido en tabla */
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        padding: 1rem 0.75rem;
+        font-size: 0.85rem;
+        color: #495057;
+        border-bottom: 2px solid #e9ecef;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .table td {
+        padding: 1rem 0.75rem;
+        border-bottom: 1px solid #f2f2f2;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(76, 175, 80, 0.05);
+    }
+
+    /* Estilos para los badges de información */
+    .badge-programa, .badge-ambiente, .badge-competencia {
+        padding: 0.5rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+    }
+
+    .badge-programa {
+        background-color: #e3f2fd;
+        color: #1565c0;
+        border: 1px solid #bbdefb;
+    }
+
+    .badge-ambiente {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #c8e6c9;
+    }
+
+    .badge-competencia {
+        background-color: #f1f8e9;
+        color: #558b2f;
+        border: 1px solid #dcedc8;
+    }
+
+    /* Alineación de la información secundaria */
+    .small.text-muted {
+        text-align: center;
+        display: block;
+        margin-top: 0.5rem;
+    }
+
+    /* Centrar contenido de fecha-hora */
+    .fecha-hora {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+    }
+
+    .fecha-hora i {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+    }
+
+    .fecha-hora .ms-4 {
+        margin-left: 0 !important;
+        margin-top: 0.25rem;
+    }
+
+    /* Estilos para filtros y acciones */
+    .filters-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.25rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .search-container {
+        position: relative;
+        max-width: 350px;
+        width: 100%;
+    }
+
+    .search-input {
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border-radius: 50px;
+        border: 2px solid #e0e0e0;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
+        outline: none;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        pointer-events: none;
+    }
+
+    .btn-create {
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+    .btn-create i {
+        margin-right: 0.5rem;
+        font-size: 1.1rem;
+    }
+
+    .btn-create:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+
+    /* Botones de acción */
+    .btn-action {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        margin: 0 0.125rem;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-action i {
+        font-size: 1rem;
+    }
+
+    .btn-action.edit {
+        background-color: #fff8e1;
+        color: #ff9800;
+        border: 1px solid #ffe0b2;
+    }
+
+    .btn-action.edit:hover {
+        background-color: #ff9800;
+        color: white;
+        border-color: #ff9800;
+    }
+
+    .btn-action.delete {
+        background-color: #ffebee;
+        color: #f44336;
+        border: 1px solid #ffcdd2;
+    }
+
+    .btn-action.delete:hover {
+        background-color: #f44336;
+        color: white;
+        border-color: #f44336;
+    }
+
+    /* Estilo para el modal */
+    .modal-content {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background-color: #f44336;
+        color: white;
+        border-bottom: none;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .modal-footer {
+        border-top: none;
+        padding: 1rem 1.5rem 1.5rem;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .modal-warning-icon {
+        font-size: 3rem;
+        color: #f44336;
+        margin-bottom: 1rem;
+    }
+
+    .modal-item-name {
+        font-weight: 600;
+        color: #f44336;
+    }
+
+    /* Estado vacío */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1.5rem;
+        background-color: #f9f9f9;
+        border-radius: 12px;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: #e0e0e0;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h4 {
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        color: #6c757d;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <!-- Card principal -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2>
+                <i class="bi bi-person-badge me-2"></i>Calendarios por Instructor
+            </h2>
+        </div>
+        
+        <div class="card-body">
+            <!-- Filtros y botón de creación -->
+            <div class="filters-actions">
+                <div class="search-container">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text" class="search-input" id="searchCalendar" placeholder="Buscar por programa, ambiente...">
+                </div>
+                
+                <a href="{% url 'calendar_create' %}" class="btn btn-success btn-create">
+                    <i class="bi bi-plus-circle"></i>Nuevo Calendario
+                </a>
+            </div>
+            
+            <!-- Tabla de calendarios -->
+            <div class="table-container">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">Programa</th>
+                            <th style="width: 20%">Ambiente</th>
+                            <th style="width: 20%">Competencia</th>
+                            <th style="width: 15%">Inicio</th>
+                            <th style="width: 15%">Fin</th>
+                            <th style="width: 5%">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for calinst in calinsts %}
+                        <tr>
+                            <!-- Programa con badge -->
+                            <td>
+                                <span class="badge-programa">
+                                    <i class="bi bi-journal-bookmark me-1"></i>
+                                    {{ calinst.programa }}
+                                </span>
+                                <div class="small text-muted">Ficha: {{ calinst.codigo_programa }}</div>
+                            </td>
+                            
+                            <!-- Ambiente con badge -->
+                            <td>
+                                <span class="badge-ambiente">
+                                    <i class="bi bi-building me-1"></i>
+                                    {{ calinst.ambiente }}
+                                </span>
+                                <div class="small text-muted">Código: {{ calinst.codigo_ambiente }}</div>
+                            </td>
+                            
+                            <!-- Competencia con badge -->
+                            <td>
+                                <span class="badge-competencia">
+                                    <i class="bi bi-award me-1"></i>
+                                    {{ calinst.competencia }}
+                                </span>
+                                <div class="small text-muted">Norma: {{ calinst.norma_competencia }}</div>
+                            </td>
+                            
+                            <!-- Fecha de inicio con icono -->
+                            <td>
+                                <div class="fecha-hora">
+                                    <i class="bi bi-calendar-plus"></i>
+                                    {{ calinst.start|date:"d/m/Y" }}
+                                    <div class="small text-muted">{{ calinst.start|date:"H:i" }}</div>
+                                </div>
+                            </td>
+                            
+                            <!-- Fecha de fin con icono -->
+                            <td>
+                                <div class="fecha-hora">
+                                    <i class="bi bi-calendar-minus"></i>
+                                    {{ calinst.end|date:"d/m/Y" }}
+                                    <div class="small text-muted">{{ calinst.end|date:"H:i" }}</div>
+                                </div>
+                            </td>
+                            
+                            <!-- Botones de acción -->
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    <a href="{% url 'calendar_edit' calinst.pk %}" class="btn-action edit" title="Editar calendario">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    
+                                    <button type="button" class="btn-action delete" title="Eliminar calendario" 
+                                            data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"
+                                            data-url="{% url 'calinst_delete' calinst.pk %}" 
+                                            data-name="{{ calinst.programa }}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6">
+                                <div class="empty-state">
+                                    <i class="bi bi-calendar-x"></i>
+                                    <h4>No hay calendarios registrados</h4>
+                                    <p>Aún no se han creado calendarios para instructores. Haz clic en "Nuevo Calendario" para comenzar.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de confirmación de eliminación mejorado -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirmar Eliminación
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <i class="bi bi-trash modal-warning-icon"></i>
+                        <p class="fs-5 mb-4">¿Estás seguro de que quieres eliminar este calendario?</p>
+                        <div class="text-muted mb-4">
+                            Esta acción eliminará el calendario para el programa 
+                            <span class="modal-item-name" id="calinstName">este programa</span>.
+                            Esta acción no se puede deshacer.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-2"></i>Cancelar
+                    </button>
+                    <form id="deleteForm" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger px-4">
+                            <i class="bi bi-trash me-2"></i>Eliminar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Funcionalidad para el modal de eliminación
+    var deleteLinks = document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target="#confirmDeleteModal"]');
+    var confirmDeleteForm = document.getElementById('deleteForm');
+    var calinstNameSpan = document.getElementById('calinstName');
+
+    deleteLinks.forEach(function(link) {
+        link.addEventListener('click', function() {
+            var url = link.getAttribute('data-url');
+            var name = link.getAttribute('data-name') || 'este programa';
+
+            calinstNameSpan.textContent = name;
+            confirmDeleteForm.action = url;
+        });
+    });
+    
+    // Funcionalidad de búsqueda en la tabla
+    const searchInput = document.getElementById('searchCalendar');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const tableRows = document.querySelectorAll('tbody tr');
+            
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    }
+    
+    // Inicializar tooltips si existen
+    if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    }
+});
+</script>
+{% endblock scripts %}
