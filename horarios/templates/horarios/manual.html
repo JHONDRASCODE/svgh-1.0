@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGVH - Manual Técnico</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #00A650; /* Verde SENA */
+            --primary-hover: #009245;
+            --secondary-color: #39B54A;
+            --dark-color: #212529;
+            --light-color: #F8F9FA;
+            --accent-color: #17a2b8;
+            --gray-light: #F5F5F5;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--dark-color);
+        }
+        
+        /* Header styles */
+        .header {
+            background-color: rgba(0, 0, 0, 0.85);
+            padding: 15px 0;
+            position: relative;
+            z-index: 100;
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .logo {
+            max-height: 60px;
+            transition: var(--transition);
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .ministerio-logo {
+            max-height: 50px;
+            opacity: 0.9;
+            transition: var(--transition);
+        }
+        
+        .ministerio-logo:hover {
+            opacity: 1;
+        }
+        
+        /* Exit button styles */
+        .btn-outline-light {
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+        }
+        
+        .btn-outline-light:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        /* Main content */
+        .main-content {
+            flex: 1;
+            padding: 60px 0;
+            position: relative;
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-title p {
+            font-size: 1.2rem;
+            color: #6c757d;
+        }
+        
+        /* Card Styles */
+        .manual-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            height: 100%;
+            border-top: 5px solid var(--primary-color);
+            position: relative;
+        }
+        
+        .manual-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .manual-header {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .manual-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .manual-header p {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .manual-icon {
+            position: absolute;
+            bottom: -30px;
+            right: -20px;
+            font-size: 8rem;
+            opacity: 0.2;
+            z-index: 1;
+            transform: rotate(-15deg);
+            transition: var(--transition);
+        }
+        
+        .manual-card:hover .manual-icon {
+            transform: rotate(0deg) scale(1.1);
+            opacity: 0.3;
+        }
+        
+        .manual-body {
+            padding: 2rem;
+        }
+        
+        .topic-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .topic-item {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            background-color: var(--gray-light);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .topic-item:hover {
+            background-color: rgba(0, 166, 80, 0.1);
+            transform: translateX(10px);
+        }
+        
+        .topic-icon {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .topic-content {
+            flex: 1;
+        }
+        
+        .topic-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--dark-color);
+            font-size: 1rem;
+        }
+        
+        .topic-desc {
+            color: #6c757d;
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+        
+        .manual-footer {
+            padding: 1.5rem 2rem;
+            background-color: var(--gray-light);
+            text-align: center;
+        }
+        
+        .btn-manual {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.75rem 2rem;
+            font-weight: 500;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-manual:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            color: white;
+        }
+        
+        /* Modal Styles */
+        .modal-content {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .modal-header {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Steps Component */
+        .steps-container {
+            margin: 1.5rem 0;
+        }
+        
+        .step-item {
+            background-color: var(--gray-light);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .step-content {
+            padding-left: 1.5rem;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+        
+        .step-desc {
+            margin-bottom: 0;
+            color: #6c757d;
+        }
+        
+        /* Images */
+        .step-image {
+            max-width: 100%;
+            border-radius: 10px;
+            margin: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Interactive elements */
+        .interactive-buttons {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .btn-demo {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-demo:hover {
+            background-color: #138496;
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: rgba(0, 0, 0, 0.9);
+            color: #ced4da;
+            padding: 25px 0;
+            font-size: 0.9rem;
+            border-top: 3px solid var(--primary-color);
+        }
+        
+        .footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 991px) {
+            .manual-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .main-content {
+                padding: 40px 0;
+            }
+            
+            .col-md-1 {
+                padding-right: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header .row {
+                text-align: center;
+                flex-direction: column;
+            }
+            
+            .header .col-md-7, .header .col-md-4, .header .col-md-1 {
+                display: flex;
+                justify-content: center;
+                margin: 10px 0;
+                width: 100%;
+            }
+            
+            .page-title h1 {
+                font-size: 2rem;
+            }
+            
+            .manual-card {
+                margin-bottom: 30px;
+            }
+            
+            .manual-icon {
+                font-size: 6rem;
+            }
+            
+            .btn-outline-light {
+                margin-top: 10px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .manual-header {
+                padding: 1.5rem;
+            }
+            
+            .manual-body {
+                padding: 1.5rem;
+            }
+            
+            .manual-header h2 {
+                font-size: 1.3rem;
+            }
+            
+            .page-title h1 {
+                font-size: 1.7rem;
+            }
+            
+            .page-title p {
+                font-size: 1rem;
+            }
+            
+            .step-number {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+                left: -15px;
+            }
+        }
+        
+        /* Animation Classes */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fadeInUp {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.3s; }
+        .delay-3 { animation-delay: 0.5s; }
+        .delay-4 { animation-delay: 0.7s; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-7 d-flex align-items-center">
+                    <img src="/api/placeholder/150/60" alt="SGVH Logo" class="logo me-3">
+                    <h1 class="text-white mb-0 fs-4">Sistema de Gestión de Horarios</h1>
+                </div>
+                <div class="col-md-4 text-end">
+                    <img src="/api/placeholder/120/50" alt="Ministerio de Trabajo Logo" class="ministerio-logo">
+                </div>
+                <div class="col-md-1 text-end d-flex align-items-center justify-content-end">
+                    <a href="{% url 'login' %}" class="btn btn-outline-light" title="Volver al inicio de sesión">
+                        <i class="bi bi-box-arrow-left"></i> Salir
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="page-title animate-fadeInUp">
+                <h1>Manual Técnico</h1>
+                <p>Guía completa para usuarios y administradores del Sistema de Gestión de Horarios</p>
+            </div>
+            
+            <div class="row justify-content-center">
+                <!-- Manual Unificado -->
+                <div class="col-lg-10 mb-4 animate-fadeInUp delay-1">
+                    <div class="manual-card">
+                        <div class="manual-header">
+                            <h2><i class="bi bi-book-fill me-2"></i>Manual Técnico de Usuario-Administrador</h2>
+                            <p>Guía completa para todos los roles del sistema de horarios</p>
+                            <i class="bi bi-people-fill manual-icon"></i>
+                        </div>
+                        <div class="manual-body">
+                            <!-- Sección de Usuario -->
+                            <h3 class="mb-3 border-bottom pb-2"><i class="bi bi-person-fill me-2"></i>Funcionalidad para Usuarios</h3>
+                            <ul class="topic-list mb-4">
+                                <li class="topic-item" data-bs-toggle="modal" data-bs-target="#userLoginModal">
+                                    <div class="topic-icon">
+                                        <i class="bi bi-box-arrow-in-right"></i>
+                                    </div>
+                                    <div class="topic-content">
+                                        <h3 class="topic-title">Inicio de Sesión</h3>
+                                        <p class="topic-desc">Cómo acceder al sistema con tu cuenta de usuario</p>
+                                    </div>
+                                </li>
+                                <li class="topic-item" data-bs-toggle="modal" data-bs-target="#userCalendarModal">
+                                    <div class="topic-icon">
+                                        <i class="bi bi-calendar3"></i>
+                                    </div>
+                                    <div class="topic-content">
+                                        <h3 class="topic-title">Visualización de Horarios</h3>
+                                        <p class="topic-desc">Cómo consultar y filtrar los horarios disponibles</p>
+                                    </div>
+                                </li>
+                                <li class="topic-item" data-bs-toggle="modal" data-bs-target="#userNotificationsModal">
+                                    <div class="topic-icon">
+                                        <i class="bi bi-bell-fill"></i>
+                                    </div>
+                                    <div class="topic-content">
+                                        <h3 class="topic-title">Sistema de Notificaciones</h3>
+                                        <p class="topic-desc">Gestión de alertas y notificaciones importantes</p>
+                                    </div>
+                                </li>
+                            </ul>
+                            
+                            <!-- Sección de Administrador -->
+                            <h3 class="mb-3 border-bottom pb-2"><i class="bi bi-shield-fill-check me-2"></i>Funcionalidad para Administradores</h3>
+                            <ul class="topic-list">
+                                <li class="topic-item" data-bs-toggle="modal" data-bs-target="#adminInstructorsModal">
+                                    <div class="topic-icon">
+                                        <i class="bi bi-person-badge-fill"></i>
+                                    </div>
+                                    <div class="topic-content">
+                                        <h3 class="topic-title">Gestión de Instructores</h3>
+                                        <p class="topic-desc">Cómo administrar instructores y sus horarios</p>
+                                    </div>
+                                </li>
+                                <li class="topic-item" data-bs-toggle="modal" data-bs-target="#adminProgramsModal">
+                                    <div class="topic-icon">
+                                        <i class="bi bi-mortarboard-fill"></i>
+                                    </div>
+                                    <div class="topic-content">
+                                        <h3 class="topic-title">Programas de Formación</h3>
+                                        <p class="topic-desc">Administración de programas y competencias</p>
+                                    </div>
+                                </li>
+                                <li class="topic-item" data-bs-toggle="modal" data-bs-target="#adminCalendarModal">
+                                    <div class="topic-icon">
+                                        <i class="bi bi-calendar-check-fill"></i>
+                                    </div>
+                                    <div class="topic-content">
+                                        <h3 class="topic-title">Crear/Editar Horarios</h3>
+                                        <p class="topic-desc">Cómo gestionar el calendario del sistema</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="manual-footer">
+                            <a href="#" class="btn btn-manual" data-bs-toggle="modal" data-bs-target="#fullManualModal">
+                                <i class="bi bi-file-earmark-text me-2"></i>Ver Manual Completo
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CTA Banner -->
+            <div class="row mt-4">
+                <div class="col-12 animate-fadeInUp delay-3">
+                    <div class="card shadow p-4" style="border-radius: 15px; background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); border: none;">
+                        <div class="card-body text-white text-center">
+                            <h2 class="mb-3">¿Necesitas más ayuda?</h2>
+                            <p class="mb-4">Si tienes dudas o problemas con el sistema, no dudes en contactar a nuestro equipo de soporte técnico</p>
+                            <a href="#" class="btn btn-light px-4 py-2">
+                                <i class="bi bi-headset me-2"></i>Contactar Soporte
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-6">
+                    Servicio Nacional de Aprendizaje SENA – Dirección General Calle 57 No. 8-69, Bogotá D.C – PBX (57 1) 5461500<br>
+                    Línea gratuita de atención al ciudadano Bogotá 3430111 – Resto del país 018000 910270<br>
+                    Horario de atención: lunes a viernes de 8:00 am a 5:30 pm<br>
+                    Correo electrónico para notificaciones judiciales: <a href="mailto:servicioalciudadano@sena.edu.co">servicioalciudadano@sena.edu.co</a><br>
+                    Todos los derechos reservados © 2024
+                </div>
+                <div class="col-lg-4 col-md-6 mt-4 mt-md-0 text-md-end">
+                    <a href="#" class="btn btn-outline-light btn-sm me-2">Política de Privacidad</a>
+                    <a href="#" class="btn btn-outline-light btn-sm">Términos de Uso</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALES DEL MANUAL DE USUARIO -->
+    
+    <!-- Modal Inicio de Sesión (Usuario) -->
+    <div class="modal fade" id="userLoginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-box-arrow-in-right me-2"></i>Inicio de Sesión - Manual de Usuario</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>El sistema de gestión de horarios (SGVH) requiere autenticación para acceder a sus funcionalidades. A continuación, se explica el proceso de inicio de sesión:</p>
+                    
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Acceder a la página de inicio</h4>
+                                <p class="step-desc">Ingrese a la URL del sistema proporcionada por el administrador. Verá la pantalla de inicio de sesión como se muestra a continuación:</p>
+                                <img src="/api/placeholder/600/320" alt="Pantalla de inicio de sesión" class="step-image">
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Ingresar credenciales</h4>
+                                <p class="step-desc">Introduzca su correo institucional (@sena.edu.co) y la contraseña proporcionada por el administrador del sistema.</p>
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle-fill me-2"></i> Si es la primera vez que accede al sistema, deberá cambiar su contraseña temporal por una permanente.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Seleccionar "Recordarme" (opcional)</h4>
+                                <p class="step-desc">Si desea que el sistema recuerde sus credenciales para futuros accesos, seleccione la casilla "Recordarme". Tenga en cuenta que esto no es recomendable en equipos compartidos.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Iniciar sesión</h4>
+                                <p class="step-desc">Haga clic en el botón "Iniciar Sesión" para acceder al sistema. Si las credenciales son correctas, será redirigido al panel principal.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4><i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i>Solución de problemas</h4>
+                    <ul>
+                        <li><strong>Contraseña olvidada:</strong> Utilice la opción "¿Olvidaste tu contraseña?" en la pantalla de inicio de sesión.</li>
+                        <li><strong>Error de credenciales:</strong> Verifique que su correo y contraseña sean correctos. Recuerde que el sistema distingue entre mayúsculas y minúsculas.</li>
+                        <li><strong>Cuenta bloqueada:</strong> Después de varios intentos fallidos, su cuenta podría bloquearse. Contacte al administrador del sistema.</li>
+                    </ul>
+                    
+                    <div class="interactive-buttons">
+                        <a href="#" class="btn btn-demo">
+                            <i class="bi bi-play-fill"></i>Ver demostración
+                        </a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Visualización de Horarios (Usuario) -->
+    <div class="modal fade" id="userCalendarModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-calendar3 me-2"></i>Visualización de Horarios - Manual de Usuario</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>El Sistema de Gestión de Horarios (SGVH) permite consultar y visualizar los horarios de manera fácil e intuitiva. A continuación, se explica cómo utilizar esta funcionalidad:</p>
+                    
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Acceder al módulo de Calendarios</h4>
+                                <p class="step-desc">En el menú principal, haga clic en "Calendarios" o en el botón "Ver Calendario" en la página principal.</p>
+                                <img src="/api/placeholder/600/320" alt="Acceso al módulo de calendarios" class="step-image">
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Interpretar la vista de calendario</h4>
+                                <p class="step-desc">El calendario se muestra en vista mensual por defecto. Los eventos se muestran con colores según el tipo de actividad o programa.</p>
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle-fill me-2"></i> Puede cambiar entre diferentes vistas (día, semana, mes) utilizando los botones en la parte superior del calendario.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Filtrar horarios</h4>
+                                <p class="step-desc">Utilice las opciones de filtro para personalizar la visualización según sus necesidades:</p>
+                                <ul>
+                                    <li><strong>Por Instructor:</strong> Filtra los horarios de un instructor específico</li>
+                                    <li><strong>Por Programa:</strong> Muestra los horarios asociados a un programa formativo</li>
+                                    <li><strong>Por Ambiente:</strong> Filtra por ubicación o aula específica</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Ver detalles de un evento</h4>
+                                <p class="step-desc">Haga clic sobre cualquier evento en el calendario para ver información detallada como:</p>
+                                <ul>
+                                    <li>Instructor responsable</li>
+                                    <li>Programa formativo</li>
+                                    <li>Competencia</li>
+                                    <li>Ubicación o ambiente</li>
+                                    <li>Horario exacto</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4><i class="bi bi-lightbulb-fill me-2 text-warning"></i>Consejos útiles</h4>
+                    <ul>
+                        <li><strong>Exportar horario:</strong> Utilice la opción "Exportar" para descargar el horario en formato PDF o Excel.</li>
+                        <li><strong>Navegación rápida:</strong> Use las flechas de navegación para moverse entre semanas o meses.</li>
+                        <li><strong>Búsqueda:</strong> Utilice el campo de búsqueda para encontrar rápidamente eventos específicos.</li>
+                    </ul>
+                    
+                    <div class="interactive-buttons">
+                        <a href="#" class="btn btn-demo">
+                            <i class="bi bi-play-fill"></i>Ver demostración
+                        </a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Notificaciones (Usuario) -->
+    <div class="modal fade" id="userNotificationsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell-fill me-2"></i>Sistema de Notificaciones - Manual de Usuario</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>El Sistema de Gestión de Horarios (SGVH) cuenta con un sistema de notificaciones que le mantiene informado sobre cambios en horarios, nuevas asignaciones y eventos importantes. A continuación, se explica cómo utilizar esta funcionalidad:</p>
+                    
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Acceder al panel de notificaciones</h4>
+                                <p class="step-desc">Haga clic en el ícono de campana <i class="bi bi-bell-fill"></i> ubicado en la barra de navegación superior. Se desplegará un panel con todas sus notificaciones.</p>
+                                <img src="/api/placeholder/600/320" alt="Panel de notificaciones" class="step-image">
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Interpretar las notificaciones</h4>
+                                <p class="step-desc">Las notificaciones se organizan de la más reciente a la más antigua. Cada notificación incluye:</p>
+                                <ul>
+                                    <li><strong>Ícono:</strong> Representa el tipo de notificación (cambio de horario, asignación, etc.)</li>
+                                    <li><strong>Mensaje:</strong> Descripción breve del evento o cambio</li>
+                                    <li><strong>Tiempo:</strong> Cuándo ocurrió el evento</li>
+                                    <li><strong>Estado:</strong> Las notificaciones no leídas aparecen resaltadas</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Gestionar notificaciones</h4>
+                                <p class="step-desc">El sistema ofrece opciones para administrar sus notificaciones:</p>
+                                <ul>
+                                    <li><strong>Marcar como leída:</strong> Al hacer clic en una notificación, esta se marca automáticamente como leída</li>
+                                    <li><strong>Marcar todas como leídas:</strong> Utilice la opción "Leer todas" en la parte superior del panel</li>
+                                    <li><strong>Eliminar notificaciones:</strong> Use el ícono de papelera para eliminar notificaciones individuales o todas</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Configurar preferencias de notificación</h4>
+                                <p class="step-desc">Puede personalizar qué tipos de notificaciones desea recibir:</p>
+                                <ol>
+                                    <li>Acceda a su perfil de usuario</li>
+                                    <li>Seleccione "Preferencias" o "Configuración"</li>
+                                    <li>En la sección "Notificaciones", seleccione sus preferencias</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4><i class="bi bi-info-circle-fill me-2 text-info"></i>Tipos de notificaciones</h4>
+                    <ul>
+                        <li><strong>Cambios de horario:</strong> Modificaciones en la programación</li>
+                        <li><strong>Nuevas asignaciones:</strong> Cuando se le asigna un nuevo programa o competencia</li>
+                        <li><strong>Alertas del sistema:</strong> Información importante sobre mantenimiento o actualizaciones</li>
+                        <li><strong>Recordatorios:</strong> Avisos sobre eventos próximos</li>
+                    </ul>
+                    
+                    <div class="interactive-buttons">
+                        <a href="#" class="btn btn-demo">
+                            <i class="bi bi-play-fill"></i>Ver demostración
+                        </a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Cambio de Contraseña (Usuario) -->
+    <div class="modal fade" id="userPasswordModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-key-fill me-2"></i>Cambio de Contraseña - Manual de Usuario</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Por razones de seguridad, es recomendable cambiar su contraseña periódicamente. A continuación, se explica el procedimiento para actualizar su contraseña en el Sistema de Gestión de Horarios (SGVH):</p>
+                    
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Acceder a las opciones de usuario</h4>
+                                <p class="step-desc">Haga clic en su nombre de usuario en la esquina superior derecha y seleccione "Opciones" en el menú desplegable.</p>
+                                <img src="/api/placeholder/600/320" alt="Opciones de usuario" class="step-image">
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Seleccionar "Cambiar Contraseña"</h4>
+                                <p class="step-desc">En el modal de opciones, haga clic en "Cambiar Contraseña".</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Introducir datos requeridos</h4>
+                                <p class="step-desc">Complete el formulario con la siguiente información:</p>
+                                <ul>
+                                    <li><strong>Contraseña actual:</strong> Su contraseña vigente</li>
+                                    <li><strong>Nueva contraseña:</strong> La contraseña que desea establecer</li>
+                                    <li><strong>Confirmar nueva contraseña:</strong> Repita la nueva contraseña para verificación</li>
+                                </ul>
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-shield-lock-fill me-2"></i> <strong>Requisitos de seguridad:</strong> La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula, una minúscula, un número y un carácter especial.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Confirmar el cambio</h4>
+                                <p class="step-desc">Haga clic en el botón "Cambiar Contraseña" para aplicar los cambios. Si el proceso es exitoso, verá un mensaje de confirmación y deberá iniciar sesión nuevamente con su nueva contraseña.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4><i class="bi bi-shield-fill-check me-2 text-success"></i>Consejos de seguridad</h4>
+                    <ul>
+                        <li>Evite usar contraseñas que haya utilizado anteriormente</li>
+                        <li>No use información personal fácilmente identificable (nombres, fechas)</li>
+                        <li>No comparta su contraseña con otras personas</li>
+                        <li>Considere usar un gestor de contraseñas para mantener sus credenciales seguras</li>
+                        <li>Cambie su contraseña regularmente (cada 3-6 meses)</li>
+                    </ul>
+                    
+                    <div class="interactive-buttons">
+                        <a href="#" class="btn btn-demo">
+                            <i class="bi bi-play-fill"></i>Ver demostración
+                        </a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Manual Completo Unificado -->
+    <div class="modal fade" id="fullManualModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Manual Técnico Usuario-Administrador</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <ul class="nav nav-pills flex-column mb-4" id="manualTab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="user-tab" data-bs-toggle="pill" data-bs-target="#user-content" type="button" role="tab" aria-controls="user-content" aria-selected="true">
+                                            <i class="bi bi-person-fill me-2"></i>Manual de Usuario
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="admin-tab" data-bs-toggle="pill" data-bs-target="#admin-content" type="button" role="tab" aria-controls="admin-content" aria-selected="false">
+                                            <i class="bi bi-shield-fill-check me-2"></i>Manual de Administrador
+                                        </button>
+                                    </li>
+                                </ul>
+                                
+                                <div class="mt-4">
+                                    <a href="#" class="btn btn-success w-100 mb-2">
+                                        <i class="bi bi-file-earmark-pdf me-2"></i>Descargar PDF
+                                    </a>
+                                    <a href="#" class="btn btn-primary w-100">
+                                        <i class="bi bi-printer me-2"></i>Imprimir Manual
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-9">
+                                <div class="tab-content" id="manualTabContent">
+                                    <!-- Contenido del Manual de Usuario -->
+                                    <div class="tab-pane fade show active" id="user-content" role="tabpanel" aria-labelledby="user-tab">
+                                        <!-- Tabla de contenidos - Usuario -->
+                                        <div class="list-group mb-4">
+                                            <a href="#intro-user" class="list-group-item list-group-item-action active">1. Introducción</a>
+                                            <a href="#login-user" class="list-group-item list-group-item-action">2. Inicio de Sesión</a>
+                                            <a href="#dashboard-user" class="list-group-item list-group-item-action">3. Pantalla Principal</a>
+                                            <a href="#calendar-user" class="list-group-item list-group-item-action">4. Visualización de Horarios</a>
+                                            <a href="#notifications-user" class="list-group-item list-group-item-action">5. Sistema de Notificaciones</a>
+                                            <a href="#password-user" class="list-group-item list-group-item-action">6. Cambio de Contraseña</a>
+                                            <a href="#help-user" class="list-group-item list-group-item-action">7. Ayuda y Soporte</a>
+                                        </div>
+                                        
+                                        <!-- Contenido del manual de Usuario -->
+                                        <div data-bs-spy="scroll" data-bs-target="#list-group" data-bs-smooth-scroll="true" class="scrollspy-example-2" tabindex="0" style="height: 400px; overflow-y: scroll; padding-right: 15px;">
+                                            <section id="intro-user" class="mb-5">
+                                                <h2 class="border-bottom pb-2">1. Introducción</h2>
+                                                <p>Bienvenido al Sistema de Gestión de Horarios (SGVH) del SENA. Esta plataforma ha sido diseñada para facilitar la visualización y gestión de horarios educativos para instructores, administradores y aprendices.</p>
+                                                
+                                                <h4>1.1 Objetivo del manual</h4>
+                                                <p>El presente manual tiene como objetivo proporcionar una guía completa y detallada para el uso correcto del sistema SGVH, dirigida a usuarios regulares que necesitan consultar horarios y recibir notificaciones.</p>
+                                                
+                                                <h4>1.2 Requisitos técnicos</h4>
+                                                <p>Para un funcionamiento óptimo del sistema, se recomienda:</p>
+                                                <ul>
+                                                    <li>Navegador web actualizado (Chrome, Firefox, Edge o Safari)</li>
+                                                    <li>Conexión a Internet estable</li>
+                                                    <li>Resolución de pantalla mínima de 1280x720 píxeles</li>
+                                                    <li>JavaScript habilitado en el navegador</li>
+                                                </ul>
+                                            </section>
+                                            
+                                            <section id="login-user" class="mb-5">
+                                                <h2 class="border-bottom pb-2">2. Inicio de Sesión</h2>
+                                                <p>El acceso al sistema requiere credenciales válidas proporcionadas por la institución.</p>
+                                                <!-- Más contenido de la sección -->
+                                            </section>
+                                            
+                                            <!-- Continúa con las demás secciones del manual de usuario -->
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Contenido del Manual de Administrador -->
+                                    <div class="tab-pane fade" id="admin-content" role="tabpanel" aria-labelledby="admin-tab">
+                                        <!-- Tabla de contenidos - Administrador -->
+                                        <div class="list-group mb-4">
+                                            <a href="#intro-admin" class="list-group-item list-group-item-action active">1. Introducción</a>
+                                            <a href="#dashboard-admin" class="list-group-item list-group-item-action">2. Panel de Administración</a>
+                                            <a href="#instructors-admin" class="list-group-item list-group-item-action">3. Gestión de Instructores</a>
+                                            <a href="#programs-admin" class="list-group-item list-group-item-action">4. Programas de Formación</a>
+                                            <a href="#competencies-admin" class="list-group-item list-group-item-action">5. Competencias</a>
+                                            <a href="#environments-admin" class="list-group-item list-group-item-action">6. Ambientes</a>
+                                            <a href="#calendars-admin" class="list-group-item list-group-item-action">7. Gestión de Horarios</a>
+                                            <a href="#bulk-admin" class="list-group-item list-group-item-action">8. Carga Masiva</a>
+                                            <a href="#reports-admin" class="list-group-item list-group-item-action">9. Informes y Estadísticas</a>
+                                        </div>
+                                        
+                                        <!-- Contenido del manual de Administrador -->
+                                        <div data-bs-spy="scroll" data-bs-target="#list-group" data-bs-smooth-scroll="true" class="scrollspy-example-2" tabindex="0" style="height: 400px; overflow-y: scroll; padding-right: 15px;">
+                                            <section id="intro-admin" class="mb-5">
+                                                <h2 class="border-bottom pb-2">1. Introducción</h2>
+                                                <p>Bienvenido al Manual Técnico de Administrador del Sistema de Gestión de Horarios (SGVH) del SENA. Este documento proporciona una guía completa para administrar de manera efectiva todos los aspectos del sistema, desde la gestión de usuarios hasta la programación de horarios.</p>
+                                                
+                                                <h4>1.1 Objetivo del manual</h4>
+                                                <p>Este manual técnico está diseñado para proporcionar a los administradores del sistema SGVH todas las herramientas y conocimientos necesarios para gestionar eficientemente la plataforma, garantizando su correcto funcionamiento y optimizando los procesos de programación académica.</p>
+                                                
+                                                <h4>1.2 Perfil del Administrador</h4>
+                                                <p>El rol de administrador en el sistema SGVH está destinado a personal con las siguientes características:</p>
+                                                <ul>
+                                                    <li>Conocimiento del funcionamiento institucional del SENA</li>
+                                                    <li>Comprensión básica de sistemas informáticos y gestión de datos</li>
+                                                    <li>Responsabilidad en el manejo de información sensible</li>
+                                                    <li>Capacidad para gestionar usuarios y resolver incidencias</li>
+                                                </ul>
+                                            </section>
+                                            
+                                            <!-- Continúa con las demás secciones del manual de administrador -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODALES DEL MANUAL DE USUARIO -->
+    
+    <!-- Modal Inicio de Sesión (Usuario) -->
+    <div class="modal fade" id="userLoginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-box-arrow-in-right me-2"></i>Inicio de Sesión - Manual de Usuario</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>El sistema de gestión de horarios (SGVH) requiere autenticación para acceder a sus funcionalidades. A continuación, se explica el proceso de inicio de sesión:</p>
+                    
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Acceder a la página de inicio</h4>
+                                <p class="step-desc">Ingrese a la URL del sistema proporcionada por el administrador. Verá la pantalla de inicio de sesión como se muestra a continuación:</p>
+                                <img src="/api/placeholder/600/320" alt="Pantalla de inicio de sesión" class="step-image">
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Ingresar credenciales</h4>
+                                <p class="step-desc">Introduzca su correo institucional (@sena.edu.co) y la contraseña proporcionada por el administrador del sistema.</p>
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle-fill me-2"></i> Si es la primera vez que accede al sistema, deberá cambiar su contraseña temporal por una permanente.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Seleccionar "Recordarme" (opcional)</h4>
+                                <p class="step-desc">Si desea que el sistema recuerde sus credenciales para futuros accesos, seleccione la casilla "Recordarme". Tenga en cuenta que esto no es recomendable en equipos compartidos.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Iniciar sesión</h4>
+                                <p class="step-desc">Haga clic en el botón "Iniciar Sesión" para acceder al sistema. Si las credenciales son correctas, será redirigido al panel principal.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4><i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i>Solución de problemas</h4>
+                    <ul>
+                        <li><strong>Contraseña olvidada:</strong> Utilice la opción "¿Olvidaste tu contraseña?" en la pantalla de inicio de sesión.</li>
+                        <li><strong>Error de credenciales:</strong> Verifique que su correo y contraseña sean correctos. Recuerde que el sistema distingue entre mayúsculas y minúsculas.</li>
+                        <li><strong>Cuenta bloqueada:</strong> Después de varios intentos fallidos, su cuenta podría bloquearse. Contacte al administrador del sistema.</li>
+                    </ul>
+                    
+                    <div class="interactive-buttons">
+                        <a href="#" class="btn btn-demo">
+                            <i class="bi bi-play-fill"></i>Ver demostración
+                        </a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Visualización de Horarios (Usuario) -->
+    <div class="modal fade" id="userCalendarModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-calendar3 me-2"></i>Visualización de Horarios - Manual de Usuario</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>El Sistema de Gestión de Horarios (SGVH) permite consultar y visualizar los horarios de manera fácil e intuitiva. A continuación, se explica cómo utilizar esta funcionalidad:</p>
+                    
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Acceder al módulo de Calendarios</h4>
+                                <p class="step-desc">En el menú principal, haga clic en "Calendarios" o en el botón "Ver Calendario" en la página principal.</p>
+                                <img src="/api/placeholder/600/320" alt="Acceso al módulo de calendarios" class="step-image">
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Interpretar la vista de calendario</h4>
+                                <p class="step-desc">El calendario se muestra en vista mensual por defecto. Los eventos se muestran con colores según el tipo de actividad o programa.</p>
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle-fill me-2"></i> Puede cambiar entre diferentes vistas (día, semana, mes) utilizando los botones en la parte superior del calendario.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Filtrar horarios</h4>
+                                <p class="step-desc">Utilice las opciones de filtro para personalizar la visualización según sus necesidades:</p>
+                                <ul>
+                                    <li><strong>Por Instructor:</strong> Filtra los horarios de un instructor específico</li>
+                                    <li><strong>Por Programa:</strong> Muestra los horarios asociados a un programa formativo</li>
+                                    <li><strong>Por Ambiente:</strong> Filtra por ubicación o aula específica</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Ver detalles de un evento</h4>
+                                <p class="step-desc">Haga clic sobre cualquier evento en el calendario para ver información detallada como:</p>
+                                <ul>
+                                    <li>Instructor responsable</li>
+                                    <li>Programa formativo</li>
+                                    <li>Competencia</li>
+                                    <li>Ubicación o ambiente</li>
+                                    <li>Horario exacto</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4><i class="bi bi-lightbulb-fill me-2 text-warning"></i>Consejos útiles</h4>
+                    <ul>
+                        <li><strong>Exportar horario:</strong> Utilice la opción "Exportar" para descargar el horario en formato PDF o Excel.</li>
+                        <li><strong>Navegación rápida:</strong> Use las flechas de navegación para moverse entre semanas o meses.</li>
+                        <li><strong>Búsqueda:</strong> Utilice el campo de búsqueda para encontrar rápidamente eventos específicos.</li>
+                    </ul>
+                    
+                    <div class="interactive-buttons">
+                        <a href="#" class="btn btn-demo">
+                            <i class="bi bi-play-fill"></i>Ver demostración
+                        </a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Notificaciones (Usuario) -->
+    <div class="modal fade" id="userNotificationsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-bell-fill me-2"></i>Sistema de Notificaciones - Manual de Usuario</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>El Sistema de Gestión de Horarios (SGVH) cuenta con un sistema de notificaciones que le mantiene informado sobre cambios en horarios, nuevas asignaciones y eventos importantes. A continuación, se explica cómo utilizar esta funcionalidad:</p>
+                    
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Acceder al panel de notificaciones</h4>
+                                <p class="step-desc">Haga clic en el ícono de campana <i class="bi bi-bell-fill"></i> ubicado en la barra de navegación superior. Se desplegará un panel con todas sus notificaciones.</p>
+                                <img src="/api/placeholder/600/320" alt="Panel de notificaciones" class="step-image">
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Interpretar las notificaciones</h4>
+                                <p class="step-desc">Las notificaciones se organizan de la más reciente a la más antigua. Cada notificación incluye:</p>
+                                <ul>
+                                    <li><strong>Ícono:</strong> Representa el tipo de notificación (cambio de horario, asignación, etc.)</li>
+                                    <li><strong>Mensaje:</strong> Descripción breve del evento o cambio</li>
+                                    <li><strong>Tiempo:</strong> Cuándo ocurrió el evento</li>
+                                    <li><strong>Estado:</strong> Las notificaciones no leídas aparecen resaltadas</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Gestionar notificaciones</h4>
+                                <p class="step-desc">El sistema ofrece opciones para administrar sus notificaciones:</p>
+                                <ul>
+                                    <li><strong>Marcar como leída:</strong> Al hacer clic en una notificación, esta se marca automáticamente como leída</li>
+                                    <li><strong>Marcar todas como leídas:</strong> Utilice la opción "Leer todas" en la parte superior del panel</li>
+                                    <li><strong>Eliminar notificaciones:</strong> Use el ícono de papelera para eliminar notificaciones individuales o todas</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODALES DEL MANUAL DE ADMINISTRADOR -->
+    
+    <!-- Modal Gestión de Instructores (Admin) -->
+    <div class="modal fade" id="adminInstructorsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-badge-fill me-2"></i>Gestión de Instructores - Manual de Administrador</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Como administrador del sistema, tiene la capacidad de gestionar instructores, incluyendo la creación, edición, eliminación y asignación de horarios. A continuación, se explica cómo utilizar estas funcionalidades:</p>
+                    
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Acceder al módulo de Instructores</h4>
+                                <p class="step-desc">En el menú lateral, haga clic en "Instructores" para acceder al listado de instructores registrados en el sistema.</p>
+                                <img src="/api/placeholder/600/320" alt="Listado de instructores" class="step-image">
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Crear un nuevo instructor</h4>
+                                <p class="step-desc">Para añadir un nuevo instructor al sistema:</p>
+                                <ol>
+                                    <li>Haga clic en el botón "Nuevo Instructor"</li>
+                                    <li>Complete el formulario con los datos personales y profesionales del instructor</li>
+                                    <li>Asigne credenciales iniciales (contraseña temporal)</li>
+                                    <li>Haga clic en "Guardar" para completar el registro</li>
+                                </ol>
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle-fill me-2"></i> El correo institucional será el nombre de usuario para iniciar sesión.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Programas de Formación (Admin) -->
+    <div class="modal fade" id="adminProgramsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-mortarboard-fill me-2"></i>Programas de Formación - Manual de Administrador</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>La gestión de programas de formación es fundamental para la correcta asignación de horarios. A continuación, se explica cómo administrar los programas y competencias en el sistema:</p>
+                    
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Acceder al módulo de Programas</h4>
+                                <p class="step-desc">En el menú lateral, haga clic en "Programas de Formación" para acceder al listado de programas registrados.</p>
+                                <img src="/api/placeholder/600/320" alt="Listado de programas" class="step-image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Crear/Editar Horarios (Admin) -->
+    <div class="modal fade" id="adminCalendarModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-calendar-check-fill me-2"></i>Crear/Editar Horarios - Manual de Administrador</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>La creación y edición de horarios es una de las funciones principales del sistema SGVH. A continuación, se explica cómo gestionar el calendario:</p>
+                    
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Acceder al módulo de Calendarios</h4>
+                                <p class="step-desc">En el menú lateral, haga clic en "Calendarios" para acceder a las opciones de gestión de horarios.</p>
+                                <img src="/api/placeholder/600/320" alt="Módulo de calendarios" class="step-image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts necesarios -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animación para mostrar elementos gradualmente
+            setTimeout(function() {
+                document.querySelectorAll('.animate-fadeInUp').forEach(function(element) {
+                    element.style.opacity = 1;
+                });
+            }, 100);
+            
+            // Activar tooltips de Bootstrap
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+            
+            // Inicializar scrollspy para el manual completo
+            const scrollspy = document.querySelector('[data-bs-spy="scroll"]');
+            if (scrollspy) {
+                bootstrap.ScrollSpy.getOrCreateInstance(scrollspy);
+            }
+        });
+    </script>
+</body>
+</html>

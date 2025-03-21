@@ -3,6 +3,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth.decorators import login_required
 from . import views
+from .views import manual_view 
 from .views import (
     login_view, 
     admin_dashboard,
@@ -137,7 +138,9 @@ urlpatterns = [
     path('instructor/crear/', views.instructor_form, name='crear_instructor'),
     path('programa/crear/', views.programa_form, name='crear_programa'),
     path('competencia/crear/', views.competencia_form, name='crear_competencia'),
-    path('horario/generar/', views.horario_form, name='generar_horario'),
+    
+    # ACTUALIZADO: Ahora usamos CalendarCreateView (formulario moderno) en lugar de CalAmbCreateView
+    path('horario/generar/', login_required(CalendarCreateView.as_view()), name='generar_horario'),
     
     # URLs para el sistema de notificaciones
     path('notificaciones/', login_required(obtener_notificaciones), name='obtener_notificaciones'),
@@ -145,4 +148,6 @@ urlpatterns = [
     path('notificaciones/marcar-todas-leidas/', login_required(marcar_todas_leidas), name='marcar_todas_leidas'),
     # Nueva URL para eliminar todas las notificaciones
     path('notificaciones/eliminar-todas/', login_required(eliminar_todas_notificaciones), name='eliminar_todas_notificaciones'),
+    # url llamado manual
+     path('manual/', manual_view, name='manual'),
 ]

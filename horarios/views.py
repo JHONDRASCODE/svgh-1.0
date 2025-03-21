@@ -25,6 +25,10 @@ from .forms import AdministradorForm, InstructorForm, ProgramaFormacionForm, Amb
 from .utils import create_instructor_template
 
 
+def manual_view(request):
+    return render(request, 'horarios/manual.html')
+
+
 def registrar_actividad(usuario, tipo, accion, descripcion, elemento_id=None, elemento_nombre=""):
     """
     Registra una actividad del sistema.
@@ -2172,23 +2176,25 @@ def crear_competencia(request):
 
 @login_required
 def generar_horario(request):
-    # Si se genera un horario, registrar la actividad
+    """
+    Redirecciona a la vista para crear un calendario de ambiente.
+    """
+    # Registrar la actividad y luego redirigir
     if request.method == 'POST':
-        # Ejemplo: si se procesa un formulario para generar horario
         exito = registrar_actividad(
             usuario=request.user,
             tipo='horario',
             accion='generar',
-            descripcion='Se generó un nuevo horario',
+            descripcion='Se accedió al formulario de generación de horario',
             elemento_id=None,
             elemento_nombre='Generación de horario'
         )
         
         if not exito:
-            messages.warning(request, 'El horario se generó correctamente, pero hubo un problema al registrar la actividad.')
+            messages.warning(request, 'Hubo un problema al registrar la actividad.')
     
-    # Aquí irá la lógica para generar horarios
-    return render(request, 'horarios/generar_horario.html')
+    # Redirigir a la vista de crear calendario de ambiente
+    return redirect('calamb_create')
 
 
 @login_required
@@ -2258,18 +2264,39 @@ def competencia_form(request):
 
 @login_required
 def horario_form(request):
+    """
+    Vista para el formulario de generación de horarios.
+    Utiliza el template calendar_form.html
+    """
     if request.method == 'POST':
-        # Si se crea un horario, registrar la actividad con la versión mejorada
-        exito = registrar_actividad(
-            usuario=request.user,
-            tipo='horario',
-            accion='crear',
-            descripcion='Se creó un nuevo horario',
-            elemento_id=None,
-            elemento_nombre='Nuevo horario'
-        )
-        
-        if not exito:
-            messages.warning(request, 'El horario se creó correctamente, pero hubo un problema al registrar la actividad.')
+        form = CalendarForm(request.POST)
+        if form.is_valid():
+            calendario = form.save()
+            
+            # Registrar la actividad de creación
+            exito = registrar_actividad(
+                usuario=request.user,
+                tipo='horario',
+                accion='crear',
+                descripcion=f'Se creó un nuevo horario',
+                elemento_id=calendario.id,
+                elemento_nombre=getattr(calendario, 'title', f'Calendario ID:{calendario.id}')
+            )
+            
+            if exito:
+                messages.success(request, '¡Horario creado exitosamente!')
+            else:
+                messages.success(request, '¡Horario creado exitosamente, pero hubo un problema al registrar la actividad!')
+            
+            return redirect('calendar_list')
+    else:
+        form = CalendarForm()
     
-    return render(request, 'horarios/horarios/horario_form.html')
+    # Preparar el contexto para la plantilla
+    context = {
+        'form': form,
+        'object': None  # Para indicar que es una creación, no una edición
+    }
+    
+    # Usar el template calendar_form.html
+    return redirect('calendar_create')

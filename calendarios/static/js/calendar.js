@@ -463,10 +463,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Limpiar filtros
+    // Limpiar filtros - Versión actualizada que deja el calendario vacío
     const clearFiltersBtn = document.getElementById('clearFilters');
     if (clearFiltersBtn) {
         clearFiltersBtn.addEventListener('click', () => {
+            // Limpiar todos los selectores de filtro
             ['instructorFilter', 'programaFilter', 'locationFilter'].forEach(filterId => {
                 const element = document.getElementById(filterId);
                 if (element) {
@@ -474,18 +475,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
             
-            // Al limpiar filtros, mostramos todos los eventos
+            // Vaciar el calendario en lugar de mostrar todos los eventos
             calendar.removeAllEvents();
-            calendar.addEventSource(allEvents);
             
-            // Ocultar mensaje cuando mostramos todos los eventos
-            if (allEvents.length > 0) {
-                hideNoEventsMessage();
-                // Ajustar rango de horas
-                setTimeout(() => adjustHoursToEvents(), 300);
-            } else {
-                showNoEventsMessage();
-            }
+            // Mostrar el mensaje de que no hay eventos visibles
+            showNoEventsMessage();
+            
+            console.log('Filtros limpiados - Calendario vacío');
         });
     } else {
         console.error('Botón "clearFilters" no encontrado');
