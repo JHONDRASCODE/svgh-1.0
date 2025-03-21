@@ -60,12 +60,8 @@ WSGI_APPLICATION = 'sgvh.wsgi.application'
 # Base de Datos
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sgvh_db',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -98,7 +94,8 @@ USE_TZ = False
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    # Eliminar esta línea que causa el warning
+    # os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'horarios', 'static'),
 ]
 

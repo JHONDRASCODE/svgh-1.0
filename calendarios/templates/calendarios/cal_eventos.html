@@ -5,260 +5,679 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="stylesheet" href='{% static "css/style_calendar.css" %}'> -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <title>Full Calendar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Iconos de Bootstrap para el modal -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <title>Calendario de Eventos</title>
     
     <!-- Estilos integrados directamente en el HTML -->
     <style>
-        /* Estilos generales */
+        /* Variables de Colores - Paleta moderna */
         :root {
-            --primary-color: #3788d8;
+            --primary-color: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: #eef2ff;
             --secondary-color: #f8f9fa;
-            --accent-color: #2c3e50;
-            --border-color: #dee2e6;
-            --hover-color: #e9ecef;
+            --accent-color: #2d3748;
+            --border-color: #e2e8f0;
+            --hover-color: #f7fafc;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+            --danger-color: #ef4444;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
         }
-        
+
+        /* Estilos generales mejorados */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: #333;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.5;
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+
+        .app-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .calendar-layout {
+            display: flex;
+            flex-direction: row;
+            gap: 1.5rem;
+        }
+
+        .sidebar {
+            width: 320px;
+            flex-shrink: 0;
+        }
+
+        .main-content {
+            flex-grow: 1;
+        }
+
+        .card {
             background-color: #fff;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
-            border-radius: 10px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        
-        /* Estilos del formulario de filtros */
-        #event-filter-form {
-            background-color: var(--secondary-color);
-            padding: 20px;
-            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            border-radius: 12px;
             border: 1px solid var(--border-color);
+            height: 100%;
         }
-        
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Toggle para filtros en móvil */
+        .filters-toggle {
+            display: none;
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .filters-toggle:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .filters-toggle-icon {
+            margin-left: 8px;
+            transition: transform 0.3s;
+        }
+
+        .filters-toggle[aria-expanded="true"] .filters-toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Mejora de formulario de filtros */
+        #event-filter-form {
+            background-color: var(--primary-light);
+            border-radius: 10px;
+            border: 1px solid rgba(67, 97, 238, 0.15);
+            transition: var(--transition);
+        }
+
+        #event-filter-form:hover {
+            box-shadow: var(--shadow-sm);
+        }
+
         .form-label {
             font-weight: 600;
             color: var(--accent-color);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: block;
         }
-        
+
         .form-select {
-            border-radius: 6px;
+            border-radius: 8px;
             border: 1px solid var(--border-color);
-            padding: 8px 12px;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            padding: 0.6rem 1rem;
+            font-size: 0.95rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            background-color: white;
         }
-        
+
+        .form-select:hover {
+            border-color: #cbd5e1;
+        }
+
         .form-select:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(55, 136, 216, 0.25);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            outline: none;
         }
-        
+
         #clearFilters {
-            background-color: #6c757d;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: background-color 0.3s;
+            background-color: white;
+            color: var(--accent-color);
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            width: 100%;
+            margin-top: 0.5rem;
         }
-        
+
         #clearFilters:hover {
-            background-color: #5a6268;
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
         }
-        
-        /* Estilos del calendario */
+
+        /* Mejoras del calendario */
         #calendar {
-            margin-top: 30px;
+            height: 100%;
         }
-        
+
         /* Personalización de FullCalendar */
         .fc {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --fc-border-color: var(--border-color);
+            --fc-page-bg-color: #fff;
+            --fc-neutral-bg-color: var(--secondary-color);
+            --fc-event-border-color: transparent;
+            height: 100%;
         }
-        
+
+        .fc-theme-standard .fc-scrollgrid {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+        }
+
         .fc-toolbar-title {
             font-weight: 700 !important;
             color: var(--accent-color) !important;
+            font-size: 1.5rem !important;
         }
-        
+
         .fc-button-primary {
             background-color: var(--primary-color) !important;
             border-color: var(--primary-color) !important;
             font-weight: 500 !important;
-            border-radius: 6px !important;
-            padding: 8px 16px !important;
-            transition: all 0.3s !important;
+            border-radius: 8px !important;
+            padding: 0.6rem 1.2rem !important;
+            transition: var(--transition) !important;
+            box-shadow: var(--shadow-sm) !important;
+            text-transform: none !important;
+            font-size: 0.9rem !important;
         }
-        
+
         .fc-button-primary:hover {
-            background-color: #2c6fc1 !important;
-            border-color: #2c6fc1 !important;
+            background-color: var(--primary-dark) !important;
+            border-color: var(--primary-dark) !important;
+            box-shadow: var(--shadow-md) !important;
         }
-        
+
         .fc-button-active {
-            background-color: #2c6fc1 !important;
-            border-color: #2c6fc1 !important;
-            box-shadow: 0 0 0 0.2rem rgba(44, 111, 193, 0.25) !important;
+            background-color: var(--primary-dark) !important;
+            border-color: var(--primary-dark) !important;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
         }
-        
+
         .fc-day-today {
-            background-color: rgba(55, 136, 216, 0.1) !important;
+            background-color: var(--primary-light) !important;
         }
-        
+
+        .fc-daygrid-day-number, .fc-col-header-cell-cushion {
+            text-decoration: none !important;
+            color: var(--accent-color) !important;
+        }
+
         .fc-daygrid-day-number {
-            padding: 8px !important;
+            padding: 8px 12px !important;
             font-weight: 500 !important;
+            font-size: 0.9rem !important;
         }
-        
-        .fc-daygrid-day-frame {
-            transition: background-color 0.3s !important;
+
+        .fc-col-header-cell {
+            background-color: #f8fafc !important;
+            padding: 12px 0 !important;
+            font-weight: 600 !important;
         }
-        
-        .fc-daygrid-day-frame:hover {
+
+        .fc-col-header-cell-cushion {
+            font-weight: 600 !important;
+            padding: 8px 4px !important;
+            text-transform: uppercase !important;
+            font-size: 0.75rem !important;
+            letter-spacing: 0.05em !important;
+        }
+
+        .fc-daygrid-day {
+            transition: background-color 0.2s !important;
+        }
+
+        .fc-daygrid-day:hover {
             background-color: var(--hover-color) !important;
         }
-        
-        .fc-col-header-cell {
-            background-color: var(--secondary-color) !important;
-            padding: 10px 0 !important;
-        }
-        
-        .fc-col-header-cell-cushion {
-            color: var(--accent-color) !important;
-            font-weight: 600 !important;
-            text-decoration: none !important;
-        }
-        
-        /* Estilo de eventos */
+
+        /* Estilos de evento mejorados */
         .fc-event {
-            border-radius: 4px !important;
-            padding: 3px 5px !important;
+            border-radius: 6px !important;
+            padding: 4px 8px !important;
             border: none !important;
-            font-size: 0.85em !important;
-            transition: opacity 0.3s !important;
+            font-size: 0.8rem !important;
+            transition: transform 0.2s, box-shadow 0.2s !important;
+            margin-bottom: 2px !important;
+            box-shadow: var(--shadow-sm) !important;
+            font-weight: 500 !important;
         }
-        
+
         .fc-event:hover {
-            opacity: 0.85 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: var(--shadow-md) !important;
+            z-index: 5 !important;
         }
-        
-        /* Colores para diferentes tipos de eventos (puedes personalizarlos) */
-        .event-instructor {
-            background-color: #4CAF50 !important;
-            border-left: 3px solid #2E7D32 !important;
-        }
-        
-        .event-programa {
-            background-color: #FF9800 !important;
-            border-left: 3px solid #EF6C00 !important;
-        }
-        
-        .event-location {
-            background-color: #9C27B0 !important;
-            border-left: 3px solid #6A1B9A !important;
-        }
-        
-        /* Personalización del popover de eventos */
-        .fc-popover {
-            border-radius: 8px !important;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
-            border: 1px solid var(--border-color) !important;
-        }
-        
-        .fc-popover-header {
-            background-color: var(--secondary-color) !important;
-            padding: 10px !important;
+
+        .fc-event-time {
             font-weight: 600 !important;
+            margin-right: 4px !important;
         }
-        
-        /* Diseño responsivo */
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-                margin-top: 10px;
-                margin-bottom: 10px;
-                border-radius: 8px;
+
+        /* Colores para diferentes tipos de eventos (mejorados) */
+        .event-instructor {
+            background-color: var(--success-color) !important;
+            border-left: 3px solid #059669 !important;
+            color: white !important;
+        }
+
+        .event-programa {
+            background-color: var(--warning-color) !important;
+            border-left: 3px solid #d97706 !important;
+            color: white !important;
+        }
+
+        .event-location {
+            background-color: var(--info-color) !important;
+            border-left: 3px solid #2563eb !important;
+            color: white !important;
+        }
+
+        /* Estilos para indicador de carga */
+        #loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
+            display: none;
+        }
+
+        /* Estilos del modal mejorado */
+        .modal-content {
+            border-radius: 14px;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            border-bottom: none;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .modal-header .modal-title {
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            border-top: none;
+            background-color: #f8fafc;
+            padding: 1rem 1.5rem;
+        }
+
+        /* Elementos dentro del modal */
+        .calendar-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+        }
+
+        .info-card {
+            height: 100%;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .instructor-avatar {
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .instructor-info, .competencia-info {
+            transition: all 0.3s ease;
+        }
+
+        .competencia-info .bg-light {
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .competencia-info .bg-light:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge {
+            font-weight: 500;
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.85rem;
+            letter-spacing: 0.02em;
+            margin-right: 0.5rem;
+        }
+
+        /* Animación del modal */
+        .modal.fade .modal-dialog {
+            transition: transform 0.3s ease-out;
+            transform: translateY(-10px);
+        }
+
+        .modal.show .modal-dialog {
+            transform: translateY(0);
+        }
+
+        /* Botón de cerrar modal */
+        .btn-close-white {
+            filter: brightness(0) invert(1);
+        }
+
+        /* Botones del footer */
+        .modal-footer .btn {
+            border-radius: 8px;
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .modal-footer .btn-secondary {
+            background-color: #e2e8f0;
+            border-color: #e2e8f0;
+            color: #334155;
+        }
+
+        .modal-footer .btn-secondary:hover {
+            background-color: #cbd5e1;
+            border-color: #cbd5e1;
+        }
+
+        /* Mejoras responsive */
+        @media (max-width: 992px) {
+            .calendar-layout {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                margin-bottom: 1.5rem;
+            }
+            
+            .filters-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
             }
             
             #event-filter-form {
-                padding: 15px;
+                display: none;
+            }
+            
+            #event-filter-form.show {
+                display: block;
             }
             
             .fc-toolbar.fc-header-toolbar {
-                flex-direction: column;
-                gap: 10px;
+                flex-wrap: wrap;
+                gap: 0.8rem;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                margin: 1rem auto;
+                padding: 0 0.8rem;
+            }
+            
+            .card-header, .card-body {
+                padding: 1rem;
+            }
+            
+            .fc-toolbar.fc-header-toolbar {
+                margin-bottom: 1rem !important;
             }
             
             .fc-toolbar-chunk {
-                display: flex;
-                justify-content: center;
-                margin-bottom: 10px;
+                margin-bottom: 0.5rem;
             }
             
             .fc-button {
-                padding: 6px 12px !important;
-                font-size: 0.9em !important;
+                padding: 0.5rem 1rem !important;
+                font-size: 0.85rem !important;
+            }
+            
+            .fc-toolbar-title {
+                font-size: 1.2rem !important;
+            }
+            
+            /* Mejoras para la vista móvil */
+            .fc-view-harness {
+                min-height: 400px !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .app-container {
+                margin: 0.5rem;
+                padding: 0;
+            }
+            
+            .card {
+                border-radius: 8px;
+            }
+            
+            .card-header {
+                padding: 0.8rem;
+            }
+            
+            .card-body {
+                padding: 0.8rem;
+            }
+            
+            .fc-header-toolbar {
+                padding: 0 0.5rem;
             }
             
             .fc-daygrid-day-number {
-                padding: 4px !important;
+                padding: 4px 6px !important;
+                font-size: 0.8rem !important;
             }
-        }
-        
-        /* Para pantallas muy pequeñas */
-        @media (max-width: 576px) {
-            .fc-dayGridMonth-view .fc-daygrid-day-events {
-                margin-bottom: 0 !important;
+            
+            .fc-col-header-cell-cushion {
+                font-size: 0.7rem !important;
+            }
+            
+            .fc-button {
+                padding: 0.4rem 0.8rem !important;
+                font-size: 0.8rem !important;
             }
             
             .fc-event {
-                font-size: 0.75em !important;
+                font-size: 0.7rem !important;
                 padding: 2px 4px !important;
             }
+
+
+            /* Base para todos los eventos personalizados */
+.custom-event {
+    color: white !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+    box-shadow: var(--shadow-sm) !important;
+    border-left-width: 3px !important;
+    padding: 4px 8px !important;
+}
+
+.custom-event:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: var(--shadow-md) !important;
+    z-index: 10 !important;
+}
+
+/* Colores por categoría de instructor */
+.event-instructor-1 {
+    background-color: #4361ee !important; /* Azul */
+    border-left-color: #3a56d4 !important;
+}
+
+.event-instructor-2 {
+    background-color: #10b981 !important; /* Verde */
+    border-left-color: #059669 !important;
+}
+
+.event-instructor-3 {
+    background-color: #f59e0b !important; /* Naranja */
+    border-left-color: #d97706 !important;
+}
+
+.event-instructor-4 {
+    background-color: #8b5cf6 !important; /* Morado */
+    border-left-color: #7c3aed !important;
+}
+
+.event-instructor-5 {
+    background-color: #ef4444 !important; /* Rojo */
+    border-left-color: #dc2626 !important;
+}
+
+/* Estilo para mensaje de no eventos */
+#no-events-message {
+    background-color: rgba(236, 245, 255, 0.8);
+    border: 1px solid #bcd6ff;
+    color: #3a6fae;
+    border-radius: 10px;
+    padding: 1.5rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-sm);
+    margin: 2rem 0;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Clase adicional para la coloración del modal */
+.bg-purple {
+    background-color: #8b5cf6 !important;
+    color: white !important;
+}
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <!-- Sidebar con filtros -->
-        <form id="event-filter-form" class="mt-4 mb-4">
-            <div class="row">
-                <div class="col-12 mb-3">
-                    <label for="instructorFilter" class="form-label">Instructor</label>
-                    <select class="form-select" id="instructorFilter">
-                        <option value="">Seleccione un instructor</option>
-                    </select>
-                </div>
-                <div class="col-12 mb-3">
-                    <label for="programaFilter" class="form-label">Programa de Formación</label>
-                    <select class="form-select" id="programaFilter">
-                        <option value="">Seleccione un programa</option>
-                    </select>
-                </div>
-                <div class="col-12 mb-3">
-                    <label for="locationFilter" class="form-label">Ambiente</label>
-                    <select class="form-select" id="locationFilter">
-                        <option value="">Seleccione un ambiente</option>
-                    </select>
+    <div class="app-container">
+        <div class="calendar-layout">
+            <!-- Sidebar con filtros -->
+            <div class="sidebar">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Filtros</h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="event-filter-form">
+                            <div class="mb-3">
+                                <label for="instructorFilter" class="form-label">Instructor</label>
+                                <select class="form-select" id="instructorFilter">
+                                    <option value="">Seleccione un instructor</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="programaFilter" class="form-label">Programa de Formación</label>
+                                <select class="form-select" id="programaFilter">
+                                    <option value="">Seleccione un programa</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="locationFilter" class="form-label">Ambiente</label>
+                                <select class="form-select" id="locationFilter">
+                                    <option value="">Seleccione un ambiente</option>
+                                </select>
+                            </div>
+                            <button type="button" id="clearFilters" class="btn">Limpiar Filtros</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-            <div class="text-end">
-                <button type="button" id="clearFilters" class="btn btn-secondary">Limpiar Filtros</button>
-            </div>
-        </form>
 
-        <!-- Calendario -->
-        <div class="mt-4 mb-5" id="calendar"></div>
+            <!-- Contenido principal con el calendario -->
+            <div class="main-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Calendario de Eventos</h2>
+                    </div>
+                    <div class="card-body">
+                        <!-- Botón para móviles -->
+                        <button type="button" class="filters-toggle" aria-expanded="false" id="toggleFilters">
+                            Mostrar/Ocultar Filtros
+                            <span class="filters-toggle-icon">▼</span>
+                        </button>
+                        
+                        <!-- Indicador de carga -->
+                        <div id="loading-indicator">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                            <span class="ms-2">Cargando eventos...</span>
+                        </div>
+                        
+                        <!-- Calendario -->
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
@@ -268,52 +687,43 @@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <!-- Agregar solo el paquete de localización en español -->
     <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales/es.global.min.js'></script>
-    <script src='{% static "js/calendar.js" %}'></script>
+    
+    <!-- Importante: Añadir un parámetro de versión para evitar problemas de caché -->
+    <script src='{% static "js/calendar.js" %}?v={% now "U" %}'></script>
 
-    <!-- Script pequeño para cambiar el idioma después de que el calendario se haya inicializado -->
+    <!-- Script para manejo de filtros responsivos -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Esperar un pequeño momento para asegurar que el calendario esté inicializado
-            setTimeout(function() {
-                // Buscar la instancia del calendario
-                var calendarEl = document.getElementById('calendar');
-                if (calendarEl && calendarEl.fcSavedOptions) {
-                    // Si encontramos la configuración del calendario, cambiamos el idioma
-                    var calendarInstance = calendarEl.FullCalendar;
-                    if (calendarInstance) {
-                        calendarInstance.setOption('locale', 'es');
-                        calendarInstance.setOption('buttonText', {
-                            today: 'Hoy',
-                            month: 'Mes',
-                            week: 'Semana',
-                            day: 'Día'
-                        });
+            // Manejo de filtros en modo móvil
+            const toggleFilters = document.getElementById('toggleFilters');
+            const filterForm = document.getElementById('event-filter-form');
+            
+            if (toggleFilters) {
+                toggleFilters.addEventListener('click', function() {
+                    const isExpanded = toggleFilters.getAttribute('aria-expanded') === 'true';
+                    toggleFilters.setAttribute('aria-expanded', !isExpanded);
+                    
+                    if (window.innerWidth <= 992) {
+                        if (!isExpanded) {
+                            // Mostrar filtros
+                            filterForm.classList.add('show');
+                        } else {
+                            // Ocultar filtros
+                            filterForm.classList.remove('show');
+                        }
+                    }
+                });
+            }
+            
+            // Manejar cambios de tamaño de ventana
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 992) {
+                    filterForm.classList.remove('show');
+                    if (toggleFilters) {
+                        toggleFilters.setAttribute('aria-expanded', 'false');
                     }
                 }
-            }, 100);
-        });
-    </script>
-
-    <!-- Script adicional para debugging -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Añadir listeners de depuración
-            ['instructorFilter', 'programaFilter', 'locationFilter'].forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.addEventListener('change', function() {
-                        console.log(`Filtro ${id} cambiado a: ${this.value}`);
-                    });
-                } else {
-                    console.error(`¡ELEMENTO NO ENCONTRADO!: ${id}`);
-                }
             });
-
-            // Verificar estructura DOM
-            console.log('Elementos de filtro encontrados:');
-            console.log('instructorFilter:', document.getElementById('instructorFilter'));
-            console.log('programaFilter:', document.getElementById('programaFilter'));
-            console.log('locationFilter:', document.getElementById('locationFilter'));
         });
     </script>
 </body>

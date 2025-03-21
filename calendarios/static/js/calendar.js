@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`Filtro ${filterId} poblado con ${uniqueItems.length} opciones`);
     }
 
-    // Inicializar el calendario
+    // Inicializar el calendario con configuraciones mejoradas
     const calendar = new FullCalendar.Calendar(calendarEl, {
         headerToolbar: {
             left: 'prev,next today',
@@ -67,34 +67,244 @@ document.addEventListener('DOMContentLoaded', () => {
         nowIndicator: true,
         locale: 'es',
         allDaySlot: false,
-        slotLabelFormat: { hour: 'numeric', hour12: true },
-        events: allEvents,
+        
+        // Configuración para mostrar horas en formato de 12 horas (AM/PM)
+        slotLabelFormat: { 
+            hour: 'numeric', 
+            hour12: true,
+            omitZeroMinute: true,
+            meridiem: 'short'
+        },
+        
+        // Formato de hora para los eventos
+        eventTimeFormat: { 
+            hour: 'numeric', 
+            minute: '2-digit', 
+            hour12: true,
+            meridiem: 'short'
+        },
+        
+        events: [],  // Iniciar con calendario vacío
         eventClick: clickInfo => showEventModal(clickInfo),
         height: 'auto',
-        timeZone: 'local'
+        timeZone: 'local',
+        
+        // Configuraciones para optimizar la visualización de horas
+        slotMinTime: '07:00:00', // Comenzar a las 7 AM por defecto
+        slotMaxTime: '19:00:00', // Terminar a las 7 PM por defecto
+        slotDuration: '01:00:00', // Duración de cada slot (1 hora)
+        
+        // Eventos del calendario para manejar la visualización
+        viewDidMount: function(arg) {
+            // Ajustar horas visibles después de que la vista haya sido montada
+            if (arg.view.type === 'timeGridWeek' || arg.view.type === 'timeGridDay') {
+                setTimeout(() => adjustHoursToEvents(), 300);
+            }
+        },
+        
+        // Cuando se añaden o cambian eventos
+        eventAdd: function() {
+            setTimeout(() => adjustHoursToEvents(), 300);
+        },
+        
+        // Colorear eventos según su tipo
+        eventDidMount: function(info) {
+            // Determinar color según instructor
+            if (info.event.extendedProps.id_instructor) {
+                const instructorId = parseInt(info.event.extendedProps.id_instructor);
+                
+                // Agregar una clase base para todos los eventos
+                info.el.classList.add('custom-event');
+                
+                // Asignar clase según ID del instructor
+                if (instructorId % 5 === 0) {
+                    info.el.classList.add('event-instructor-1'); // Azul
+                } else if (instructorId % 5 === 1) {
+                    info.el.classList.add('event-instructor-2'); // Verde
+                } else if (instructorId % 5 === 2) {
+                    info.el.classList.add('event-instructor-3'); // Naranja
+                } else if (instructorId % 5 === 3) {
+                    info.el.classList.add('event-instructor-4'); // Morado
+                } else {
+                    info.el.classList.add('event-instructor-5'); // Rojo
+                }
+            }
+        },
+        
+        // Configuración de carga de datos
+        loading: function(isLoading) {
+            // Mostrar/ocultar indicador de carga
+            var loadingIndicator = document.getElementById('loading-indicator');
+            if (loadingIndicator) {
+                loadingIndicator.style.display = isLoading ? 'block' : 'none';
+            }
+        }
     });
 
-    // Mostrar modal con detalles del evento
+    // Función para ajustar las horas visibles según los eventos
+    function adjustHoursToEvents() {
+        const events = calendar.getEvents();
+        if (events.length === 0) return;
+        
+        let earliestHour = 23;
+        let latestHour = 0;
+        
+        events.forEach(event => {
+            if (event.start) {
+                const startHour = event.start.getHours();
+                if (startHour < earliestHour) earliestHour = startHour;
+            }
+            
+            if (event.end) {
+                const endHour = event.end.getHours();
+                // Si el evento termina justo a la hora en punto, consideramos la hora anterior
+                const adjustedEndHour = event.end.getMinutes() === 0 ? endHour : endHour + 1;
+                if (adjustedEndHour > latestHour) latestHour = adjustedEndHour;
+            }
+        });
+        
+        // Dar margen de 1 hora antes y después
+        earliestHour = Math.max(6, earliestHour - 1);
+        latestHour = Math.min(22, latestHour + 1);
+        
+        // Formatear horas para FullCalendar (formato 24h)
+        const minTime = String(earliestHour).padStart(2, '0') + ':00:00';
+        const maxTime = String(latestHour).padStart(2, '0') + ':00:00';
+        
+        console.log(`Ajustando rango de horas: ${minTime} - ${maxTime}`);
+        
+        // Aplicar nuevas horas
+        calendar.setOption('slotMinTime', minTime);
+        calendar.setOption('slotMaxTime', maxTime);
+    }
+
+    // Función mejorada para mostrar el modal con detalles del evento
     function showEventModal(clickInfo) {
         const { title, extendedProps } = clickInfo.event;
         console.log("Evento clickeado:", clickInfo.event);
         
+        // Formatear fechas para mostrar
+        const formatDate = (date) => {
+            if (!date) return 'No especificada';
+            return date.toLocaleDateString('es', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+        };
+        
+        // Formatear horas en formato 12h
+        const formatTime = (date) => {
+            if (!date) return 'No especificada';
+            return date.toLocaleTimeString('es', { 
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+        };
+        
+        // Determinar color para la cabecera según tipo de evento
+        let headerColor = "#4361ee"; // Color por defecto
+        let badgeClass = "bg-primary";
+        
+        // Personalizar color según tipo de evento (puedes ajustar estos valores)
+        if (extendedProps.id_instructor) {
+            const instructorId = parseInt(extendedProps.id_instructor);
+            if (instructorId % 5 === 0) {
+                headerColor = "#4361ee"; // Azul
+                badgeClass = "bg-primary";
+            } else if (instructorId % 5 === 1) {
+                headerColor = "#10b981"; // Verde
+                badgeClass = "bg-success";
+            } else if (instructorId % 5 === 2) {
+                headerColor = "#f59e0b"; // Naranja
+                badgeClass = "bg-warning text-dark";
+            } else if (instructorId % 5 === 3) {
+                headerColor = "#8b5cf6"; // Morado
+                badgeClass = "bg-purple";
+            } else {
+                headerColor = "#ef4444"; // Rojo
+                badgeClass = "bg-danger";
+            }
+        }
+        
+        // HTML mejorado del modal
         const eventDetails = `
             <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="eventModalLabel">${title || 'Evento'}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow">
+                        <div class="modal-header" style="background-color: ${headerColor}; color: white;">
+                            <h5 class="modal-title fw-bold" id="eventModalLabel">
+                                ${title || 'Evento de Formación'}
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
-                            <p><strong>Instructor:</strong> ${extendedProps.instructor || 'No especificado'}</p>
-                            <p><strong>Competencia:</strong> ${extendedProps.competencia || 'No especificada'}</p>
-                            <p><strong>Ambiente:</strong> ${extendedProps.ambiente || 'No especificado'}</p>
-                            <p><strong>Hora de inicio:</strong> ${clickInfo.event.start ? clickInfo.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'No especificada'}</p>
-                            <p><strong>Hora de finalización:</strong> ${clickInfo.event.end ? clickInfo.event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'No especificada'}</p>
+                        <div class="modal-body p-4">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="calendar-icon rounded bg-light p-3 me-3 text-center">
+                                    <i class="bi bi-calendar-event fs-3 text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 text-muted fw-normal">Fecha del evento</h6>
+                                    <p class="mb-0 fw-bold fs-5">
+                                        ${formatDate(clickInfo.event.start)}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="info-card p-3 bg-light rounded mb-2">
+                                        <h6 class="text-muted mb-2">
+                                            <i class="bi bi-clock me-2"></i>Horario
+                                        </h6>
+                                        <p class="mb-0 fw-bold">
+                                            ${formatTime(clickInfo.event.start)}
+                                            -
+                                            ${formatTime(clickInfo.event.end)}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-card p-3 bg-light rounded mb-2">
+                                        <h6 class="text-muted mb-2">
+                                            <i class="bi bi-geo-alt me-2"></i>Ambiente
+                                        </h6>
+                                        <p class="mb-0 fw-bold">
+                                            ${extendedProps.ambiente || 'No especificado'}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="instructor-info border-top border-bottom py-3 my-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="instructor-avatar rounded-circle bg-primary text-white p-3 me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                        <span class="fw-bold fs-5">${extendedProps.instructor ? extendedProps.instructor.charAt(0).toUpperCase() : 'I'}</span>
+                                    </div>
+                                    <div>
+                                        <h6 class="text-muted mb-1">Instructor</h6>
+                                        <p class="mb-0 fw-bold fs-5">${extendedProps.instructor || 'No especificado'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="competencia-info mt-3">
+                                <h6 class="text-muted mb-2">
+                                    <i class="bi bi-book me-2"></i>Competencia
+                                </h6>
+                                <div class="p-3 bg-light rounded">
+                                    <p class="mb-0">${extendedProps.competencia || 'No especificada'}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <span class="badge ${badgeClass} py-2 px-3">Formación</span>
+                                <span class="badge bg-info py-2 px-3">ID: ${extendedProps.id_programa || 'N/A'}</span>
+                            </div>
                         </div>
-                        <div class="modal-footer">
+                        <div class="modal-footer bg-light">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                         </div>
                     </div>
@@ -107,14 +317,53 @@ document.addEventListener('DOMContentLoaded', () => {
             existingModal.remove();
         }
         
+        // Añadir el modal al documento
         document.body.insertAdjacentHTML('beforeend', eventDetails);
-        new bootstrap.Modal(document.getElementById('eventModal')).show();
+        
+        // Mostrar el modal
+        const modal = new bootstrap.Modal(document.getElementById('eventModal'));
+        modal.show();
+        
+        // Eliminar el modal del DOM cuando se cierre
         document.getElementById('eventModal').addEventListener('hidden.bs.modal', () => {
             document.getElementById('eventModal').remove();
         });
     }
 
-    // Cargar eventos
+    // Funciones para mostrar/ocultar mensaje cuando no hay eventos
+    function showNoEventsMessage() {
+        // Verificar si ya existe el mensaje
+        let noEventsMsg = document.getElementById('no-events-message');
+        
+        if (!noEventsMsg) {
+            // Crear el mensaje si no existe
+            noEventsMsg = document.createElement('div');
+            noEventsMsg.id = 'no-events-message';
+            noEventsMsg.className = 'alert alert-info mt-4 text-center';
+            noEventsMsg.innerHTML = `
+                <i class="bi bi-info-circle me-2"></i>
+                <span>No hay eventos visibles. Utilice los filtros para visualizar eventos.</span>
+            `;
+            
+            // Insertar después del calendario
+            const calendarEl = document.getElementById('calendar');
+            if (calendarEl && calendarEl.parentNode) {
+                calendarEl.parentNode.insertBefore(noEventsMsg, calendarEl.nextSibling);
+            }
+        } else {
+            // Mostrar si ya existe
+            noEventsMsg.style.display = 'block';
+        }
+    }
+
+    function hideNoEventsMessage() {
+        const noEventsMsg = document.getElementById('no-events-message');
+        if (noEventsMsg) {
+            noEventsMsg.style.display = 'none';
+        }
+    }
+
+    // Cargar eventos pero iniciar con calendario vacío
     function loadEvents() {
         console.log("Cargando eventos desde:", request);
         fetch(request)
@@ -144,8 +393,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 console.log(`${allEvents.length} eventos cargados y mapeados`);
                 
+                // Iniciar con calendario vacío
                 calendar.removeAllEvents();
-                calendar.addEventSource(allEvents);
+                // No agregamos eventos inicialmente
+                
+                // Mostrar mensaje de que no hay eventos visibles
+                showNoEventsMessage();
             })
             .catch(error => {
                 console.error('Error al cargar eventos:', error);
@@ -189,6 +442,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         calendar.removeAllEvents();
         calendar.addEventSource(filteredEvents);
+        
+        // Mostrar mensaje si no hay eventos después de filtrar
+        if (filteredEvents.length === 0) {
+            showNoEventsMessage();
+        } else {
+            hideNoEventsMessage();
+            // Ajustar rango de horas después de filtrar
+            setTimeout(() => adjustHoursToEvents(), 300);
+        }
     }
 
     // Asignar eventos a los filtros
@@ -211,7 +473,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     element.value = '';
                 }
             });
-            filterEvents();
+            
+            // Al limpiar filtros, mostramos todos los eventos
+            calendar.removeAllEvents();
+            calendar.addEventSource(allEvents);
+            
+            // Ocultar mensaje cuando mostramos todos los eventos
+            if (allEvents.length > 0) {
+                hideNoEventsMessage();
+                // Ajustar rango de horas
+                setTimeout(() => adjustHoursToEvents(), 300);
+            } else {
+                showNoEventsMessage();
+            }
         });
     } else {
         console.error('Botón "clearFilters" no encontrado');
@@ -219,11 +493,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Inicialización
     loadFilterOptions(); // Cargar las opciones de los filtros
-    loadEvents();        // Cargar los eventos
+    loadEvents();        // Cargar los eventos (pero no mostrarlos)
     calendar.render();    // Renderizar el calendario
     
     // Recargar eventos cada 5 minutos para mantener el calendario actualizado
     setInterval(loadEvents, 300000);
     
-    console.log('Calendario inicializado correctamente');
+    console.log('Calendario inicializado correctamente con inicio vacío');
 });
