@@ -12,20 +12,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Iconos de Bootstrap para el modal -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <title>Calendario de Eventos</title>
+    <title>Calendario de Eventos - SENA</title>
     
     <!-- Estilos integrados directamente en el HTML -->
     <style>
-        /* Variables de Colores - Paleta moderna */
+        /* Variables de Colores - Paleta SENA */
         :root {
-            --primary-color: #4361ee;
-            --primary-dark: #3a56d4;
-            --primary-light: #eef2ff;
+            --primary-color: #39B54A; /* Verde SENA principal actualizado según imagen */
+            --primary-dark: #33a043;  /* Verde SENA oscuro para hover */
+            --primary-light: #e6f5ee; /* Verde SENA claro para fondos */
             --secondary-color: #f8f9fa;
             --accent-color: #2d3748;
             --border-color: #e2e8f0;
             --hover-color: #f7fafc;
-            --success-color: #10b981;
+            --success-color: #39B54A; /* Verde SENA */
             --warning-color: #f59e0b;
             --info-color: #3b82f6;
             --danger-color: #ef4444;
@@ -35,7 +35,7 @@
             --transition: all 0.3s ease;
         }
 
-        /* Estilos generales mejorados */
+        /* Estilos generales */
         body {
             font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
             background-color: #f8fafc;
@@ -45,7 +45,7 @@
 
         .app-container {
             max-width: 1400px;
-            margin: 2rem auto;
+            margin: 0 auto;
             padding: 0 1rem;
         }
 
@@ -53,6 +53,7 @@
             display: flex;
             flex-direction: row;
             gap: 1.5rem;
+            margin-top: 1.5rem;
         }
 
         .sidebar {
@@ -73,16 +74,30 @@
         }
 
         .card-header {
-            padding: 1.25rem 1.5rem;
+            padding: 1rem 1.5rem;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
+            background-color: var(--primary-color);
+            color: white;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .card-header .header-icon {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-header .header-icon i {
+            font-size: 1.25rem;
         }
 
         .card-title {
             font-weight: 700;
-            color: var(--accent-color);
+            color: white;
             font-size: 1.1rem;
             margin: 0;
         }
@@ -120,12 +135,13 @@
             transform: rotate(180deg);
         }
 
-        /* Mejora de formulario de filtros */
+        /* Formulario de filtros */
         #event-filter-form {
             background-color: var(--primary-light);
             border-radius: 10px;
-            border: 1px solid rgba(67, 97, 238, 0.15);
+            border: 1px solid rgba(57, 181, 74, 0.15);
             transition: var(--transition);
+            padding: 1.5rem;
         }
 
         #event-filter-form:hover {
@@ -134,7 +150,7 @@
 
         .form-label {
             font-weight: 600;
-            color: var(--accent-color);
+            color: var(--primary-color);
             font-size: 0.9rem;
             margin-bottom: 0.5rem;
             display: block;
@@ -151,19 +167,19 @@
         }
 
         .form-select:hover {
-            border-color: #cbd5e1;
+            border-color: var(--primary-color);
         }
 
         .form-select:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            box-shadow: 0 0 0 3px rgba(57, 181, 74, 0.15);
             outline: none;
         }
 
         #clearFilters {
             background-color: white;
-            color: var(--accent-color);
-            border: 1px solid var(--border-color);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
             padding: 0.6rem 1.2rem;
             border-radius: 8px;
             font-weight: 500;
@@ -174,8 +190,8 @@
         }
 
         #clearFilters:hover {
-            background-color: #f1f5f9;
-            border-color: #cbd5e1;
+            background-color: var(--primary-light);
+            border-color: var(--primary-color);
         }
 
         /* Mejoras del calendario */
@@ -202,7 +218,7 @@
 
         .fc-toolbar-title {
             font-weight: 700 !important;
-            color: var(--accent-color) !important;
+            color: var(--primary-color) !important;
             font-size: 1.5rem !important;
         }
 
@@ -246,7 +262,7 @@
         }
 
         .fc-col-header-cell {
-            background-color: #f8fafc !important;
+            background-color: var(--primary-color) !important;
             padding: 12px 0 !important;
             font-weight: 600 !important;
         }
@@ -257,6 +273,17 @@
             text-transform: uppercase !important;
             font-size: 0.75rem !important;
             letter-spacing: 0.05em !important;
+            color: white !important;
+        }
+
+        .fc-timegrid-slot-label-cushion {
+            font-weight: 500 !important;
+            font-size: 0.85rem !important;
+        }
+
+        .fc-timegrid-axis-cushion {
+            font-weight: 500 !important;
+            font-size: 0.85rem !important;
         }
 
         .fc-daygrid-day {
@@ -290,23 +317,46 @@
             margin-right: 4px !important;
         }
 
-        /* Colores para diferentes tipos de eventos (mejorados) */
-        .event-instructor {
-            background-color: var(--success-color) !important;
-            border-left: 3px solid #059669 !important;
+        /* Base para todos los eventos personalizados */
+        .custom-event {
             color: white !important;
+            font-weight: 500 !important;
+            border-radius: 6px !important;
+            box-shadow: var(--shadow-sm) !important;
+            border-left-width: 3px !important;
+            padding: 4px 8px !important;
         }
 
-        .event-programa {
-            background-color: var(--warning-color) !important;
-            border-left: 3px solid #d97706 !important;
-            color: white !important;
+        .custom-event:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: var(--shadow-md) !important;
+            z-index: 10 !important;
         }
 
-        .event-location {
-            background-color: var(--info-color) !important;
-            border-left: 3px solid #2563eb !important;
-            color: white !important;
+        /* Colores por categoría de instructor (tonos verdes SENA) */
+        .event-instructor-1 {
+            background-color: #39B54A !important; /* Verde SENA principal */
+            border-left-color: #33a043 !important;
+        }
+
+        .event-instructor-2 {
+            background-color: #34A853 !important; /* Verde más claro */
+            border-left-color: #2d9249 !important;
+        }
+
+        .event-instructor-3 {
+            background-color: #138A48 !important; /* Verde medio */
+            border-left-color: #0f7a3e !important;
+        }
+
+        .event-instructor-4 {
+            background-color: #0E8749 !important; /* Verde oscuro */
+            border-left-color: #0a7038 !important;
+        }
+
+        .event-instructor-5 {
+            background-color: #38B87C !important; /* Verde menta */
+            border-left-color: #30a46c !important;
         }
 
         /* Estilos para indicador de carga */
@@ -323,121 +373,42 @@
             display: none;
         }
 
-        /* Estilos del modal mejorado */
-        .modal-content {
-            border-radius: 14px;
-            overflow: hidden;
-            border: none;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
+        #loading-indicator .spinner-border {
+            color: var(--primary-color) !important;
         }
 
-        .modal-header {
-            border-bottom: none;
-            padding: 1.25rem 1.5rem;
-        }
-
-        .modal-header .modal-title {
-            font-weight: 700;
-            letter-spacing: 0.01em;
-        }
-
-        .modal-body {
+        /* Estilo para mensaje de no eventos */
+        #no-events-message {
+            background-color: rgba(228, 245, 236, 0.8);
+            border: 1px solid #a7e3c4;
+            color: #39B54A;
+            border-radius: 10px;
             padding: 1.5rem;
-        }
-
-        .modal-footer {
-            border-top: none;
-            background-color: #f8fafc;
-            padding: 1rem 1.5rem;
-        }
-
-        /* Elementos dentro del modal */
-        .calendar-icon {
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-        }
-
-        .info-card {
-            height: 100%;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .info-card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            transform: translateY(-2px);
-        }
-
-        .instructor-avatar {
-            width: 60px;
-            height: 60px;
-            background-color: var(--primary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.5rem;
-        }
-
-        .instructor-info, .competencia-info {
-            transition: all 0.3s ease;
-        }
-
-        .competencia-info .bg-light {
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .competencia-info .bg-light:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .badge {
             font-weight: 500;
-            border-radius: 6px;
-            padding: 0.5rem 0.75rem;
-            font-size: 0.85rem;
-            letter-spacing: 0.02em;
-            margin-right: 0.5rem;
+            box-shadow: var(--shadow-sm);
+            margin: 2rem 0;
+            animation: fadeIn 0.5s ease;
         }
 
-        /* Animación del modal */
-        .modal.fade .modal-dialog {
-            transition: transform 0.3s ease-out;
-            transform: translateY(-10px);
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .modal.show .modal-dialog {
-            transform: translateY(0);
-        }
-
-        /* Botón de cerrar modal */
-        .btn-close-white {
-            filter: brightness(0) invert(1);
-        }
-
-        /* Botones del footer */
-        .modal-footer .btn {
+        
+        /* Estilo para el reloj colombiano */
+        .colombia-time {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 6px 10px;
             border-radius: 8px;
-            padding: 0.5rem 1.25rem;
             font-weight: 500;
-            transition: all 0.3s ease;
+            font-size: 0.9rem;
         }
-
-        .modal-footer .btn-secondary {
-            background-color: #e2e8f0;
-            border-color: #e2e8f0;
-            color: #334155;
-        }
-
-        .modal-footer .btn-secondary:hover {
-            background-color: #cbd5e1;
-            border-color: #cbd5e1;
+        
+        .colombia-time i {
+            font-size: 1rem;
         }
 
         /* Mejoras responsive */
@@ -503,6 +474,16 @@
             .fc-view-harness {
                 min-height: 400px !important;
             }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .colombia-time {
+                align-self: flex-start;
+            }
         }
 
         @media (max-width: 576px) {
@@ -545,73 +526,6 @@
                 font-size: 0.7rem !important;
                 padding: 2px 4px !important;
             }
-
-
-            /* Base para todos los eventos personalizados */
-.custom-event {
-    color: white !important;
-    font-weight: 500 !important;
-    border-radius: 6px !important;
-    box-shadow: var(--shadow-sm) !important;
-    border-left-width: 3px !important;
-    padding: 4px 8px !important;
-}
-
-.custom-event:hover {
-    transform: translateY(-1px) !important;
-    box-shadow: var(--shadow-md) !important;
-    z-index: 10 !important;
-}
-
-/* Colores por categoría de instructor */
-.event-instructor-1 {
-    background-color: #4361ee !important; /* Azul */
-    border-left-color: #3a56d4 !important;
-}
-
-.event-instructor-2 {
-    background-color: #10b981 !important; /* Verde */
-    border-left-color: #059669 !important;
-}
-
-.event-instructor-3 {
-    background-color: #f59e0b !important; /* Naranja */
-    border-left-color: #d97706 !important;
-}
-
-.event-instructor-4 {
-    background-color: #8b5cf6 !important; /* Morado */
-    border-left-color: #7c3aed !important;
-}
-
-.event-instructor-5 {
-    background-color: #ef4444 !important; /* Rojo */
-    border-left-color: #dc2626 !important;
-}
-
-/* Estilo para mensaje de no eventos */
-#no-events-message {
-    background-color: rgba(236, 245, 255, 0.8);
-    border: 1px solid #bcd6ff;
-    color: #3a6fae;
-    border-radius: 10px;
-    padding: 1.5rem;
-    font-weight: 500;
-    box-shadow: var(--shadow-sm);
-    margin: 2rem 0;
-    animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Clase adicional para la coloración del modal */
-.bg-purple {
-    background-color: #8b5cf6 !important;
-    color: white !important;
-}
         }
     </style>
 </head>
@@ -623,7 +537,10 @@
             <div class="sidebar">
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title">Filtros</h2>
+                        <div class="header-icon">
+                            <i class="bi bi-funnel-fill"></i>
+                            <h2 class="card-title">Filtros</h2>
+                        </div>
                     </div>
                     <div class="card-body">
                         <form id="event-filter-form">
@@ -655,7 +572,15 @@
             <div class="main-content">
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title">Calendario de Eventos</h2>
+                        <div class="header-icon">
+                            <i class="bi bi-calendar-event"></i>
+                            <h2 class="card-title">Calendario de Eventos</h2>
+                        </div>
+                        <!-- Nuevo elemento para mostrar la fecha y hora colombiana -->
+                        <div id="colombia-datetime" class="colombia-time">
+                            <i class="bi bi-clock"></i>
+                            <span id="current-time">Cargando...</span>
+                        </div>
                     </div>
                     <div class="card-body">
                         <!-- Botón para móviles -->
@@ -690,42 +615,6 @@
     
     <!-- Importante: Añadir un parámetro de versión para evitar problemas de caché -->
     <script src='{% static "js/calendar.js" %}?v={% now "U" %}'></script>
-
-    <!-- Script para manejo de filtros responsivos -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Manejo de filtros en modo móvil
-            const toggleFilters = document.getElementById('toggleFilters');
-            const filterForm = document.getElementById('event-filter-form');
-            
-            if (toggleFilters) {
-                toggleFilters.addEventListener('click', function() {
-                    const isExpanded = toggleFilters.getAttribute('aria-expanded') === 'true';
-                    toggleFilters.setAttribute('aria-expanded', !isExpanded);
-                    
-                    if (window.innerWidth <= 992) {
-                        if (!isExpanded) {
-                            // Mostrar filtros
-                            filterForm.classList.add('show');
-                        } else {
-                            // Ocultar filtros
-                            filterForm.classList.remove('show');
-                        }
-                    }
-                });
-            }
-            
-            // Manejar cambios de tamaño de ventana
-            window.addEventListener('resize', function() {
-                if (window.innerWidth > 992) {
-                    filterForm.classList.remove('show');
-                    if (toggleFilters) {
-                        toggleFilters.setAttribute('aria-expanded', 'false');
-                    }
-                }
-            });
-        });
-    </script>
 </body>
 
 </html>

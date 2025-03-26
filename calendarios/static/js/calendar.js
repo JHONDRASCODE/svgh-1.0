@@ -1,7 +1,66 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // ----- CÓDIGO DEL CALENDARIO SENA -----
     const request = '/calendarios/get_all_events/';
     const calendarEl = document.getElementById('calendar');
     let allEvents = [];
+
+    // Función para obtener la hora y fecha de Colombia (UTC-5)
+    function getColombiaDateTime() {
+        // Crear un objeto Date con la hora actual
+        const now = new Date();
+        
+        // Colombia está en UTC-5
+        const colombiaOffset = -5 * 60; // Offset en minutos
+        
+        // Obtener el offset actual en minutos
+        const localOffset = now.getTimezoneOffset();
+        
+        // Calcular la diferencia entre la hora local y la hora de Colombia
+        const offsetDiff = localOffset + colombiaOffset;
+        
+        // Ajustar la hora al tiempo de Colombia
+        const colombiaTime = new Date(now.getTime() + offsetDiff * 60 * 1000);
+        
+        return colombiaTime;
+    }
+
+    // Función para actualizar la hora y fecha de Colombia
+    function updateColombiaTime() {
+        // Opciones para formatear la fecha y hora
+        const dateOptions = { 
+            weekday: 'long',
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric'
+        };
+        
+        const timeOptions = {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        };
+        
+        // Obtener la fecha y hora de Colombia
+        const colombiaDateTime = getColombiaDateTime();
+        
+        // Formatear la fecha y hora 
+        const dateStr = colombiaDateTime.toLocaleDateString('es-CO', dateOptions);
+        const timeStr = colombiaDateTime.toLocaleTimeString('es-CO', timeOptions);
+        
+        // Formatear con primera letra mayúscula
+        const formattedDate = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+        
+        // Actualizar el elemento HTML
+        const timeElement = document.getElementById('current-time');
+        if (timeElement) {
+            timeElement.textContent = `${formattedDate} - ${timeStr}`;
+        }
+    }
+    
+    // Actualizar inmediatamente y luego cada segundo
+    updateColombiaTime();
+    setInterval(updateColombiaTime, 1000);
 
     // Cargar opciones de los filtros desde la misma API
     function loadFilterOptions() {
@@ -116,17 +175,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Agregar una clase base para todos los eventos
                 info.el.classList.add('custom-event');
                 
-                // Asignar clase según ID del instructor
+                // Asignar clase según ID del instructor (Actualizado para usar colores SENA)
                 if (instructorId % 5 === 0) {
-                    info.el.classList.add('event-instructor-1'); // Azul
+                    info.el.classList.add('event-instructor-1'); // Verde SENA principal
                 } else if (instructorId % 5 === 1) {
-                    info.el.classList.add('event-instructor-2'); // Verde
+                    info.el.classList.add('event-instructor-2'); // Verde más claro
                 } else if (instructorId % 5 === 2) {
-                    info.el.classList.add('event-instructor-3'); // Naranja
+                    info.el.classList.add('event-instructor-3'); // Verde medio
                 } else if (instructorId % 5 === 3) {
-                    info.el.classList.add('event-instructor-4'); // Morado
+                    info.el.classList.add('event-instructor-4'); // Verde oscuro
                 } else {
-                    info.el.classList.add('event-instructor-5'); // Rojo
+                    info.el.classList.add('event-instructor-5'); // Verde menta
                 }
             }
         },
@@ -178,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         calendar.setOption('slotMaxTime', maxTime);
     }
 
-    // Función mejorada para mostrar el modal con detalles del evento
+    // Función mejorada para mostrar el modal con detalles del evento (Actualizada para usar colores SENA)
     function showEventModal(clickInfo) {
         const { title, extendedProps } = clickInfo.event;
         console.log("Evento clickeado:", clickInfo.event);
@@ -204,32 +263,32 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
         
-        // Determinar color para la cabecera según tipo de evento
-        let headerColor = "#4361ee"; // Color por defecto
-        let badgeClass = "bg-primary";
+        // Determinar color para la cabecera según tipo de evento (Actualizado para usar colores SENA)
+        let headerColor = "#39B54A"; // Color SENA por defecto
+        let badgeClass = "bg-success";
         
-        // Personalizar color según tipo de evento (puedes ajustar estos valores)
+        // Personalizar color según tipo de evento (Actualizado para usar tonos verdes)
         if (extendedProps.id_instructor) {
             const instructorId = parseInt(extendedProps.id_instructor);
             if (instructorId % 5 === 0) {
-                headerColor = "#4361ee"; // Azul
-                badgeClass = "bg-primary";
+                headerColor = "#39B54A"; // Verde SENA principal
+                badgeClass = "bg-success";
             } else if (instructorId % 5 === 1) {
-                headerColor = "#10b981"; // Verde
+                headerColor = "#34A853"; // Verde más claro
                 badgeClass = "bg-success";
             } else if (instructorId % 5 === 2) {
-                headerColor = "#f59e0b"; // Naranja
-                badgeClass = "bg-warning text-dark";
+                headerColor = "#138A48"; // Verde medio
+                badgeClass = "bg-success";
             } else if (instructorId % 5 === 3) {
-                headerColor = "#8b5cf6"; // Morado
-                badgeClass = "bg-purple";
+                headerColor = "#0E8749"; // Verde oscuro
+                badgeClass = "bg-success";
             } else {
-                headerColor = "#ef4444"; // Rojo
-                badgeClass = "bg-danger";
+                headerColor = "#38B87C"; // Verde menta
+                badgeClass = "bg-success";
             }
         }
         
-        // HTML mejorado del modal
+        // HTML mejorado del modal (Actualizado para usar colores SENA)
         const eventDetails = `
             <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -243,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="modal-body p-4">
                             <div class="d-flex align-items-center mb-4">
                                 <div class="calendar-icon rounded bg-light p-3 me-3 text-center">
-                                    <i class="bi bi-calendar-event fs-3 text-primary"></i>
+                                    <i class="bi bi-calendar-event fs-3" style="color: ${headerColor};"></i>
                                 </div>
                                 <div>
                                     <h6 class="mb-0 text-muted fw-normal">Fecha del evento</h6>
@@ -280,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             
                             <div class="instructor-info border-top border-bottom py-3 my-3">
                                 <div class="d-flex align-items-center">
-                                    <div class="instructor-avatar rounded-circle bg-primary text-white p-3 me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <div class="instructor-avatar rounded-circle text-white p-3 me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: ${headerColor};">
                                         <span class="fw-bold fs-5">${extendedProps.instructor ? extendedProps.instructor.charAt(0).toUpperCase() : 'I'}</span>
                                     </div>
                                     <div>
@@ -330,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Funciones para mostrar/ocultar mensaje cuando no hay eventos
+    // Funciones para mostrar/ocultar mensaje cuando no hay eventos (Actualizado para estilo SENA)
     function showNoEventsMessage() {
         // Verificar si ya existe el mensaje
         let noEventsMsg = document.getElementById('no-events-message');
@@ -339,7 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Crear el mensaje si no existe
             noEventsMsg = document.createElement('div');
             noEventsMsg.id = 'no-events-message';
-            noEventsMsg.className = 'alert alert-info mt-4 text-center';
+            noEventsMsg.className = 'mt-4 text-center';
             noEventsMsg.innerHTML = `
                 <i class="bi bi-info-circle me-2"></i>
                 <span>No hay eventos visibles. Utilice los filtros para visualizar eventos.</span>
@@ -485,6 +544,37 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     } else {
         console.error('Botón "clearFilters" no encontrado');
+    }
+
+    // Configuración del manejo de filtros responsivo
+    const toggleFilters = document.getElementById('toggleFilters');
+    const filterForm = document.getElementById('event-filter-form');
+    
+    if (toggleFilters && filterForm) {
+        toggleFilters.addEventListener('click', function() {
+            const isExpanded = toggleFilters.getAttribute('aria-expanded') === 'true';
+            toggleFilters.setAttribute('aria-expanded', !isExpanded);
+            
+            if (window.innerWidth <= 992) {
+                if (!isExpanded) {
+                    // Mostrar filtros
+                    filterForm.classList.add('show');
+                } else {
+                    // Ocultar filtros
+                    filterForm.classList.remove('show');
+                }
+            }
+        });
+        
+        // Manejar cambios de tamaño de ventana
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 992) {
+                filterForm.classList.remove('show');
+                if (toggleFilters) {
+                    toggleFilters.setAttribute('aria-expanded', 'false');
+                }
+            }
+        });
     }
 
     // Inicialización
