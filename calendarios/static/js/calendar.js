@@ -1,32 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ----- CÓDIGO DEL CALENDARIO SENA -----
-    const request = '/calendarios/get_all_events/';
+    // IMPORTANTE: Asegúrate de que esta ruta sea correcta y coincida con tu configuración de URLs en Django
+    const baseApiUrl = '/calendarios/get_all_events/';
     const calendarEl = document.getElementById('calendar');
     let allEvents = [];
-
+    
     // Función para obtener la hora y fecha de Colombia (UTC-5)
     function getColombiaDateTime() {
-        // Crear un objeto Date con la hora actual
         const now = new Date();
-        
-        // Colombia está en UTC-5
-        const colombiaOffset = -5 * 60; // Offset en minutos
-        
-        // Obtener el offset actual en minutos
+        const colombiaOffset = -5 * 60;
         const localOffset = now.getTimezoneOffset();
-        
-        // Calcular la diferencia entre la hora local y la hora de Colombia
         const offsetDiff = localOffset + colombiaOffset;
-        
-        // Ajustar la hora al tiempo de Colombia
         const colombiaTime = new Date(now.getTime() + offsetDiff * 60 * 1000);
-        
         return colombiaTime;
     }
 
     // Función para actualizar la hora y fecha de Colombia
     function updateColombiaTime() {
-        // Opciones para formatear la fecha y hora
         const dateOptions = { 
             weekday: 'long',
             year: 'numeric', 
@@ -41,17 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
             hour12: true
         };
         
-        // Obtener la fecha y hora de Colombia
         const colombiaDateTime = getColombiaDateTime();
-        
-        // Formatear la fecha y hora 
         const dateStr = colombiaDateTime.toLocaleDateString('es-CO', dateOptions);
         const timeStr = colombiaDateTime.toLocaleTimeString('es-CO', timeOptions);
-        
-        // Formatear con primera letra mayúscula
         const formattedDate = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
         
-        // Actualizar el elemento HTML
         const timeElement = document.getElementById('current-time');
         if (timeElement) {
             timeElement.textContent = `${formattedDate} - ${timeStr}`;
@@ -62,24 +46,96 @@ document.addEventListener('DOMContentLoaded', () => {
     updateColombiaTime();
     setInterval(updateColombiaTime, 1000);
 
-    // Cargar opciones de los filtros desde la misma API
-    function loadFilterOptions() {
-        fetch(request)  // Usar la misma URL que para cargar eventos
-            .then(response => response.json())
-            .then(data => {
-                // Asegurarse de que data.events existe
-                const events = data.events || [];
-                console.log("Datos de eventos para filtros:", events);
-                
-                // Poblar los selectores con opciones únicas
-                populateFilter('instructorFilter', events, 'id_instructor', 'instructor');
-                populateFilter('programaFilter', events, 'id_programa', 'programa');
-                populateFilter('locationFilter', events, 'id_ambiente', 'ambiente');
-            })
-            .catch(error => console.error('Error al cargar los filtros:', error));
+    // Función para mostrar mensaje inicial - MODIFICADA PARA NO HACER NADA
+    function showInitialMessage() {
+        // Función vacía para evitar que se muestre el mensaje
+        return;
     }
 
-    // Función para poblar las opciones de los filtros
+    // Función para ocultar mensaje inicial
+    function hideInitialMessage() {
+        const initialMsg = document.getElementById('initial-message');
+        if (initialMsg) {
+            initialMsg.style.display = 'none';
+        }
+    }
+
+    // Función mejorada para cargar eventos pero NO mostrarlos automáticamente
+    function loadAllEvents() {
+        // Mostrar indicador de carga
+        const loadingIndicator = document.getElementById('loading-indicator');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'block';
+        }
+        
+        console.log("Cargando todos los eventos desde:", baseApiUrl);
+        
+        // Realizar la petición sin parámetros de rango para obtener todos los eventos
+        fetch(baseApiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Datos recibidos del servidor:", data);
+                
+                if (!data || !data.events) {
+                    console.error('Formato de datos incorrecto:', data);
+                    if (loadingIndicator) {
+                        loadingIndicator.style.display = 'none';
+                    }
+                    return;
+                }
+                
+                // Transformar eventos al formato de FullCalendar
+                allEvents = data.events.map(event => ({
+                    id: `${event.id_programa}-${event.id_instructor}-${event.id_ambiente}-${new Date(event.startDate).getTime()}`,
+                    title: event.programa,
+                    start: event.startDate,
+                    end: event.endDate,
+                    extendedProps: {
+                        id_instructor: event.id_instructor,
+                        instructor: event.instructor,
+                        id_ambiente: event.id_ambiente,
+                        ambiente: event.ambiente,
+                        competencia: event.competencia,
+                        id_programa: event.id_programa,
+                    },
+                }));
+                
+                console.log(`${allEvents.length} eventos cargados y mapeados`);
+                
+                // Poblar los filtros con los datos recibidos
+                populateFilters(data.events);
+                
+                // MODIFICADO: No mostrar mensaje inicial
+                // showInitialMessage();
+                
+                // Ocultar indicador de carga
+                if (loadingIndicator) {
+                    loadingIndicator.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error al cargar eventos:', error);
+                // Ocultar indicador de carga en caso de error
+                if (loadingIndicator) {
+                    loadingIndicator.style.display = 'none';
+                }
+            });
+    }
+
+    // Función para poblar todos los filtros a la vez
+    function populateFilters(events) {
+        console.log("Poblando filtros con eventos:", events.length);
+        populateFilter('instructorFilter', events, 'id_instructor', 'instructor');
+        populateFilter('programaFilter', events, 'id_programa', 'programa');
+        populateFilter('locationFilter', events, 'id_ambiente', 'ambiente');
+    }
+
+    // Función para poblar las opciones de un filtro específico
     function populateFilter(filterId, data, idKey, textKey) {
         const filterElement = document.getElementById(filterId);
         if (!filterElement) {
@@ -96,9 +152,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const uniqueValues = new Set();
         const uniqueItems = [];
 
-        // Filtrar elementos únicos
+        // Filtrar elementos únicos que tengan valores válidos
         data.forEach(item => {
-            if (item[idKey] && !uniqueValues.has(item[idKey])) {
+            if (item[idKey] && !uniqueValues.has(item[idKey]) && item[textKey]) {
                 uniqueValues.add(item[idKey]);
                 uniqueItems.push(item);
             }
@@ -153,6 +209,25 @@ document.addEventListener('DOMContentLoaded', () => {
         slotMaxTime: '19:00:00', // Terminar a las 7 PM por defecto
         slotDuration: '01:00:00', // Duración de cada slot (1 hora)
         
+        // Mejoras para evitar amontonamiento
+        eventMaxStack: 3,        // Limita el número de eventos apilados
+        moreLinkClick: 'popover', // Muestra popup al hacer clic en "más eventos"
+        dayMaxEvents: true,      // Muestra link "+más" cuando hay muchos eventos
+        
+        // Ajustes específicos para vista de semana para mejorar la visualización
+        views: {
+            timeGridWeek: {
+                eventMinHeight: 22,           // Altura mínima del evento
+                slotEventOverlap: false,      // Evita superposición
+                slotDuration: '00:30:00',     // Duración de slots de 30 minutos
+                slotLabelInterval: '01:00:00' // Etiquetas de hora cada hora
+            },
+            timeGridDay: {
+                eventMinHeight: 25,          // Eventos más altos en vista diaria
+                slotEventOverlap: false      // Sin superposición
+            }
+        },
+        
         // Eventos del calendario para manejar la visualización
         viewDidMount: function(arg) {
             // Ajustar horas visibles después de que la vista haya sido montada
@@ -168,6 +243,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Colorear eventos según su tipo
         eventDidMount: function(info) {
+            // Asegura que el texto se corte con elipsis
+            info.el.style.overflow = 'hidden';
+            info.el.style.textOverflow = 'ellipsis';
+            info.el.style.whiteSpace = 'nowrap';
+            
             // Determinar color según instructor
             if (info.event.extendedProps.id_instructor) {
                 const instructorId = parseInt(info.event.extendedProps.id_instructor);
@@ -187,6 +267,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     info.el.classList.add('event-instructor-5'); // Verde menta
                 }
+            }
+            
+            // Añadir tooltip para ver información completa al pasar el mouse
+            try {
+                new bootstrap.Tooltip(info.el, {
+                    title: info.event.title,
+                    placement: 'top',
+                    trigger: 'hover',
+                    container: 'body'
+                });
+            } catch (error) {
+                console.log("Tooltip no disponible", error);
             }
         },
         
@@ -237,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
         calendar.setOption('slotMaxTime', maxTime);
     }
 
-    // Función mejorada para mostrar el modal con detalles del evento (Actualizada para usar colores SENA)
+    // Función mejorada para mostrar el modal con detalles del evento
     function showEventModal(clickInfo) {
         const { title, extendedProps } = clickInfo.event;
         console.log("Evento clickeado:", clickInfo.event);
@@ -288,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        // HTML mejorado del modal (Actualizado para usar colores SENA)
+        // HTML mejorado del modal
         const eventDetails = `
             <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -389,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Funciones para mostrar/ocultar mensaje cuando no hay eventos (Actualizado para estilo SENA)
+    // Funciones para mostrar/ocultar mensaje cuando no hay eventos
     function showNoEventsMessage() {
         // Verificar si ya existe el mensaje
         let noEventsMsg = document.getElementById('no-events-message');
@@ -398,10 +490,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Crear el mensaje si no existe
             noEventsMsg = document.createElement('div');
             noEventsMsg.id = 'no-events-message';
-            noEventsMsg.className = 'mt-4 text-center';
+            noEventsMsg.className = 'mt-4 text-center p-4 bg-light rounded shadow-sm';
             noEventsMsg.innerHTML = `
-                <i class="bi bi-info-circle me-2"></i>
-                <span>No hay eventos visibles. Utilice los filtros para visualizar eventos.</span>
+                <i class="bi bi-info-circle me-2 text-warning"></i>
+                <span>No hay eventos que coincidan con los filtros seleccionados.</span>
             `;
             
             // Insertar después del calendario
@@ -413,6 +505,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Mostrar si ya existe
             noEventsMsg.style.display = 'block';
         }
+        
+        // Ocultar mensaje inicial si está visible
+        hideInitialMessage();
     }
 
     function hideNoEventsMessage() {
@@ -422,93 +517,68 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Cargar eventos pero iniciar con calendario vacío
-    function loadEvents() {
-        console.log("Cargando eventos desde:", request);
-        fetch(request)
-            .then(response => response.json())
-            .then(data => {
-                console.log("Datos recibidos:", data);
-                
-                if (!data || !data.events) {
-                    console.error('Formato de datos incorrecto:', data);
-                    return;
-                }
-                
-                allEvents = data.events.map(event => ({
-                    id: `${event.id_programa}-${event.id_instructor}-${event.id_ambiente}-${new Date(event.startDate).getTime()}`,
-                    title: event.programa,
-                    start: event.startDate,
-                    end: event.endDate,
-                    extendedProps: {
-                        id_instructor: event.id_instructor,
-                        instructor: event.instructor,
-                        id_ambiente: event.id_ambiente,
-                        ambiente: event.ambiente,
-                        competencia: event.competencia,
-                        id_programa: event.id_programa,
-                    },
-                }));
-                
-                console.log(`${allEvents.length} eventos cargados y mapeados`);
-                
-                // Iniciar con calendario vacío
-                calendar.removeAllEvents();
-                // No agregamos eventos inicialmente
-                
-                // Mostrar mensaje de que no hay eventos visibles
-                showNoEventsMessage();
-            })
-            .catch(error => {
-                console.error('Error al cargar eventos:', error);
-            });
-    }
-
     // Filtrar eventos según los filtros seleccionados
     function filterEvents() {
-        const filters = ['instructorFilter', 'programaFilter', 'locationFilter'].map(id => {
-            const element = document.getElementById(id);
-            if (!element) {
-                console.error(`Elemento de filtro no encontrado: ${id}`);
-                return { id, value: '' };
-            }
-            return element;
-        });
+        const instructorFilter = document.getElementById('instructorFilter');
+        const programaFilter = document.getElementById('programaFilter');
+        const locationFilter = document.getElementById('locationFilter');
         
+        // Verificar si los elementos existen
+        if (!instructorFilter || !programaFilter || !locationFilter) {
+            console.error("No se encontraron elementos de filtro");
+            return;
+        }
+        
+        // Verificar si hay algún filtro activo
+        const instructorValue = instructorFilter.value;
+        const programaValue = programaFilter.value;
+        const locationValue = locationFilter.value;
+        
+        const hasActiveFilters = instructorValue || programaValue || locationValue;
+        
+        // Limpiar el calendario de eventos
+        calendar.removeAllEvents();
+        
+        // Si no hay filtros activos, mantener el calendario vacío
+        // MODIFICADO: Eliminada llamada a showInitialMessage()
+        if (!hasActiveFilters) {
+            console.log("No hay filtros activos. No mostrando eventos.");
+            hideNoEventsMessage();
+            return;
+        }
+        
+        // Aplicar filtros
         const filteredEvents = allEvents.filter(event => {
-            return filters.every(filter => {
-                // Determinar la clave correcta basada en el ID del filtro
-                let filterKey;
-                if (filter.id === 'instructorFilter') {
-                    filterKey = 'id_instructor';
-                } else if (filter.id === 'programaFilter') {
-                    filterKey = 'id_programa';
-                } else if (filter.id === 'locationFilter') {
-                    filterKey = 'id_ambiente';
-                } else {
-                    return true; // Si no reconocemos el filtro, no filtramos
-                }
-                
-                // Si no hay valor seleccionado, no filtramos
-                if (!filter.value) return true;
-                
-                // Comparar el valor del filtro con el valor en el evento
-                return event.extendedProps[filterKey] == filter.value;
-            });
+            // Filtro de instructor
+            if (instructorValue && event.extendedProps.id_instructor != instructorValue) {
+                return false;
+            }
+            
+            // Filtro de programa
+            if (programaValue && event.extendedProps.id_programa != programaValue) {
+                return false;
+            }
+            
+            // Filtro de ambiente
+            if (locationValue && event.extendedProps.id_ambiente != locationValue) {
+                return false;
+            }
+            
+            return true;
         });
         
         console.log(`Filtrando eventos: ${filteredEvents.length} de ${allEvents.length} coinciden`);
         
-        calendar.removeAllEvents();
-        calendar.addEventSource(filteredEvents);
+        // Ocultar mensaje inicial ya que hay filtros aplicados
+        hideInitialMessage();
         
-        // Mostrar mensaje si no hay eventos después de filtrar
-        if (filteredEvents.length === 0) {
-            showNoEventsMessage();
-        } else {
+        // Actualizar eventos en el calendario
+        if (filteredEvents.length > 0) {
+            calendar.addEventSource(filteredEvents);
             hideNoEventsMessage();
-            // Ajustar rango de horas después de filtrar
             setTimeout(() => adjustHoursToEvents(), 300);
+        } else {
+            showNoEventsMessage();
         }
     }
 
@@ -522,7 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Limpiar filtros - Versión actualizada que deja el calendario vacío
+    // Limpiar filtros
     const clearFiltersBtn = document.getElementById('clearFilters');
     if (clearFiltersBtn) {
         clearFiltersBtn.addEventListener('click', () => {
@@ -534,13 +604,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
             
-            // Vaciar el calendario en lugar de mostrar todos los eventos
+            // Limpiar calendario
             calendar.removeAllEvents();
             
-            // Mostrar el mensaje de que no hay eventos visibles
-            showNoEventsMessage();
+            // MODIFICADO: No mostrar mensaje inicial
+            // showInitialMessage();
+            hideNoEventsMessage();
             
-            console.log('Filtros limpiados - Calendario vacío');
+            console.log('Filtros limpiados - Calendario limpio, esperando selección de filtros');
         });
     } else {
         console.error('Botón "clearFilters" no encontrado');
@@ -578,12 +649,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Inicialización
-    loadFilterOptions(); // Cargar las opciones de los filtros
-    loadEvents();        // Cargar los eventos (pero no mostrarlos)
     calendar.render();    // Renderizar el calendario
     
-    // Recargar eventos cada 5 minutos para mantener el calendario actualizado
-    setInterval(loadEvents, 300000);
+    // Cargar todos los eventos pero no mostrarlos hasta que se usen filtros
+    loadAllEvents();
     
-    console.log('Calendario inicializado correctamente con inicio vacío');
+    console.log('Calendario inicializado en modo "filtrar primero"');
 });

@@ -3,371 +3,576 @@
 
 {% block extra_css %}
 <style>
-    /* Estilos para la card */
-    .card {
-        border: none;
-        border-radius: 15px;
-        overflow: hidden;
-    }
+/* Variables para colores y transiciones */
+:root {
+    --color-success: #28a745;
+    --color-success-hover: #218838;
+    --color-success-light: rgba(40, 167, 69, 0.05);
+    --color-success-lighter: rgba(40, 167, 69, 0.02);
+    --color-danger: #dc3545;
+    --color-warning: #ffc107;
+    --color-gray: #6c757d;
+    --color-gray-light: #dee2e6;
+    --color-gray-lighter: #f8f9fa;
+    --border-radius: 15px;
+    --transition-default: all 0.3s ease;
+}
 
-    .card-header {
-        border-bottom: 0;
-        border-radius: 15px 15px 0 0 !important;
-    }
+/* Estilos para la card principal */
+.card {
+    border: none;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.07) !important;
+    transition: var(--transition-default);
+    border-radius: 15px;
+    overflow: hidden;
+}
 
+.card:hover {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+.card-header {
+    border-bottom: 0;
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.card-body {
+    background-color: #fff;
+    border-radius: 0 0 15px 15px;
+    padding: 2rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+/* Estilos para la búsqueda */
+.search-container {
+    position: relative;
+    max-width: 100%;
+    transition: var(--transition-default);
+}
+
+.search-form {
+    width: 100%;
+}
+
+.search-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.custom-search-input {
+    width: 100%;
+    padding: 12px 45px 12px 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 50px;
+    font-size: 14px;
+    transition: var(--transition-default);
+    background: white;
+    outline: none;
+}
+
+.custom-search-input:focus {
+    border-color: var(--color-success);
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+}
+
+.search-btn {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--color-success);
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: var(--transition-default);
+}
+
+.search-btn:hover,
+.search-btn:focus {
+    background: var(--color-success-hover);
+    transform: translateY(-50%) scale(1.05);
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+    outline: none;
+}
+
+.clear-btn {
+    position: absolute;
+    right: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--color-gray);
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-default);
+}
+
+.clear-btn:hover,
+.clear-btn:focus {
+    color: var(--color-danger);
+    outline: none;
+}
+
+/* Eliminar todas las decoraciones del navegador */
+.custom-search-input::-webkit-search-decoration,
+.custom-search-input::-webkit-search-cancel-button,
+.custom-search-input::-webkit-search-results-button,
+.custom-search-input::-webkit-search-results-decoration,
+.custom-search-input::-ms-clear,
+.custom-search-input::-ms-reveal {
+    display: none;
+}
+
+.custom-search-input:-webkit-autofill,
+.custom-search-input:-webkit-autofill:hover,
+.custom-search-input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Estilos para la tabla */
+.table-container {
+    border: 1px solid var(--color-gray-light);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+}
+
+.table-responsive {
+    border-radius: 12px;
+    margin-top: 1rem;
+    overflow: hidden;
+    max-height: 70vh;
+    position: relative;
+    border: 2px solid #dee2e6;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    border-bottom: 2px solid var(--color-gray-light);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #495057;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    background-color: var(--color-gray-lighter);
+    z-index: 1;
+    padding: 1rem 1.25rem;
+    text-align: center;
+}
+
+.table tbody td {
+    border-bottom: 1px solid var(--color-gray-light);
+    font-size: 0.95rem;
+    vertical-align: middle;
+    padding: 1rem 1.25rem;
+    text-align: center;
+}
+
+/* Quitar el borde inferior de la última fila */
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Mejorar hover en las filas */
+.table-hover tbody tr:hover {
+    background-color: var(--color-success-light);
+    transition: background-color 0.2s ease;
+}
+
+/* Botones de acción */
+.action-buttons .btn {
+    padding: 0.4rem 0.75rem;
+    transition: var(--transition-default);
+    margin: 0;
+    border-color: var(--color-gray-light);
+}
+
+.action-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+}
+
+.btn-outline-success:hover {
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+    color: white;
+}
+
+.btn-outline-danger:hover {
+    background-color: var(--color-danger);
+    border-color: var(--color-danger);
+    color: white;
+}
+
+/* Estilos para alertas y mensajes */
+.alert {
+    border: none;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.alert-success {
+    background-color: #e6f7e9;
+    color: #28a745;
+    border-left: 4px solid #28a745;
+}
+
+.alert-danger {
+    background-color: #fff2f2;
+    color: #dc3545;
+    border-left: 4px solid #dc3545;
+}
+
+.alert-warning {
+    background-color: #fff8e1;
+    color: #856404;
+    border-left: 4px solid #ffc107;
+}
+
+/* Estado vacío */
+.empty-state-container {
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: var(--color-success-lighter);
+    color: var(--color-success);
+}
+
+/* Animación para filas */
+.fade-in {
+    opacity: 0;
+    animation: fadeInRow 0.5s ease forwards;
+}
+
+@keyframes fadeInRow {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilos para tooltip mejorado */
+.tooltip .tooltip-inner {
+    background-color: #343a40;
+    color: white;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.tooltip.bs-tooltip-top .tooltip-arrow::before {
+    border-top-color: #343a40;
+}
+
+/* Estilos para ordenamiento de columnas */
+.sort-icon {
+    cursor: pointer;
+    opacity: 0.5;
+    transition: var(--transition-default);
+}
+
+.sort-icon:hover {
+    opacity: 1;
+    color: var(--color-success);
+}
+
+/* Estilos para ordenamiento activo */
+.bi-arrow-down, .bi-arrow-up {
+    opacity: 1;
+    color: var(--color-success);
+}
+
+/* Estilos para SweetAlert2 */
+.swal2-popup {
+    border-radius: 15px !important;
+    padding: 2rem;
+}
+
+.swal2-title {
+    color: #333 !important;
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+}
+
+.swal2-html-container {
+    font-size: 1rem !important;
+    margin-top: 1rem !important;
+}
+
+.swal2-icon {
+    margin: 1.5rem auto !important;
+}
+
+.swal2-actions {
+    margin-top: 1.5rem !important;
+}
+
+.swal2-confirm, .swal2-cancel {
+    padding: 0.5rem 1.5rem !important;
+    font-weight: 500 !important;
+    border-radius: 4px !important;
+}
+
+.swal2-styled.swal2-confirm {
+    background-color: var(--color-success) !important;
+    border-color: var(--color-success) !important;
+}
+
+.swal2-styled.swal2-confirm:hover {
+    background-color: var(--color-success-hover) !important;
+    border-color: var(--color-success-hover) !important;
+}
+
+.swal2-styled.swal2-cancel {
+    background-color: var(--color-gray) !important;
+    border-color: var(--color-gray) !important;
+}
+
+.swal2-styled.swal2-cancel:hover {
+    background-color: #5a6268 !important;
+    border-color: #545b62 !important;
+}
+
+.swal2-loader {
+    border-color: var(--color-success) transparent var(--color-success) transparent !important;
+}
+
+/* Transición común para elementos interactivos */
+.transition {
+    transition: var(--transition-default);
+}
+
+/* Mejoras de accesibilidad - estado focus visible */
+.btn:focus-visible,
+.form-control:focus-visible,
+.sort-icon:focus-visible {
+    outline: 3px solid rgba(40, 167, 69, 0.4);
+    outline-offset: 2px;
+}
+
+/* Mejoras responsive */
+@media (max-width: 992px) {
+    .search-container {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
     .card-body {
-        border-radius: 0 0 15px 15px;
-        padding: 2rem;
-        background-color: #fff;
-        box-shadow: 0 0 20px rgba(0,0,0,0.05);
-    }
-
-    /* Ajuste para la tabla dentro de la card */
-    .table-responsive {
-        border-radius: 12px;
-        margin-top: 1rem;
-        overflow: hidden;
-    }
-
-    /* Mantener los estilos existentes de la tabla */
-    .table {
-        border: 2px solid #dee2e6;
-        border-radius: 12px;
-        overflow: hidden;
-        margin-bottom: 0;
-    }
-
-    .table thead th {
-        border-bottom: 2px solid #dee2e6;
-        background-color: #f8f9fa;
-        font-weight: 600;
-        font-size: 0.9rem;
-        color: #495057;
-        padding: 1.25rem 0.75rem;
-    }
-
-    .table tbody td {
-        border-bottom: 1px solid #dee2e6;
-        font-size: 0.9rem;
-        padding: 1.25rem 0.75rem;
-        vertical-align: middle;
-    }
-
-    /* Quitar el borde inferior de la última fila */
-    .table tbody tr:last-child td {
-        border-bottom: none;
-    }
-
-    /* Hover en las filas */
-    .table-hover tbody tr:hover {
-        background-color: rgba(40, 167, 69, 0.05);
-    }
-
-    /* Estilos para los botones de acción */
-    .btn-group .btn {
-        padding: 0.375rem 0.75rem;
-        transition: all 0.3s ease;
-    }
-
-    .btn-outline-success {
-        color: #28a745;
-        border-color: #28a745;
-    }
-
-    .btn-outline-success:hover {
-        background-color: #28a745;
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.15);
-    }
-
-    .btn-outline-danger {
-        color: #dc3545;
-        border-color: #dc3545;
-    }
-
-    .btn-outline-danger:hover {
-        background-color: #dc3545;
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.15);
-    }
-
-    /* Estilos para el formulario de búsqueda */
-    .search-form {
-        width: 100%;
-    }
-
-    .search-wrapper {
-        position: relative;
-        width: 100%;
-        display: flex;
-        align-items: center;
-    }
-
-    .custom-search-input {
-        width: 100%;
-        padding: 12px 45px 12px 20px;
-        border: 2px solid #e0e0e0;
-        border-radius: 50px;
-        font-size: 14px;
-        transition: all 0.3s ease;
-        background: white;
-        outline: none;
-    }
-
-    .custom-search-input:focus {
-        border-color: #28a745;
-        box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
-    }
-
-    .search-btn {
-        position: absolute;
-        right: 5px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: #28a745;
-        border: none;
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .search-btn:hover {
-        background: #218838;
-        transform: translateY(-50%) scale(1.05);
-    }
-
-    .clear-btn {
-        position: absolute;
-        right: 50px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        color: #6c757d;
-        cursor: pointer;
-        padding: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-    }
-
-    .clear-btn:hover {
-        color: #dc3545;
-    }
-
-    /* Eliminar todas las decoraciones del navegador */
-    .custom-search-input::-webkit-search-decoration,
-    .custom-search-input::-webkit-search-cancel-button,
-    .custom-search-input::-webkit-search-results-button,
-    .custom-search-input::-webkit-search-results-decoration,
-    .custom-search-input::-ms-clear,
-    .custom-search-input::-ms-reveal {
-        display: none;
-    }
-
-    .custom-search-input:-webkit-autofill,
-    .custom-search-input:-webkit-autofill:hover,
-    .custom-search-input:-webkit-autofill:focus {
-        -webkit-box-shadow: 0 0 0px 1000px white inset;
-        transition: background-color 5000s ease-in-out 0s;
-    }
-
-    /* Estilos para alertas y mensajes */
-    .alert {
-        border: none;
-        border-radius: 10px;
-        padding: 1rem;
-        margin-bottom: 1.5rem;
-        font-size: 0.9rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-
-    .alert-success {
-        background-color: #e6f7e9;
-        color: #28a745;
-        border-left: 4px solid #28a745;
-    }
-
-    .alert-danger {
-        background-color: #fff2f2;
-        color: #dc3545;
-        border-left: 4px solid #dc3545;
-    }
-
-    .alert-warning {
-        background-color: #fff8e1;
-        color: #856404;
-        border-left: 4px solid #ffc107;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .card-body {
-            padding: 1.5rem !important;
-        }
-        
-        .table td, .table th {
-            padding: 1rem;
-        }
-        
-        .btn-group .btn {
-            padding: 0.25rem 0.5rem;
-        }
+        padding: 1.5rem !important;
     }
     
-    /* Estilos para SweetAlert2 */
-    .swal2-popup {
-        border-radius: 15px !important;
-        padding: 2rem;
+    .table td, .table th {
+        padding: 0.75rem 1rem;
     }
+    
+    thead {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+    
+    .search-wrapper {
+        margin-bottom: 1rem;
+    }
+    
+    .row.g-3 {
+        flex-direction: column;
+    }
+}
 
-    .swal2-title {
-        color: #333 !important;
-        font-size: 1.5rem !important;
-        font-weight: 600 !important;
+@media (max-width: 576px) {
+    .card-header h2 {
+        font-size: 1.25rem !important;
     }
-
-    .swal2-html-container {
-        font-size: 1rem !important;
-        margin-top: 1rem !important;
+    
+    .empty-state-icon {
+        font-size: 2.5rem;
+        width: 80px;
+        height: 80px;
     }
-
-    .swal2-icon {
-        margin: 1.5rem auto !important;
-    }
-
-    .swal2-actions {
-        margin-top: 1.5rem !important;
-    }
-
-    .swal2-confirm, .swal2-cancel {
-        padding: 0.5rem 1.5rem !important;
-        font-weight: 500 !important;
-        border-radius: 4px !important;
-    }
-
-    /* Loading personalizado */
-    .swal2-loading {
-        border-radius: 50%;
-    }
-
-    .swal2-loader {
-        border-color: #28a745 transparent #28a745 transparent !important;
-    }
-
-    /* Estilos actualizados para SweetAlert2 */
-    .swal2-styled.swal2-confirm {
-        background-color: #28a745 !important;
-        border-color: #28a745 !important;
-    }
-
-    .swal2-styled.swal2-confirm:hover {
-        background-color: #218838 !important;
-        border-color: #1e7e34 !important;
-    }
-
-    .swal2-styled.swal2-cancel {
-        background-color: #6c757d !important;
-        border-color: #6c757d !important;
-    }
-
-    .swal2-styled.swal2-cancel:hover {
-        background-color: #5a6268 !important;
-        border-color: #545b62 !important;
-    }
+}
 </style>
 {% endblock extra_css %}
 
 {% block content %}
 <div class="container mt-5 mb-5">
-    <div class="card shadow">
-        <div class="card-header bg-success text-white py-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2 class="mb-0 fs-4">
-                    <i class="bi bi-award me-2"></i>Competencias
-                </h2>
-                <a href="{% url 'competencia_create' %}" class="btn btn-light">
-                    <i class="bi bi-plus-circle me-2"></i>Nueva Competencia
-                </a>
+    <div class="card shadow rounded-4">
+        <!-- Encabezado con título y botón de nuevo -->
+        <div class="card-header bg-success text-white py-4 rounded-top-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <h1 class="mb-0 fs-4">
+                    <i class="bi bi-award me-2" aria-hidden="true"></i>Competencias
+                </h1>
+                <div class="d-flex gap-2 mt-2 mt-sm-0">
+                    <!-- Filtro de búsqueda para pantallas medianas y grandes -->
+                    <div class="search-container d-none d-md-flex">
+                        <form method="GET" class="position-relative" autocomplete="off">
+                            <input type="text" 
+                                   id="competencia-search" 
+                                   name="q" 
+                                   class="form-control custom-search-input" 
+                                   placeholder="Buscar por código de norma..." 
+                                   value="{{ request.GET.q }}"
+                                   aria-label="Buscar competencia">
+                            {% if request.GET.q %}
+                                <button type="button" class="clear-btn" onclick="window.location.href='{% url 'competencia_list' %}'" aria-label="Limpiar búsqueda">
+                                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                                </button>
+                            {% endif %}
+                            <button type="submit" class="search-btn" aria-label="Buscar">
+                                <i class="bi bi-search" aria-hidden="true"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <!-- Botón para añadir nueva competencia -->
+                    <a href="{% url 'competencia_create' %}" class="btn btn-light rounded-pill transition" aria-label="Crear nueva competencia">
+                        <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>Nueva Competencia
+                    </a>
+                </div>
             </div>
         </div>
 
-        <div class="card-body p-5">
-            <!-- Formulario de búsqueda -->
-            <div class="row g-3 mb-4">
-                <div class="col-md-8">
-                    <form method="GET" class="search-form" autocomplete="off">
-                        <div class="search-wrapper">
+        <div class="card-body p-4 p-md-5">
+            <!-- Controles de búsqueda para móviles -->
+            <div class="d-md-none mb-4">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <form method="GET" class="search-container w-100" autocomplete="off">
                             <input type="text" 
                                    name="q" 
-                                   class="custom-search-input" 
-                                   placeholder="Buscar por código de norma..."
+                                   class="form-control custom-search-input" 
+                                   placeholder="Buscar por código de norma..." 
                                    value="{{ request.GET.q }}"
-                                   autocomplete="off"
-                                   autocorrect="off"
-                                   autocapitalize="off"
-                                   spellcheck="false">
+                                   aria-label="Buscar competencia">
                             {% if request.GET.q %}
-                                <button type="button" class="clear-btn" onclick="window.location.href='{% url 'competencia_list' %}'">
-                                    <i class="bi bi-x-lg"></i>
+                                <button type="button" class="clear-btn" onclick="window.location.href='{% url 'competencia_list' %}'" aria-label="Limpiar búsqueda">
+                                    <i class="bi bi-x-lg" aria-hidden="true"></i>
                                 </button>
                             {% endif %}
-                            <button type="submit" class="search-btn" title="Buscar">
-                                <i class="bi bi-search"></i>
+                            <button type="submit" class="search-btn" aria-label="Buscar">
+                                <i class="bi bi-search" aria-hidden="true"></i>
                             </button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
 
             <!-- Tabla de Competencias -->
-            <div class="table-responsive mb-0">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light">
+            <div class="table-responsive rounded-4 mb-0 table-container">
+                <table class="table table-hover align-middle mb-0" id="competencia-table" aria-label="Listado de competencias">
+                    <thead>
                         <tr>
-                            <th class="py-3 text-center">Nombre</th>
-                            <th class="py-3 text-center">Código Norma</th>
-                            <th class="py-3 text-center">Unidad de Competencia</th>
-                            <th class="py-3 text-center">Duración Estimada (horas)</th>
-                            <th class="py-3 text-center">Resultado de Aprendizaje</th>
-                            <th class="py-3 text-center">Acciones</th>
+                            <th scope="col" class="text-center text-nowrap">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <span>Nombre</span>
+                                    <i class="bi bi-arrow-down-up ms-2 sort-icon" data-column="0" tabindex="0" role="button" aria-label="Ordenar por nombre"></i>
+                                </div>
+                            </th>
+                            <th scope="col" class="text-center text-nowrap">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <span>Código Norma</span>
+                                    <i class="bi bi-arrow-down-up ms-2 sort-icon" data-column="1" tabindex="0" role="button" aria-label="Ordenar por código de norma"></i>
+                                </div>
+                            </th>
+                            <th scope="col" class="text-center text-nowrap">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <span>Unidad de Competencia</span>
+                                    <i class="bi bi-arrow-down-up ms-2 sort-icon" data-column="2" tabindex="0" role="button" aria-label="Ordenar por unidad de competencia"></i>
+                                </div>
+                            </th>
+                            <th scope="col" class="text-center text-nowrap">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <span>Duración Estimada (horas)</span>
+                                    <i class="bi bi-arrow-down-up ms-2 sort-icon" data-column="3" tabindex="0" role="button" aria-label="Ordenar por duración"></i>
+                                </div>
+                            </th>
+                            <th scope="col" class="text-center text-nowrap">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <span>Resultado de Aprendizaje</span>
+                                    <i class="bi bi-arrow-down-up ms-2 sort-icon" data-column="4" tabindex="0" role="button" aria-label="Ordenar por resultado de aprendizaje"></i>
+                                </div>
+                            </th>
+                            <th scope="col" class="text-center text-nowrap">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for competencia in competencias %}
-                        <tr>
-                            <td class="py-3 text-center">{{ competencia.nombre }}</td>
-                            <td class="py-3 text-center">{{ competencia.codigo_norma }}</td>
-                            <td class="py-3 text-center">{{ competencia.unidad_competencia }}</td>
-                            <td class="py-3 text-center">{{ competencia.duracion_estimada }}</td>
-                            <td class="py-3 text-center">{{ competencia.resultado_aprendizaje }}</td>
-                            <td class="text-center py-3">
-                                <div class="btn-group">
-                                    <a href="{% url 'competencia_edit' competencia.pk %}" class="btn btn-sm btn-outline-success">
-                                        <i class="bi bi-pencil-square"></i>
+                        <tr class="competencia-row fade-in" style="animation-delay: {{ forloop.counter0|divisibleby:5 }}00ms">
+                            <td class="text-center">{{ competencia.nombre }}</td>
+                            <td class="text-center">{{ competencia.codigo_norma }}</td>
+                            <td class="text-center">{{ competencia.unidad_competencia }}</td>
+                            <td class="text-center">{{ competencia.duracion_estimada }}</td>
+                            <td class="text-center">{{ competencia.resultado_aprendizaje }}</td>
+                            <td class="text-center">
+                                <div class="btn-group action-buttons">
+                                    <a href="{% url 'competencia_edit' competencia.pk %}" 
+                                       class="btn btn-sm btn-outline-success rounded-start-pill" 
+                                       aria-label="Editar {{ competencia.nombre }}"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-title="Editar">
+                                        <i class="bi bi-pencil-square" aria-hidden="true"></i>
                                     </a>
-                                    <button class="btn btn-sm btn-outline-danger delete-competencia" 
-                                            data-id="{{ competencia.pk }}"
-                                            data-nombre="{{ competencia.nombre }}">
-                                        <i class="bi bi-trash"></i>
+                                    <button class="btn btn-sm btn-outline-danger rounded-end-pill delete-competencia" 
+                                           data-bs-toggle="tooltip"
+                                           data-bs-title="Eliminar"
+                                           data-id="{{ competencia.pk }}"
+                                           data-nombre="{{ competencia.nombre }}"
+                                           aria-label="Eliminar {{ competencia.nombre }}">
+                                        <i class="bi bi-trash" aria-hidden="true"></i>
                                     </button>
                                 </div>
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center py-4 text-muted">
-                                <i class="bi bi-inbox-fill display-4 d-block mb-3"></i>
-                                No hay competencias registradas
+                            <td colspan="6" class="text-center py-5 empty-state">
+                                <div class="empty-state-container">
+                                    <div class="empty-state-icon mb-3">
+                                        <i class="bi bi-award text-success"></i>
+                                    </div>
+                                    <h3 class="fs-5 mb-2">No hay competencias registradas</h3>
+                                    <p class="text-muted mb-4">Crea una nueva competencia para comenzar</p>
+                                    <a href="{% url 'competencia_create' %}" class="btn btn-success rounded-pill transition">
+                                        <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>Nueva Competencia
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
@@ -382,46 +587,201 @@
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Manejador para botones de eliminación individual
+    // Inicializar tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl, {
+            delay: { show: 300, hide: 100 },
+            placement: 'top'
+        });
+    });
+    
+    // Variables
     const deleteButtons = document.querySelectorAll('.delete-competencia');
+    const searchInput = document.getElementById('competencia-search');
+    const sortIcons = document.querySelectorAll('.sort-icon');
+    
+    // Función para confirmar eliminación
+    function confirmDelete(id, nombre) {
+        // Ocultar cualquier tooltip activo
+        tooltipList.forEach(tooltip => tooltip.hide());
+        
+        Swal.fire({
+            title: '¿Estás seguro?',
+            html: `¿Deseas eliminar la competencia <strong>${nombre}</strong>?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true,
+            showLoaderOnConfirm: true,
+            focusConfirm: false,
+            customClass: {
+                container: 'delete-confirm-modal',
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-secondary'
+            },
+            preConfirm: () => {
+                return submitDeleteForm(id);
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        });
+    }
+    
+    // Función para enviar el formulario de eliminación
+    function submitDeleteForm(id) {
+        return new Promise((resolve) => {
+            // Mostrar indicador de carga
+            document.body.classList.add('processing');
+            
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/competencias/${id}/delete/`;
+            
+            const csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = 'csrfmiddlewaretoken';
+            csrf.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            form.appendChild(csrf);
+            document.body.appendChild(form);
+            form.submit();
+        });
+    }
+    
+    // Asignar manejadores de eventos para botones de eliminación
     deleteButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
             const competenciaId = this.getAttribute('data-id');
             const competenciaNombre = this.getAttribute('data-nombre');
             
-            Swal.fire({
-                title: '¿Estás seguro?',
-                html: `¿Deseas eliminar la competencia <strong>${competenciaNombre}</strong>?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#28a745',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar',
-                reverseButtons: true,
-                showLoaderOnConfirm: true,
-                preConfirm: () => {
-                    return new Promise((resolve) => {
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = `/competencias/${competenciaId}/delete/`;
-                        
-                        const csrf = document.createElement('input');
-                        csrf.type = 'hidden';
-                        csrf.name = 'csrfmiddlewaretoken';
-                        csrf.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
-                        
-                        form.appendChild(csrf);
-                        document.body.appendChild(form);
-                        form.submit();
-                    });
-                },
-                allowOutsideClick: () => !Swal.isLoading()
-            });
+            confirmDelete(competenciaId, competenciaNombre);
         });
     });
-
+    
+    // Implementar búsqueda en la tabla
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#competencia-table tbody tr.competencia-row');
+            
+            rows.forEach(row => {
+                let found = false;
+                const cells = row.querySelectorAll('td');
+                
+                cells.forEach((cell, index) => {
+                    if (index < 5) { // Excluir la columna de acciones
+                        if (cell.textContent.toLowerCase().includes(searchTerm)) {
+                            found = true;
+                        }
+                    }
+                });
+                
+                if (found) {
+                    row.classList.remove('d-none');
+                    row.style.display = '';
+                } else {
+                    row.classList.add('d-none');
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Mostrar mensaje si no hay resultados
+            const noResults = document.getElementById('no-results');
+            const visibleRows = document.querySelectorAll('#competencia-table tbody tr.competencia-row:not(.d-none)').length;
+            
+            if (visibleRows === 0 && searchTerm !== '') {
+                if (!noResults) {
+                    const tbody = document.querySelector('#competencia-table tbody');
+                    const noResultsRow = document.createElement('tr');
+                    noResultsRow.id = 'no-results';
+                    noResultsRow.innerHTML = `
+                        <td colspan="6" class="text-center py-4">
+                            <div class="empty-search-results">
+                                <i class="bi bi-search text-muted mb-2"></i>
+                                <p>No se encontraron resultados para "<strong>${searchTerm}</strong>"</p>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(noResultsRow);
+                }
+            } else if (noResults) {
+                noResults.remove();
+            }
+        });
+    }
+    
+    // Implementar ordenamiento de columnas
+    sortIcons.forEach(icon => {
+        icon.addEventListener('click', function() {
+            const column = parseInt(this.getAttribute('data-column'));
+            const table = document.getElementById('competencia-table');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr.competencia-row'));
+            
+            // Cambiar estado de ordenamiento
+            if (this.classList.contains('bi-arrow-down')) {
+                this.classList.replace('bi-arrow-down', 'bi-arrow-up');
+                this.setAttribute('data-order', 'asc');
+            } else if (this.classList.contains('bi-arrow-up')) {
+                this.classList.replace('bi-arrow-up', 'bi-arrow-down-up');
+                this.setAttribute('data-order', 'none');
+            } else {
+                this.classList.replace('bi-arrow-down-up', 'bi-arrow-down');
+                this.setAttribute('data-order', 'desc');
+            }
+            
+            // Restablecer otros iconos
+            sortIcons.forEach(otherIcon => {
+                if (otherIcon !== this) {
+                    otherIcon.classList.replace('bi-arrow-down', 'bi-arrow-down-up');
+                    otherIcon.classList.replace('bi-arrow-up', 'bi-arrow-down-up');
+                    otherIcon.removeAttribute('data-order');
+                }
+            });
+            
+            // Ordenar filas
+            const order = this.getAttribute('data-order');
+            if (order && order !== 'none') {
+                rows.sort((a, b) => {
+                    const aValue = a.cells[column].textContent.trim();
+                    const bValue = b.cells[column].textContent.trim();
+                    
+                    if (order === 'asc') {
+                        return aValue.localeCompare(bValue, 'es', { sensitivity: 'base' });
+                    } else {
+                        return bValue.localeCompare(aValue, 'es', { sensitivity: 'base' });
+                    }
+                });
+                
+                // Vaciar y volver a llenar la tabla con filas ordenadas
+                rows.forEach(row => tbody.appendChild(row));
+            }
+        });
+        
+        // Soporte para teclado en los íconos de ordenamiento
+        icon.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    });
+    
+    // Soporte de accesibilidad para teclado
+    document.querySelectorAll('.btn, a').forEach(element => {
+        element.addEventListener('keydown', function(e) {
+            // Si es Enter o Space en elementos que no son links nativos
+            if ((e.key === 'Enter' || e.key === ' ') && this.tagName !== 'A') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    });
+    
     // Prevenir el historial y sugerencias
     document.querySelector('.custom-search-input').addEventListener('input', function(e) {
         e.target.setAttribute('autocomplete', 'off');

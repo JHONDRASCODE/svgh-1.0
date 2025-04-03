@@ -34,7 +34,7 @@
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             --transition: all 0.3s ease;
         }
-
+        
         /* Estilos generales */
         body {
             font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -42,29 +42,29 @@
             color: #334155;
             line-height: 1.5;
         }
-
+        
         .app-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 1rem;
         }
-
+        
         .calendar-layout {
             display: flex;
             flex-direction: row;
             gap: 1.5rem;
             margin-top: 1.5rem;
         }
-
+        
         .sidebar {
             width: 320px;
             flex-shrink: 0;
         }
-
+        
         .main-content {
             flex-grow: 1;
         }
-
+        
         .card {
             background-color: #fff;
             box-shadow: var(--shadow-md);
@@ -72,7 +72,7 @@
             border: 1px solid var(--border-color);
             height: 100%;
         }
-
+        
         .card-header {
             padding: 1rem 1.5rem;
             border-bottom: 1px solid var(--border-color);
@@ -84,28 +84,28 @@
             border-top-left-radius: 12px;
             border-top-right-radius: 12px;
         }
-
+        
         .card-header .header-icon {
             display: flex;
             align-items: center;
             gap: 0.75rem;
         }
-
+        
         .card-header .header-icon i {
             font-size: 1.25rem;
         }
-
+        
         .card-title {
             font-weight: 700;
             color: white;
             font-size: 1.1rem;
             margin: 0;
         }
-
+        
         .card-body {
             padding: 1.5rem;
         }
-
+        
         /* Toggle para filtros en móvil */
         .filters-toggle {
             display: none;
@@ -121,20 +121,20 @@
             box-shadow: var(--shadow-sm);
             transition: var(--transition);
         }
-
+        
         .filters-toggle:hover {
             background-color: var(--primary-dark);
         }
-
+        
         .filters-toggle-icon {
             margin-left: 8px;
             transition: transform 0.3s;
         }
-
+        
         .filters-toggle[aria-expanded="true"] .filters-toggle-icon {
             transform: rotate(180deg);
         }
-
+        
         /* Formulario de filtros */
         #event-filter-form {
             background-color: var(--primary-light);
@@ -143,11 +143,11 @@
             transition: var(--transition);
             padding: 1.5rem;
         }
-
+        
         #event-filter-form:hover {
             box-shadow: var(--shadow-sm);
         }
-
+        
         .form-label {
             font-weight: 600;
             color: var(--primary-color);
@@ -155,7 +155,7 @@
             margin-bottom: 0.5rem;
             display: block;
         }
-
+        
         .form-select {
             border-radius: 8px;
             border: 1px solid var(--border-color);
@@ -165,17 +165,17 @@
             transition: var(--transition);
             background-color: white;
         }
-
+        
         .form-select:hover {
             border-color: var(--primary-color);
         }
-
+        
         .form-select:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(57, 181, 74, 0.15);
             outline: none;
         }
-
+        
         #clearFilters {
             background-color: white;
             color: var(--primary-color);
@@ -188,17 +188,17 @@
             width: 100%;
             margin-top: 0.5rem;
         }
-
+        
         #clearFilters:hover {
             background-color: var(--primary-light);
             border-color: var(--primary-color);
         }
-
+        
         /* Mejoras del calendario */
         #calendar {
             height: 100%;
         }
-
+        
         /* Personalización de FullCalendar */
         .fc {
             font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -208,20 +208,20 @@
             --fc-event-border-color: transparent;
             height: 100%;
         }
-
+        
         .fc-theme-standard .fc-scrollgrid {
             border-radius: 10px;
             overflow: hidden;
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow-sm);
         }
-
+        
         .fc-toolbar-title {
             font-weight: 700 !important;
             color: var(--primary-color) !important;
             font-size: 1.5rem !important;
         }
-
+        
         .fc-button-primary {
             background-color: var(--primary-color) !important;
             border-color: var(--primary-color) !important;
@@ -233,40 +233,40 @@
             text-transform: none !important;
             font-size: 0.9rem !important;
         }
-
+        
         .fc-button-primary:hover {
             background-color: var(--primary-dark) !important;
             border-color: var(--primary-dark) !important;
             box-shadow: var(--shadow-md) !important;
         }
-
+        
         .fc-button-active {
             background-color: var(--primary-dark) !important;
             border-color: var(--primary-dark) !important;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
         }
-
+        
         .fc-day-today {
             background-color: var(--primary-light) !important;
         }
-
+        
         .fc-daygrid-day-number, .fc-col-header-cell-cushion {
             text-decoration: none !important;
             color: var(--accent-color) !important;
         }
-
+        
         .fc-daygrid-day-number {
             padding: 8px 12px !important;
             font-weight: 500 !important;
             font-size: 0.9rem !important;
         }
-
+        
         .fc-col-header-cell {
             background-color: var(--primary-color) !important;
             padding: 12px 0 !important;
             font-weight: 600 !important;
         }
-
+        
         .fc-col-header-cell-cushion {
             font-weight: 600 !important;
             padding: 8px 4px !important;
@@ -275,48 +275,66 @@
             letter-spacing: 0.05em !important;
             color: white !important;
         }
-
+        
         .fc-timegrid-slot-label-cushion {
             font-weight: 500 !important;
             font-size: 0.85rem !important;
         }
-
+        
         .fc-timegrid-axis-cushion {
             font-weight: 500 !important;
             font-size: 0.85rem !important;
         }
-
+        
         .fc-daygrid-day {
             transition: background-color 0.2s !important;
         }
-
+        
         .fc-daygrid-day:hover {
             background-color: var(--hover-color) !important;
         }
-
-        /* Estilos de evento mejorados */
+        
+        /* Ajustes para reducir la altura del calendario */
+        .fc-timegrid-slot {
+            height: 1.7em !important; /* Reducido de 2.5em */
+        }
+        
+        /* Ajustar escala vertical para eventos largos */
+        .fc-timegrid-event {
+            min-height: auto !important;
+            height: auto !important;
+        }
+        
+        /* Estilos de evento mejorados y más compactos */
         .fc-event {
             border-radius: 6px !important;
-            padding: 4px 8px !important;
+            padding: 2px 8px !important; /* Reducido el padding vertical */
             border: none !important;
             font-size: 0.8rem !important;
             transition: transform 0.2s, box-shadow 0.2s !important;
             margin-bottom: 2px !important;
             box-shadow: var(--shadow-sm) !important;
             font-weight: 500 !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
         }
-
+        
         .fc-event:hover {
             transform: translateY(-1px) !important;
             box-shadow: var(--shadow-md) !important;
             z-index: 5 !important;
         }
-
+        
         .fc-event-time {
+            font-size: 0.7rem !important;
             font-weight: 600 !important;
             margin-right: 4px !important;
+            white-space: nowrap !important;
+            opacity: 0.9 !important;
         }
-
+        
         /* Base para todos los eventos personalizados */
         .custom-event {
             color: white !important;
@@ -324,41 +342,73 @@
             border-radius: 6px !important;
             box-shadow: var(--shadow-sm) !important;
             border-left-width: 3px !important;
-            padding: 4px 8px !important;
+            padding: 2px 8px !important; /* Reducido */
         }
-
+        
         .custom-event:hover {
             transform: translateY(-1px) !important;
             box-shadow: var(--shadow-md) !important;
             z-index: 10 !important;
         }
-
+        
+        /* Estilos para eventos según su duración */
+        .event-short {
+            min-height: 22px !important;
+        }
+        
+        .event-medium {
+            min-height: 30px !important;
+        }
+        
+        .event-long {
+            overflow-y: auto !important;
+        }
+        
+        /* Mejora de visualización de celdas */
+        .fc-timegrid-col-frame {
+            min-height: 100% !important;
+            border-left: 1px solid #e5e7eb !important;
+            border-right: 1px solid #e5e7eb !important;
+        }
+        
+        /* Compactar la visualización de eventos largos */
+        .custom-event.long-event {
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: flex-start !important;
+        }
+        
+        .custom-event.long-event .fc-event-title {
+            margin-top: 5px !important;
+            line-height: 1.1 !important;
+        }
+        
         /* Colores por categoría de instructor (tonos verdes SENA) */
         .event-instructor-1 {
             background-color: #39B54A !important; /* Verde SENA principal */
             border-left-color: #33a043 !important;
         }
-
+        
         .event-instructor-2 {
             background-color: #34A853 !important; /* Verde más claro */
             border-left-color: #2d9249 !important;
         }
-
+        
         .event-instructor-3 {
             background-color: #138A48 !important; /* Verde medio */
             border-left-color: #0f7a3e !important;
         }
-
+        
         .event-instructor-4 {
             background-color: #0E8749 !important; /* Verde oscuro */
             border-left-color: #0a7038 !important;
         }
-
+        
         .event-instructor-5 {
             background-color: #38B87C !important; /* Verde menta */
             border-left-color: #30a46c !important;
         }
-
+        
         /* Estilos para indicador de carga */
         #loading-indicator {
             position: absolute;
@@ -372,11 +422,11 @@
             z-index: 1000;
             display: none;
         }
-
+        
         #loading-indicator .spinner-border {
             color: var(--primary-color) !important;
         }
-
+        
         /* Estilo para mensaje de no eventos */
         #no-events-message {
             background-color: rgba(228, 245, 236, 0.8);
@@ -388,8 +438,28 @@
             box-shadow: var(--shadow-sm);
             margin: 2rem 0;
             animation: fadeIn 0.5s ease;
+            text-align: center;
         }
-
+        
+        /* Estilo para el mensaje inicial */
+        #initial-message {
+            background-color: rgba(228, 245, 236, 0.9) !important;
+            border: 1px solid #a7e3c4;
+            color: #39B54A;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            margin: 2rem 0;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        #initial-message i {
+            font-size: 2rem;
+            display: block;
+            margin: 0 auto 1rem;
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -410,7 +480,93 @@
         .colombia-time i {
             font-size: 1rem;
         }
-
+        
+        /* Mejora para el contenedor de eventos */
+        .fc-timegrid-event-harness {
+            margin-right: 1px !important;
+            margin-left: 1px !important;
+        }
+        
+        /* Estilos para el enlace "más eventos" */
+        .fc-more-link {
+            background-color: rgba(57, 181, 74, 0.1) !important;
+            color: var(--primary-color) !important;
+            font-weight: 600 !important;
+            padding: 2px 4px !important;
+            border-radius: 4px !important;
+            margin-top: 1px !important;
+            text-align: center !important;
+            font-size: 0.7rem !important;
+        }
+        
+        /* Mejora para el indicador de "más eventos" */
+        .fc-daygrid-more-link {
+            margin: 3px auto 0 !important;
+            display: block !important;
+            width: 85% !important;
+            text-align: center !important;
+            background: rgba(57, 181, 74, 0.1) !important;
+            border-radius: 4px !important;
+            color: var(--primary-color) !important;
+            font-weight: 500 !important;
+            padding: 2px 0 !important;
+        }
+        
+        /* Estilos para el popover de "más eventos" */
+        .fc-popover {
+            border-radius: 8px !important;
+            border: 1px solid var(--border-color) !important;
+            box-shadow: var(--shadow-md) !important;
+            overflow: hidden !important;
+        }
+        
+        .fc-popover-header {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+            padding: 8px 10px !important;
+            font-weight: 600 !important;
+        }
+        
+        .fc-popover-body {
+            padding: 8px !important;
+        }
+        
+        /* Reducir espaciado entre filas */
+        .fc-timegrid-slots tr {
+            line-height: 1.1 !important;
+        }
+        
+        /* Formato compacto para etiquetas de hora */
+        .fc-timegrid-slot-label {
+            font-size: 0.75rem !important;
+            vertical-align: middle !important;
+        }
+        
+        /* Reducir altura de vista semanal */
+        .fc-view-harness {
+            min-height: 500px !important;
+            max-height: 75vh !important; /* Limitar la altura máxima */
+        }
+        
+        /* Ajustar altura de filas en vista de semana */
+        .fc-timegrid-body {
+            min-height: 0 !important;
+        }
+        
+        /* Mejoras para la vista de agenda de tiempo */
+        .fc-timegrid-slots td {
+            border-bottom-color: #f0f0f0 !important;
+        }
+        
+        .fc-timegrid-divider {
+            display: none !important; /* Eliminar divisor innecesario */
+        }
+        
+        /* Añadir líneas de guía horizontales más claras */
+        .fc-timegrid-slots tr:not(:first-child) td {
+            border-top: 1px dashed #eaeaea !important;
+        }
+        
         /* Mejoras responsive */
         @media (max-width: 992px) {
             .calendar-layout {
@@ -442,7 +598,7 @@
                 justify-content: center;
             }
         }
-
+        
         @media (max-width: 768px) {
             .app-container {
                 margin: 1rem auto;
@@ -485,7 +641,7 @@
                 align-self: flex-start;
             }
         }
-
+        
         @media (max-width: 576px) {
             .app-container {
                 margin: 0.5rem;
@@ -526,6 +682,7 @@
                 font-size: 0.7rem !important;
                 padding: 2px 4px !important;
             }
+            
         }
     </style>
 </head>

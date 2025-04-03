@@ -2,619 +2,968 @@
 {% load static %}
 
 {% block extra_css %}
-<!-- Estilos específicos para la página de instructores -->
 <style>
-    /* Estilos para la card */
-    .card {
-        border: none;
-        border-radius: 15px;  /* Bordes más redondeados para la card */
-        overflow: hidden;
-    }
+/* Variables para colores y transiciones */
+:root {
+    --color-success: #28a745;
+    --color-success-hover: #218838;
+    --color-success-light: rgba(40, 167, 69, 0.05);
+    --color-success-lighter: rgba(40, 167, 69, 0.02);
+    --color-danger: #dc3545;
+    --color-danger-hover: #c82333;
+    --color-warning: #ffc107;
+    --color-gray: #6c757d;
+    --color-gray-light: #dee2e6;
+    --color-gray-lighter: #f8f9fa;
+    --border-radius-sm: 8px;
+    --border-radius: 15px;
+    --border-radius-lg: 20px;
+    --transition-default: all 0.3s ease;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow: 0 5px 15px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 25px rgba(0,0,0,0.12);
+}
 
-    .card-header {
-        border-bottom: 0;
-        border-radius: 15px 15px 0 0 !important;  /* Bordes redondeados superiores */
-    }
+/* Reset y estilos base */
+button:focus, a:focus, input:focus, select:focus {
+    outline: none;
+}
 
-    .card-body {
-        border-radius: 0 0 15px 15px;  /* Bordes redondeados inferiores */
-        padding: 2rem;  /* Padding más generoso */
-        background-color: #fff;
-        box-shadow: 0 0 20px rgba(0,0,0,0.05);  /* Sombra suave */
-    }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 3px solid rgba(40, 167, 69, 0.4);
+    outline-offset: 2px;
+}
 
-    /* Ajuste para la tabla dentro de la card */
-    .table-responsive {
-        border-radius: 12px;  /* Bordes redondeados para la tabla */
-        margin-top: 1rem;
-        overflow: hidden;
-    }
+.transition {
+    transition: var(--transition-default);
+}
 
-    /* Mantener los estilos existentes de la tabla */
-    .table {
-        border: 2px solid #dee2e6;
-        border-radius: 12px;
-        overflow: hidden;
-        margin-bottom: 0;
-    }
+/* Estilos para la card principal */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--transition-default);
+}
 
-    .table thead th {
-        border-bottom: 2px solid #dee2e6;  /* Borde inferior del encabezado más pronunciado */
-        background-color: #f8f9fa;
-        font-weight: 600;
-        font-size: 0.9rem;
-        color: #495057;
-        padding: 1.25rem 0.75rem;
-    }
+.card:hover {
+    box-shadow: var(--shadow-lg);
+}
 
-    .table tbody td {
-        border-bottom: 1px solid #dee2e6;  /* Borde entre filas */
-        font-size: 0.9rem;
-        padding: 1.25rem 0.75rem;
-        vertical-align: middle;
-    }
+.card-header {
+    border-bottom: 0;
+    background-color: var(--color-success);
+}
 
-    /* Quitar el borde inferior de la última fila */
-    .table tbody tr:last-child td {
-        border-bottom: none;
-    }
+.card-body {
+    padding: 2rem;
+    background-color: #fff;
+}
 
-    /* Hover en las filas */
-    .table-hover tbody tr:hover {
-        background-color: rgba(40, 167, 69, 0.05);
-    }
+/* Estilos mejorados para los botones principales */
+.btn {
+    padding: 0.6rem 1.25rem;
+    border-radius: 50px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: var(--transition-default);
+}
 
-    .form-select, .form-control {
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
-        border: 1px solid #dee2e6;
-    }
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
 
-    .form-select:focus, .form-control:focus {
-        border-color: #28a745;
-        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-    }
+.btn:active {
+    transform: translateY(0);
+}
 
-    .btn-success {
-        background-color: #28a745;
-        border-color: #28a745;
-    }
+.btn-success {
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+}
 
-    .btn-success:hover {
-        background-color: #218838;
-        border-color: #1e7e34;
-    }
+.btn-success, .btn-success i {
+    color: black !important;
+    font-weight: 500;
+}
 
-    .table-responsive {
-        margin-bottom: 0;
-    }
+.btn-success:hover, .btn-success:focus {
+    background-color: var(--color-success-hover);
+    border-color: var(--color-success-hover);
+    color: black !important;
+}
 
-    .table {
-        margin-bottom: 0;
-    }
+.btn-light {
+    background-color: white;
+    border-color: #dee2e6;
+}
 
-    @media (max-width: 768px) {
-        .card-body {
-            padding: 1rem;
-        }
-        
-        .table td, .table th {
-            padding: 1rem 0.75rem;
-        }
-    }
+.btn-light:hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
 
-    .error-container {
-        max-height: 300px;
-        overflow-y: auto;
-        border-radius: 8px;
-        margin-top: 1rem !important;
-    }
+.btn-dark {
+    background-color: #212529;
+    border-color: #212529;
+    color: white;
+}
 
-    .alert {
-        border: none;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
+.btn-dark:hover {
+    background-color: #343a40;
+    border-color: #343a40;
+    color: white;
+}
 
-    .alert-danger {
-        background-color: #fff2f2;
-        color: #dc3545;
-        border-left: 4px solid #dc3545;
-    }
+.btn-outline-danger {
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+}
 
-    .alert-warning {
-        background-color: #fff8e1;
-        color: #856404;
-        border-left: 4px solid #ffc107;
-    }
+.btn-outline-danger:hover {
+    background-color: var(--color-danger);
+    border-color: var(--color-danger);
+    color: white;
+}
 
-    .alert i {
-        font-size: 1.1rem;
-    }
+.btn-outline-success {
+    color: var(--color-success);
+    border-color: var(--color-success);
+}
 
-    .alert strong {
-        font-weight: 600;
-    }
+.btn-outline-success:hover {
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+    color: white;
+}
 
-    .alert .btn-close {
-        padding: 1.05rem;
-    }
+/* Barra de búsqueda mejorada */
+.search-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
 
-    .alert-dismissible .btn-close {
-        opacity: 0.5;
-        transition: opacity 0.2s;
-    }
+.custom-search-input {
+    width: 100%;
+    padding: 14px 55px 14px 25px;
+    border: 2px solid var(--color-gray-light);
+    border-radius: 50px;
+    font-size: 0.95rem;
+    transition: var(--transition-default);
+    background: white;
+    outline: none;
+}
 
-    .alert-dismissible .btn-close:hover {
+.custom-search-input:focus {
+    border-color: var(--color-success);
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+}
+
+.search-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--color-success);
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: var(--transition-default);
+}
+
+.search-btn:hover {
+    background: var(--color-success-hover);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.clear-btn {
+    position: absolute;
+    right: 55px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--color-gray);
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-default);
+    z-index: 2;
+}
+
+.clear-btn:hover {
+    color: var(--color-danger);
+    transform: translateY(-50%) scale(1.2);
+}
+
+/* Estilos para la tabla */
+.table-container {
+    position: relative;
+    background-color: white;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--color-gray-light);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 2rem;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background-color: var(--color-gray-lighter);
+    color: #495057;
+    font-weight: 600;
+    padding: 1rem;
+    border-bottom: 2px solid var(--color-gray-light);
+    vertical-align: middle;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    text-align: center;
+}
+
+.table th i.sort-icon {
+    cursor: pointer;
+    opacity: 0.5;
+    transition: var(--transition-default);
+    margin-left: 8px;
+}
+
+.table th i.sort-icon:hover {
+    opacity: 1;
+    color: var(--color-success);
+}
+
+.table th .active-sort {
+    opacity: 1;
+    color: var(--color-success);
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--color-gray-light);
+    transition: var(--transition-default);
+    text-align: center;
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--color-success-light);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Estado vacío mejorado */
+.empty-state {
+    padding: 3rem 1rem;
+    text-align: center;
+}
+
+.empty-state-icon {
+    font-size: 3.5rem;
+    color: var(--color-success);
+    opacity: 0.7;
+    margin-bottom: 1.5rem;
+}
+
+.empty-state-title {
+    font-size: 1.25rem;
+    color: #343a40;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state-message {
+    color: var(--color-gray);
+    margin-bottom: 1.5rem;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Carga masiva mejorada */
+.bulk-upload-card {
+    background-color: var(--color-gray-lighter);
+    border-radius: var(--border-radius-sm);
+    box-shadow: var(--shadow-sm);
+    height: 100%;
+    padding: 1.25rem;
+    transition: var(--transition-default);
+}
+
+.bulk-upload-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+}
+
+.bulk-upload-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #343a40;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.bulk-upload-title i {
+    margin-right: 0.5rem;
+    color: var(--color-success);
+}
+
+.upload-input-group {
+    position: relative;
+    margin-bottom: 0.75rem;
+}
+
+.file-input-container {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.file-input-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    color: #495057;
+    background-color: white;
+    border: 1px solid var(--color-gray-light);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: var(--transition-default);
+    font-size: 0.9rem;
+}
+
+.file-input-label:hover {
+    background-color: var(--color-success-lighter);
+    border-color: var(--color-success);
+}
+
+.file-input-label i {
+    margin-right: 0.5rem;
+}
+
+.file-input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.file-name {
+    margin-left: 0.5rem;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.upload-btn {
+    margin-bottom: 0.75rem;
+}
+
+.form-hint {
+    font-size: 0.8rem;
+    color: var(--color-gray);
+    margin-top: 0.25rem;
+    margin-bottom: 0.75rem;
+}
+
+/* Botones de acción en la tabla */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: var(--transition-default);
+    background-color: white;
+}
+
+.action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+}
+
+.action-btn.edit-btn {
+    color: var(--color-success);
+    border: 1px solid var(--color-success);
+}
+
+.action-btn.edit-btn:hover {
+    background-color: var(--color-success);
+    color: white;
+}
+
+.action-btn.delete-btn {
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger);
+}
+
+.action-btn.delete-btn:hover {
+    background-color: var(--color-danger);
+    color: white;
+}
+
+/* Paginación mejorada */
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.pagination-info {
+    color: var(--color-gray);
+    font-size: 0.9rem;
+}
+
+.pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    margin-bottom: 0;
+}
+
+.page-item .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin: 0 3px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 0.9rem;
+    color: var(--color-success);
+    background-color: white;
+    border: 1px solid var(--color-gray-light);
+    transition: var(--transition-default);
+}
+
+.page-item .page-link:hover {
+    background-color: var(--color-success-lighter);
+    border-color: var(--color-success);
+    transform: scale(1.1);
+    z-index: 5;
+}
+
+.page-item.active .page-link {
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+    color: white;
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+    z-index: 3;
+}
+
+.page-item.disabled .page-link {
+    color: var(--color-gray);
+    background-color: var(--color-gray-lighter);
+    border-color: var(--color-gray-light);
+    pointer-events: none;
+}
+
+/* Badge para información adicional */
+.badge {
+    padding: 0.4em 0.6em;
+    font-size: 0.75em;
+    font-weight: 500;
+    border-radius: 50px;
+}
+
+.badge-success {
+    background-color: rgba(40, 167, 69, 0.15);
+    color: var(--color-success);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
         opacity: 1;
+        transform: translateY(0);
     }
+}
 
-    /* Estilos adicionales para la carga masiva */
-    .card.bg-light {
-        background-color: #f8f9fa !important;
-        border-radius: 8px;
-    }
+.fade-in {
+    animation: fadeIn 0.5s ease forwards;
+}
 
-    .input-group {
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        border-radius: 8px;
-        overflow: hidden;
-    }
+.animate-row {
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+}
 
-    .input-group .form-control {
-        border: 1px solid #ced4da;
-        border-left: none;
-        padding: 0.75rem 1rem;
-    }
+/* Animaciones escalonadas para filas */
+.animate-row:nth-child(1) { animation-delay: 0.05s; }
+.animate-row:nth-child(2) { animation-delay: 0.1s; }
+.animate-row:nth-child(3) { animation-delay: 0.15s; }
+.animate-row:nth-child(4) { animation-delay: 0.2s; }
+.animate-row:nth-child(5) { animation-delay: 0.25s; }
+.animate-row:nth-child(6) { animation-delay: 0.3s; }
+.animate-row:nth-child(7) { animation-delay: 0.35s; }
+.animate-row:nth-child(8) { animation-delay: 0.4s; }
+.animate-row:nth-child(9) { animation-delay: 0.45s; }
+.animate-row:nth-child(10) { animation-delay: 0.5s; }
 
-    .input-group .form-control:focus {
-        box-shadow: none;
-        border-color: #28a745;
-    }
+/* Mejoras para el botón eliminar todos */
+.delete-all-container {
+    padding: 0.5rem 0;
+    margin-bottom: 1.5rem;
+}
 
-    .input-group-text {
-        background-color: #fff;
-        border: 1px solid #ced4da;
-        border-right: none;
-        color: #6c757d;
-    }
+.delete-all-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition-default);
+}
 
-    .input-group .btn-outline-secondary {
-        border: 1px solid #ced4da;
-        border-left: none;
-    }
+.delete-all-btn:hover {
+    transform: translateY(-2px);
+}
 
-    .input-group .btn-outline-secondary:hover {
-        background-color: #f8f9fa;
-        color: #dc3545;
-    }
+.delete-all-btn i {
+    transition: var(--transition-default);
+}
 
-    .form-text {
-        color: #6c757d;
-        font-size: 0.75rem;
-    }
+.delete-all-btn:hover i {
+    animation: shake 0.5s ease;
+}
 
-    /* Ajustes responsivos */
-    @media (max-width: 768px) {
-        .card-body {
-            padding: 1rem !important;
-        }
-        
-        .input-group {
-            flex-direction: column;
-        }
-        
-        .input-group > * {
-            width: 100%;
-            margin-bottom: 0.5rem;
-        }
-    }
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px) rotate(-2deg); }
+    75% { transform: translateX(3px) rotate(2deg); }
+}
 
-    /* Estilos para el modal de eliminación */
-    .modal-content {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
+/* Estilos para destacar la información de contacto */
+.email-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 
-    .modal-header {
-        border-top-left-radius: 12px;
-        border-top-right-radius: 12px;
-        padding: 1rem 1.5rem;
-    }
+.email-cell i {
+    color: var(--color-success);
+}
 
-    .modal-body {
+.email-link {
+    color: #495057;
+    text-decoration: none;
+    transition: var(--transition-default);
+}
+
+.email-link:hover {
+    color: var(--color-success);
+    text-decoration: underline;
+}
+
+.phone-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.phone-cell i {
+    color: var(--color-success);
+}
+
+/* Personalización para SweetAlert2 */
+.swal2-popup {
+    border-radius: var(--border-radius) !important;
+    padding: 2rem !important;
+}
+
+.swal2-title {
+    color: #343a40 !important;
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+}
+
+.swal2-html-container {
+    margin-top: 1.5rem !important;
+}
+
+.swal2-styled.swal2-confirm {
+    background-color: var(--color-success) !important;
+    border-radius: 50px !important;
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 500 !important;
+}
+
+.swal2-styled.swal2-cancel {
+    background-color: var(--color-gray) !important;
+    border-radius: 50px !important;
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 500 !important;
+}
+
+/* Estilos responsivos */
+@media (max-width: 992px) {
+    .card-body {
         padding: 1.5rem;
-        font-size: 1rem;
-    }
-
-    .modal-footer {
-        padding: 1rem 1.5rem;
-        border-top: 1px solid #dee2e6;
-    }
-
-    .btn-close-white {
-        filter: brightness(0) invert(1);
-    }
-
-    .delete-instructor {
-        transition: all 0.3s ease;
-    }
-
-    .delete-instructor:hover {
-        background-color: #dc3545;
-        color: white;
-    }
-
-    .search-form {
-        width: 100%;
-    }
-
-    .search-wrapper {
-        position: relative;
-        width: 100%;
-        display: flex;
-        align-items: center;
-    }
-
-    .custom-search-input {
-        width: 100%;
-        padding: 12px 45px 12px 20px;
-        border: 2px solid #e0e0e0;
-        border-radius: 50px;
-        font-size: 14px;
-        transition: all 0.3s ease;
-        background: white;
-        outline: none;
-    }
-
-    .custom-search-input:focus {
-        border-color: #28a745;
-        box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
-    }
-
-    .search-btn {
-        position: absolute;
-        right: 5px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: #28a745;
-        border: none;
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .search-btn:hover {
-        background: #218838;
-        transform: translateY(-50%) scale(1.05);
-    }
-
-    .clear-btn {
-        position: absolute;
-        right: 50px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        color: #6c757d;
-        cursor: pointer;
-        padding: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-    }
-
-    .clear-btn:hover {
-        color: #dc3545;
-    }
-
-    /* Eliminar todas las decoraciones del navegador */
-    .custom-search-input::-webkit-search-decoration,
-    .custom-search-input::-webkit-search-cancel-button,
-    .custom-search-input::-webkit-search-results-button,
-    .custom-search-input::-webkit-search-results-decoration,
-    .custom-search-input::-ms-clear,
-    .custom-search-input::-ms-reveal {
-        display: none;
-    }
-
-    .custom-search-input:-webkit-autofill,
-    .custom-search-input:-webkit-autofill:hover,
-    .custom-search-input:-webkit-autofill:focus {
-        -webkit-box-shadow: 0 0 0px 1000px white inset;
-        transition: background-color 5000s ease-in-out 0s;
-    }
-
-    /* Estilos para el paginador moderno */
-    .pagination-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-
-    .pagination-info {
-        color: #6c757d;
-        font-size: 0.9rem;
-    }
-
-    .pagination-modern {
-        display: flex;
-        padding-left: 0;
-        list-style: none;
-        margin-bottom: 0;
-    }
-
-    .pagination-modern .page-item .page-link {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #28a745;
-        text-decoration: none;
-        background-color: #fff;
-        border: 1px solid #dee2e6;
-        margin: 0 3px;
-        height: 38px;
-        min-width: 38px;
-        border-radius: 50%;
-        font-size: 0.9rem;
-        transition: all 0.2s ease-in-out;
-    }
-
-    .pagination-modern .page-item.active .page-link {
-        z-index: 3;
-        color: #fff;
-        background-color: #28a745;
-        border-color: #28a745;
-        box-shadow: 0 0 10px rgba(40, 167, 69, 0.2);
-    }
-
-    .pagination-modern .page-item.disabled .page-link {
-        color: #6c757d;
-        pointer-events: none;
-        background-color: #f8f9fa;
-        border-color: #dee2e6;
-    }
-
-    .pagination-modern .page-item .page-link:hover {
-        color: #1e7e34;
-        background-color: #e9ecef;
-        border-color: #dee2e6;
-        transform: scale(1.1);
-    }
-
-    .pagination-modern .page-item.active .page-link:hover {
-        color: #fff;
-        background-color: #218838;
-        border-color: #1e7e34;
-    }
-
-    /* Animación para cambio de página */
-    @keyframes fadeIn {
-        0% { opacity: 0; transform: translateY(10px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-
-    .table tbody tr {
-        animation: fadeIn 0.3s ease-in-out;
-    }
-
-    /* Estilos responsivos para el paginador */
-    @media (max-width: 576px) {
-        .pagination-container {
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .pagination-modern .page-item .page-link {
-            height: 32px;
-            min-width: 32px;
-            font-size: 0.8rem;
-        }
     }
     
-    /* Estilos para SweetAlert2 */
-    .swal2-popup {
-        border-radius: 15px !important;
-        padding: 2rem;
+    .search-wrapper {
+        margin-bottom: 1.5rem;
     }
+    
+    .custom-search-input {
+        padding: 12px 55px 12px 20px;
+    }
+    
+    .table-container {
+        margin-bottom: 1.5rem;
+    }
+    
+    .pagination-container {
+        flex-direction: column;
+        align-items: center;
+    }
+}
 
-    .swal2-title {
-        color: #333 !important;
-        font-size: 1.5rem !important;
-        font-weight: 600 !important;
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
     }
+    
+    .table thead th, 
+    .table tbody td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .action-btn {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .page-item .page-link {
+        width: 35px;
+        height: 35px;
+        margin: 0 2px;
+    }
+    
+    .custom-search-input {
+        padding: 10px 50px 10px 15px;
+    }
+    
+    .search-btn {
+        width: 34px;
+        height: 34px;
+    }
+}
 
-    .swal2-styled.swal2-confirm {
-        background-color: #28a745 !important;
-        border-color: #28a745 !important;
+@media (max-width: 576px) {
+    .card-header {
+        padding: 1rem;
     }
-
-    .swal2-styled.swal2-confirm:hover {
-        background-color: #218838 !important;
-        border-color: #1e7e34 !important;
+    
+    .card-header .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.875rem;
     }
-
-    .swal2-styled.swal2-cancel {
-        background-color: #6c757d !important;
-        border-color: #6c757d !important;
+    
+    .card-body {
+        padding: 0.75rem;
     }
-
-    .swal2-styled.swal2-cancel:hover {
-        background-color: #5a6268 !important;
-        border-color: #545b62 !important;
+    
+    .table thead th, 
+    .table tbody td {
+        padding: 0.6rem 0.4rem;
+        font-size: 0.875rem;
     }
-
-    /* Loading personalizado */
-    .swal2-loader {
-        border-color: #28a745 transparent #28a745 transparent !important;
+    
+    .action-btn {
+        width: 30px;
+        height: 30px;
     }
+    
+    .delete-all-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .table-container {
+        border-radius: var(--border-radius-sm);
+    }
+}
 </style>
 {% endblock extra_css %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
-    <div class="card shadow">
-        <div class="card-header bg-success text-white py-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2 class="mb-0 fs-4">
-                    <i class="bi bi-person-badge me-2"></i>Instructores
-                </h2>
-                <a href="{% url 'instructor_create' %}" class="btn btn-light">
-                    <i class="bi bi-plus-circle me-2"></i>Nuevo Instructor
-                </a>
+<div class="container mt-4 mb-5">
+    <div class="card shadow rounded-4">
+        <!-- Encabezado -->
+        <div class="card-header bg-success text-white py-4 rounded-top-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <h1 class="mb-0 fs-4">
+                    <i class="bi bi-person-badge me-2" aria-hidden="true"></i>Instructores
+                </h1>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'instructor_create' %}" class="btn btn-light rounded-pill border transition" aria-label="Crear nuevo instructor">
+                        <i class="bi bi-plus-circle me-2 text-success" aria-hidden="true"></i><span class="text-dark">Nuevo Instructor</span>
+                    </a>
+                </div>
             </div>
         </div>
 
-        <div class="card-body p-5">
-            <!-- Search Row -->
-            <div class="row g-3 mb-4">
-                <div class="col-md-8">
-                    <form method="get" action="{% url 'instructor_list' %}" class="search-form" autocomplete="off">
+        <div class="card-body p-4 p-md-5">
+            <!-- Fila de búsqueda y carga masiva -->
+            <div class="row mb-4">
+                <!-- Buscador -->
+                <div class="col-md-7">
+                    <form method="get" action="{% url 'instructor_list' %}" class="search-form" autocomplete="off" role="search">
                         <div class="search-wrapper">
                             <input type="text" 
                                    name="search" 
                                    class="custom-search-input" 
                                    placeholder="Buscar por nombre, apellido, correo, celular o cédula..."
-                                   value="{{ search }}"
+                                   value="{{ search|default:'' }}"
+                                   aria-label="Buscar instructores"
                                    autocomplete="off"
                                    autocorrect="off"
                                    autocapitalize="off"
                                    spellcheck="false">
                             {% if search %}
-                                <button type="button" class="clear-btn" onclick="window.location.href='{% url 'instructor_list' %}'">
-                                    <i class="bi bi-x-lg"></i>
+                                <button type="button" class="clear-btn" onclick="window.location.href='{% url 'instructor_list' %}'" aria-label="Limpiar búsqueda">
+                                    <i class="bi bi-x-lg" aria-hidden="true"></i>
                                 </button>
                             {% endif %}
-                            <button type="submit" class="search-btn" title="Buscar">
-                                <i class="bi bi-search"></i>
+                            <button type="submit" class="search-btn" aria-label="Buscar">
+                                <i class="bi bi-search" aria-hidden="true"></i>
                             </button>
                         </div>
                     </form>
                 </div>
 
                 <!-- Carga Masiva -->
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 bg-light">
-                        <div class="card-body p-3">
-                            <div class="d-flex flex-column gap-3">
-                                <h6 class="card-title mb-0">Carga Masiva de Instructores</h6>
-                                <form method="post" enctype="multipart/form-data" action="{% url 'upload_instructors_excel' %}" class="d-flex flex-column gap-2">
-                                    {% csrf_token %}
-                                    <div class="input-group">
-                                        <input type="file" name="file" class="form-control form-control-sm" accept=".xlsx,.xls" required>
-                                        <button type="submit" class="btn btn-success btn-sm">
-                                            <i class="bi bi-upload me-1"></i>Cargar
-                                        </button>
-                                    </div>
-                                    <div class="form-text small mb-0">Formatos: .xlsx, .xls</div>
-                                </form>
-                                <a href="{% url 'download_instructor_template' %}" class="btn btn-outline-success btn-sm">
-                                    <i class="bi bi-download me-1"></i>Descargar Plantilla
+                <div class="col-md-5">
+                    <div class="bulk-upload-card">
+                        <h6 class="bulk-upload-title">
+                            <i class="bi bi-cloud-upload" aria-hidden="true"></i>
+                            Carga Masiva de Instructores
+                        </h6>
+                        
+                        <form method="post" enctype="multipart/form-data" action="{% url 'upload_instructors_excel' %}" class="d-flex flex-column gap-2">
+                            {% csrf_token %}
+                            
+                            <div class="file-input-container">
+                                <label for="file-upload" class="file-input-label">
+                                    <i class="bi bi-file-earmark-excel" aria-hidden="true"></i>
+                                    <span id="file-name">Seleccionar archivo Excel</span>
+                                </label>
+                                <input id="file-upload" type="file" name="file" class="file-input" accept=".xlsx,.xls" required aria-required="true">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-light rounded-pill border w-100 upload-btn" aria-label="Cargar archivo Excel">
+                                <i class="bi bi-upload me-2 text-success" aria-hidden="true"></i><span class="text-dark">Cargar Instructores</span>
+                            </button>
+                            
+                            <div class="form-hint">
+                                <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
+                                Formatos soportados: .xlsx, .xls - 
+                                <a href="{% url 'download_instructor_template' %}" class="text-success fw-medium" aria-label="Descargar plantilla Excel para instructores">
+                                    Descargar Plantilla
                                 </a>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
 
-
-            <!-- Delete All Button -->
+            <!-- Fila de controles y eliminar todos -->
             <div class="row mb-4">
                 <div class="col-12">
-                    <button id="deleteAllBtn" class="btn btn-outline-danger">
-                        <i class="bi bi-trash-fill me-1"></i>Eliminar Todos los Instructores
-                    </button>
+                    <div class="delete-all-container d-flex justify-content-between align-items-center">
+                        <div>
+                            {% if paginator.count %}
+                                <div class="badge badge-success">
+                                    {{ paginator.count }} instructores en total
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <button id="deleteAllBtn" class="btn btn-outline-danger delete-all-btn" aria-label="Eliminar todos los instructores">
+                            <i class="bi bi-trash-fill" aria-hidden="true"></i>
+                            Eliminar Todos los Instructores
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- Tabla de Instructores -->
-            <div class="table-responsive mb-4">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light">
-                        <tr>
-                            <th class="py-3 text-center">Nombres</th>
-                            <th class="py-3 text-center">Apellidos</th>
-                            <th class="py-3 text-center">Correo Institucional</th>
-                            <th class="py-3 text-center">Celular</th>
-                            <th class="py-3 text-center">Cédula</th>
-                            <th class="py-3 text-center">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for instructor in page_obj %}
-                        <tr>
-                            <td class="text-center">{{ instructor.nombres }}</td>
-                            <td class="text-center">{{ instructor.apellidos }}</td>
-                            <td class="text-center">{{ instructor.correo_institucional }}</td>
-                            <td class="text-center">{{ instructor.numero_celular }}</td>
-                            <td class="text-center">{{ instructor.numero_cedula }}</td>
-                            <td class="text-center">
-                                <div class="btn-group">
-                                    <a href="{% url 'instructor_edit' instructor.id %}" class="btn btn-sm btn-outline-success">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </a>
-                                    <button class="btn btn-sm btn-outline-danger delete-instructor" 
-                                            data-id="{{ instructor.id }}"
-                                            data-nombre="{{ instructor.nombres }} {{ instructor.apellidos }}">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" class="text-center py-4 text-muted">
-                                <i class="bi bi-inbox-fill display-4 d-block mb-3"></i>
-                                No hay instructores registrados
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle" aria-label="Listado de instructores">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="text-center">
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <span>Nombres</span>
+                                        <i class="bi bi-arrow-down-up sort-icon" data-column="0" aria-label="Ordenar por nombres" tabindex="0" role="button"></i>
+                                    </div>
+                                </th>
+                                <th scope="col" class="text-center">
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <span>Apellidos</span>
+                                        <i class="bi bi-arrow-down-up sort-icon" data-column="1" aria-label="Ordenar por apellidos" tabindex="0" role="button"></i>
+                                    </div>
+                                </th>
+                                <th scope="col" class="text-center">
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <span>Correo Institucional</span>
+                                        <i class="bi bi-arrow-down-up sort-icon" data-column="2" aria-label="Ordenar por correo" tabindex="0" role="button"></i>
+                                    </div>
+                                </th>
+                                <th scope="col" class="text-center">Celular</th>
+                                <th scope="col" class="text-center">
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <span>Cédula</span>
+                                        <i class="bi bi-arrow-down-up sort-icon" data-column="4" aria-label="Ordenar por cédula" tabindex="0" role="button"></i>
+                                    </div>
+                                </th>
+                                <th scope="col" class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for instructor in page_obj %}
+                            <tr class="animate-row" data-id="{{ instructor.id }}">
+                                <td class="text-center">{{ instructor.nombres }}</td>
+                                <td class="text-center">{{ instructor.apellidos }}</td>
+                                <td class="text-center">
+                                    <div class="email-cell justify-content-center">
+                                        <i class="bi bi-envelope" aria-hidden="true"></i>
+                                        <a href="mailto:{{ instructor.correo_institucional }}" class="email-link">
+                                            {{ instructor.correo_institucional }}
+                                        </a>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="phone-cell justify-content-center">
+                                        <i class="bi bi-telephone" aria-hidden="true"></i>
+                                        {{ instructor.numero_celular }}
+                                    </div>
+                                </td>
+                                <td class="text-center">{{ instructor.numero_cedula }}</td>
+                                <td class="text-center">
+                                    <div class="action-buttons">
+                                        <a href="{% url 'instructor_edit' instructor.id %}" 
+                                           class="action-btn edit-btn" 
+                                           aria-label="Editar {{ instructor.nombres }} {{ instructor.apellidos }}"
+                                           data-bs-toggle="tooltip" 
+                                           data-bs-title="Editar">
+                                            <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                                        </a>
+                                        <button type="button"
+                                                class="action-btn delete-btn delete-instructor" 
+                                                data-id="{{ instructor.id }}"
+                                                data-nombre="{{ instructor.nombres }} {{ instructor.apellidos }}"
+                                                aria-label="Eliminar {{ instructor.nombres }} {{ instructor.apellidos }}"
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-title="Eliminar">
+                                            <i class="bi bi-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <div class="empty-state">
+                                        <div class="empty-state-icon">
+                                            <i class="bi bi-people" aria-hidden="true"></i>
+                                        </div>
+                                        <h3 class="empty-state-title">No hay instructores registrados</h3>
+                                        <p class="empty-state-message">
+                                            {% if search %}
+                                                No se encontraron instructores que coincidan con tu búsqueda "{{ search }}".
+                                                <a href="{% url 'instructor_list' %}" class="text-success">Ver todos los instructores</a>
+                                            {% else %}
+                                                Puedes crear un nuevo instructor o cargar varios instructores desde un archivo Excel.
+                                            {% endif %}
+                                        </p>
+                                        {% if not search %}
+                                            <a href="{% url 'instructor_create' %}" class="btn btn-light rounded-pill border transition">
+                                                <i class="bi bi-plus-circle me-2 text-success" aria-hidden="true"></i><span class="text-dark">Nuevo Instructor</span>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <!-- Paginador Moderno -->
+            <!-- Paginación -->
             {% if page_obj.has_other_pages %}
             <div class="pagination-container">
                 <div class="pagination-info">
                     Mostrando {{ page_obj.start_index }} a {{ page_obj.end_index }} de {{ paginator.count }} instructores
+                    {% if search %} para la búsqueda "{{ search }}"{% endif %}
                 </div>
                 <nav aria-label="Paginación de instructores">
-                    <ul class="pagination pagination-modern">
+                    <ul class="pagination">
                         {% if page_obj.has_previous %}
                             <li class="page-item">
-                                <a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}" aria-label="Primera">
-                                    <i class="bi bi-chevron-double-left"></i>
+                                <a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}" aria-label="Primera página">
+                                    <i class="bi bi-chevron-double-left" aria-hidden="true"></i>
                                 </a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}" aria-label="Anterior">
-                                    <i class="bi bi-chevron-left"></i>
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}" aria-label="Página anterior">
+                                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
                                 </a>
                             </li>
                         {% else %}
                             <li class="page-item disabled">
-                                <span class="page-link">
-                                    <i class="bi bi-chevron-double-left"></i>
+                                <span class="page-link" aria-label="Primera página">
+                                    <i class="bi bi-chevron-double-left" aria-hidden="true"></i>
                                 </span>
                             </li>
                             <li class="page-item disabled">
-                                <span class="page-link">
-                                    <i class="bi bi-chevron-left"></i>
+                                <span class="page-link" aria-label="Página anterior">
+                                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
                                 </span>
                             </li>
                         {% endif %}
@@ -622,7 +971,9 @@
                         <!-- Páginas numeradas -->
                         {% for num in page_obj.paginator.page_range %}
                             {% if page_obj.number == num %}
-                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                <li class="page-item active">
+                                    <span class="page-link" aria-current="page">{{ num }}</span>
+                                </li>
                             {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                                 <li class="page-item">
                                     <a class="page-link" href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}">{{ num }}</a>
@@ -632,24 +983,24 @@
 
                         {% if page_obj.has_next %}
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}" aria-label="Siguiente">
-                                    <i class="bi bi-chevron-right"></i>
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}" aria-label="Página siguiente">
+                                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
                                 </a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}" aria-label="Última">
-                                    <i class="bi bi-chevron-double-right"></i>
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}" aria-label="Última página">
+                                    <i class="bi bi-chevron-double-right" aria-hidden="true"></i>
                                 </a>
                             </li>
                         {% else %}
                             <li class="page-item disabled">
-                                <span class="page-link">
-                                    <i class="bi bi-chevron-right"></i>
+                                <span class="page-link" aria-label="Página siguiente">
+                                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
                                 </span>
                             </li>
                             <li class="page-item disabled">
-                                <span class="page-link">
-                                    <i class="bi bi-chevron-double-right"></i>
+                                <span class="page-link" aria-label="Última página">
+                                    <i class="bi bi-chevron-double-right" aria-hidden="true"></i>
                                 </span>
                             </li>
                         {% endif %}
@@ -660,57 +1011,129 @@
         </div>
     </div>
 </div>
-
-<!-- Modal de Confirmación de Eliminación -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                ¿Está seguro que desea eliminar este instructor?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <form id="deleteForm" method="post" action="">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock content %}
 
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [];
+    tooltipTriggerList.forEach(function(tooltipTriggerEl) {
+        tooltipList.push(new bootstrap.Tooltip(tooltipTriggerEl, {
+            delay: { show: 300, hide: 100 },
+            placement: 'top'
+        }));
+    });
+
+    // Mostrar nombre del archivo seleccionado
+    const fileInput = document.getElementById('file-upload');
+    const fileName = document.getElementById('file-name');
+    
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            fileName.textContent = this.files[0] ? this.files[0].name : 'Seleccionar archivo Excel';
+        });
+    }
+
+    // Manejador para ordenamiento de columnas
+    const sortIcons = document.querySelectorAll('.sort-icon');
+    sortIcons.forEach(function(icon) {
+        icon.addEventListener('click', function() {
+            const column = parseInt(this.getAttribute('data-column'));
+            const table = this.closest('table');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr:not([colspan])'));
+            
+            // Cambiar estado de ordenamiento
+            if (this.classList.contains('bi-arrow-down')) {
+                this.classList.replace('bi-arrow-down', 'bi-arrow-up');
+                this.setAttribute('data-order', 'asc');
+            } else if (this.classList.contains('bi-arrow-up')) {
+                this.classList.replace('bi-arrow-up', 'bi-arrow-down-up');
+                this.setAttribute('data-order', 'none');
+            } else {
+                this.classList.replace('bi-arrow-down-up', 'bi-arrow-down');
+                this.setAttribute('data-order', 'desc');
+            }
+            
+            // Restablecer otros iconos
+            sortIcons.forEach(function(otherIcon) {
+                if (otherIcon !== icon) {  // Usar 'icon' en lugar de 'this'
+                    otherIcon.classList.replace('bi-arrow-down', 'bi-arrow-down-up');
+                    otherIcon.classList.replace('bi-arrow-up', 'bi-arrow-down-up');
+                    otherIcon.removeAttribute('data-order');
+                }
+            });
+            
+            // Ordenar filas
+            const order = this.getAttribute('data-order');
+            if (order && order !== 'none' && rows.length > 0) {
+                rows.sort(function(a, b) {
+                    const aValue = a.cells[column].textContent.trim();
+                    const bValue = b.cells[column].textContent.trim();
+                    
+                    if (order === 'asc') {
+                        return aValue.localeCompare(bValue, 'es', { sensitivity: 'base' });
+                    } else {
+                        return bValue.localeCompare(aValue, 'es', { sensitivity: 'base' });
+                    }
+                });
+                
+                // Animar al reordenar
+                rows.forEach(function(row) {
+                    row.style.animation = 'none';
+                    row.offsetHeight; // Trigger reflow
+                    row.style.animation = null;
+                    tbody.appendChild(row);
+                });
+            }
+        });
+        
+        // Soporte para teclado en los íconos de ordenación
+        icon.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    });
+
     // Manejador para botones de eliminación individual
     const deleteButtons = document.querySelectorAll('.delete-instructor');
-    deleteButtons.forEach(button => {
+    deleteButtons.forEach(function(button) {
         button.addEventListener('click', function(e) {
             e.preventDefault();
+            
+            // Ocultar cualquier tooltip
+            tooltipList.forEach(function(tooltip) {
+                tooltip.hide();
+            });
+            
             const instructorId = this.getAttribute('data-id');
             const instructorNombre = this.getAttribute('data-nombre');
             
             Swal.fire({
                 title: '¿Estás seguro?',
-                html: `¿Deseas eliminar al instructor <strong>${instructorNombre}</strong>?`,
+                html: '¿Deseas eliminar al instructor <strong>' + instructorNombre + '</strong>?',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#28a745',  // Cambiado a verde
+                confirmButtonColor: '#28a745',
                 cancelButtonColor: '#6c757d',
                 confirmButtonText: 'Sí, eliminar',
                 cancelButtonText: 'Cancelar',
                 reverseButtons: true,
                 showLoaderOnConfirm: true,
-                preConfirm: () => {
-                    return new Promise((resolve) => {
+                focusConfirm: false,
+                allowOutsideClick: function() { return !Swal.isLoading(); },
+                preConfirm: function() {
+                    return new Promise(function(resolve) {
+                        // Mostrar indicador de carga
+                        document.body.classList.add('processing');
+                        
                         const form = document.createElement('form');
                         form.method = 'POST';
-                        form.action = `/instructores/${instructorId}/delete/`;
+                        form.action = '/instructores/' + instructorId + '/delete/';
                         
                         const csrf = document.createElement('input');
                         csrf.type = 'hidden';
@@ -721,67 +1144,168 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.body.appendChild(form);
                         form.submit();
                     });
-                },
-                allowOutsideClick: () => !Swal.isLoading()
+                }
             });
         });
     });
 
     // Manejador para el botón de eliminar todos
-    document.getElementById('deleteAllBtn').addEventListener('click', function() {
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "¡Se eliminarán todos los instructores! Esta acción no se puede deshacer.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#28a745',  // Cambiado a verde
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Sí, eliminar todos',
-            cancelButtonText: 'Cancelar',
-            reverseButtons: true,
-            showLoaderOnConfirm: true,
-            preConfirm: () => {
-                return fetch('{% url "delete_all_instructors" %}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+    const deleteAllBtn = document.getElementById('deleteAllBtn');
+    if (deleteAllBtn) {
+        deleteAllBtn.addEventListener('click', function() {
+            Swal.fire({
+                title: '¿Eliminar todos los instructores?',
+                html: 
+                    '<div class="text-start">' +
+                    '<p class="mb-2">Esta acción eliminará <strong>todos los instructores</strong> del sistema.</p>' +
+                    '<p class="mb-0 text-danger fw-medium">Esta acción no se puede deshacer.</p>' +
+                    '</div>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, eliminar todos',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true,
+                showLoaderOnConfirm: true,
+                focusCancel: true,
+                allowOutsideClick: function() { return !Swal.isLoading(); },
+                preConfirm: function() {
+                    return fetch('{% url "delete_all_instructors" %}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(function(response) {
+                        if (!response.ok) {
+                            throw new Error(response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .catch(function(error) {
+                        Swal.showValidationMessage('Error: ' + error.message);
+                    });
+                }
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: '¡Instructores eliminados!',
+                        text: 'Todos los instructores han sido eliminados correctamente.',
+                        icon: 'success',
+                        confirmButtonColor: '#28a745',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(function() {
+                        window.location.reload();
+                    });
+                }
+            });
+        });
+    }
+
+    // Búsqueda en tiempo real - versión simplificada
+    const searchInput = document.getElementById('live-search-input');
+    if (searchInput) {
+        // Aplicar búsqueda cuando ya hay texto en la carga inicial
+        if (searchInput.value.trim()) {
+            performSearch();
+        }
+
+        // Función principal de búsqueda en tiempo real
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('table tbody tr:not([colspan])');
+            let matchCount = 0;
+            
+            rows.forEach(function(row) {
+                let found = false;
+                
+                // Buscar en todas las celdas de la fila
+                const cells = row.querySelectorAll('td');
+                for (let i = 0; i < cells.length - 1; i++) { // Excluir la columna de acciones
+                    const cellText = cells[i].textContent.toLowerCase();
+                    if (cellText.includes(searchTerm)) {
+                        found = true;
+                        break;
                     }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(response.statusText)
-                    }
-                    return response.json()
-                })
-                .catch(error => {
-                    Swal.showValidationMessage(`Error: ${error}`)
-                })
-            },
-            allowOutsideClick: () => !Swal.isLoading()
-        }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire({
-                    title: '¡Eliminados!',
-                    text: 'Todos los instructores han sido eliminados.',
-                    icon: 'success',
-                    confirmButtonColor: '#28a745',  // Cambiado a verde
-                    timer: 2000,
-                    showConfirmButton: false
-                }).then(() => {
-                    window.location.reload();
-                });
+                }
+                
+                // Mostrar u ocultar la fila según resultado
+                if (found || searchTerm === '') {
+                    row.style.display = '';
+                    matchCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Mostrar mensaje cuando no hay resultados
+            const emptyMessage = document.getElementById('no-results-row');
+            if (matchCount === 0 && searchTerm !== '') {
+                if (!emptyMessage) {
+                    const tableBody = document.querySelector('table tbody');
+                    const noResults = document.createElement('tr');
+                    noResults.id = 'no-results-row';
+                    noResults.innerHTML = 
+                        '<td colspan="6" class="text-center">' +
+                            '<div class="empty-state" style="padding: 2rem 1rem;">' +
+                                '<div class="empty-state-icon" style="font-size: 2rem; width: 70px; height: 70px;">' +
+                                    '<i class="bi bi-search" aria-hidden="true"></i>' +
+                                '</div>' +
+                                '<h3 class="empty-state-title">No se encontraron resultados</h3>' +
+                                '<p class="empty-state-message">' +
+                                    'No hay instructores que coincidan con "' + searchTerm + '"' +
+                                '</p>' +
+                            '</div>' +
+                        '</td>';
+                    tableBody.appendChild(noResults);
+                }
+            } else if (emptyMessage && (matchCount > 0 || searchTerm === '')) {
+                emptyMessage.remove();
+            }
+            
+            // Actualizar estado del botón de limpiar
+            const clearButton = document.getElementById('clear-search-btn');
+            if (clearButton) {
+                clearButton.style.display = searchTerm ? 'flex' : 'none';
+            }
+        }
+        
+        // Eventos de búsqueda
+        searchInput.addEventListener('input', performSearch);
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                this.value = '';
+                performSearch();
             }
         });
+        
+        // Botón para limpiar búsqueda
+        const clearButton = document.getElementById('clear-search-btn');
+        if (clearButton) {
+            clearButton.addEventListener('click', function() {
+                searchInput.value = '';
+                searchInput.focus();
+                performSearch();
+            });
+        }
+    }
+
+    // Atajos de teclado
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + K para enfocar el campo de búsqueda
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            if (searchInput) searchInput.focus();
+        }
     });
 
-    // Prevenir el historial y sugerencias
-    document.querySelector('.custom-search-input').addEventListener('input', function(e) {
-        e.target.setAttribute('autocomplete', 'off');
+    // Animación de entrada para las filas
+    document.querySelectorAll('.animate-row').forEach(function(row, index) {
+        row.style.animationDelay = (index * 0.05) + "s";
     });
-
-    // Limpiar el historial al cargar la página
-    const input = document.querySelector('.custom-search-input');
-    input.value = input.value;
 });
 </script>
 {% endblock scripts %}

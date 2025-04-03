@@ -118,28 +118,54 @@ def generar_eventos_recurrentes(event):
 
 def get_all_events(request):
     """
-    Obtiene todos los eventos del calendario con sus recurrencias
+    Obtiene todos los eventos del calendario sin depender de parámetros de rango
     """
     try:
         logger.info("Obteniendo todos los eventos")
+        
+        # Obtener todos los eventos sin filtrar por rango
         events = Calendar.objects.all()
+        
+        # Log detallado para depuración
+        logger.info(f"Total de eventos en la base de datos: {events.count()}")
         
         if not events:
             logger.warning("No se encontraron eventos en la base de datos")
+            return JsonResponse({"events": []})
+            
+        # Limitamos a 50 eventos para evitar problemas de rendimiento
+        # En una aplicación real, deberías implementar paginación
+        events = events[:50]
+        logger.info(f"Limitando a {len(events)} eventos para procesamiento")
             
         event_list = []
         for event in events:
             try:
                 # Verificar que el evento tiene los campos necesarios
-                if not all([event.start, event.end, event.dias_recurrencia]):
+                if not all([event.start, event.end]):
                     logger.warning(f"Event {event.id} tiene campos faltantes: "
-                                  f"start={event.start}, end={event.end}, "
-                                  f"dias_recurrencia={event.dias_recurrencia}")
+                                  f"start={event.start}, end={event.end}")
                     continue
                     
-                # Generar los eventos recurrentes para este evento base
-                eventos_recurrentes = generar_eventos_recurrentes(event)
-                event_list.extend(eventos_recurrentes)
+                # Si no hay días de recurrencia, crear un evento simple
+                if not event.dias_recurrencia:
+                    evento = {
+                        'id_programa': event.programa_id,
+                        'programa': f"{event.codigo_programa} - {event.nombre_programa}",
+                        'id_instructor': event.instructor_id,
+                        'instructor': f"{event.nombres_instructor} {event.apellidos_instructor}",
+                        'startDate': event.start.isoformat(),
+                        'endDate': event.end.isoformat(),
+                        'id_ambiente': event.ambiente_id,
+                        'ambiente': f"{event.codigo_ambiente} - {event.nombre_ambiente}",
+                        'competencia': f"{event.nombre_competencia} - {event.norma_competencia}",
+                    }
+                    event_list.append(evento)
+                    logger.debug(f"Evento simple añadido: {evento['programa']}")
+                else:
+                    # Generar los eventos recurrentes para este evento base
+                    eventos_recurrentes = generar_eventos_recurrentes(event)
+                    event_list.extend(eventos_recurrentes)
                 
             except Exception as e:
                 logger.error(f"Error procesando evento {event.id}: {str(e)}")

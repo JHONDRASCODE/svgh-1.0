@@ -478,6 +478,225 @@
 
 {% block scripts %}
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Código existente...
+        
+        // Función para verificar conflictos antes de enviar el formulario
+        async function checkForConflicts() {
+            // Obtener valores del formulario
+            const ambienteId = document.querySelector('#id_ambiente').value;
+            if (!ambienteId) return { hasConflicts: false }; // Si no hay ambiente, no puede haber conflicto
+            
+            const startDateTime = document.querySelector('#id_start').value;
+            const endDateTime = document.querySelector('#id_end').value;
+            
+            // Obtener días seleccionados
+            const selectedDays = [];
+            document.querySelectorAll('input[name="dias_recurrencia"]:checked').forEach(checkbox => {
+                selectedDays.push(checkbox.value);
+            });
+            
+            if (selectedDays.length === 0) return { hasConflicts: false }; // Si no hay días, no hay conflictos
+            
+            // Obtener ID del evento actual (si es edición)
+            const currentEventId = '{{ object.id|default:"" }}';
+            
+            try {
+                // Hacer solicitud al endpoint para verificar conflictos
+                const response = await fetch(`/calendarios/check_conflicts/?ambiente_id=${ambienteId}&start=${encodeURIComponent(startDateTime)}&end=${encodeURIComponent(endDateTime)}&days=${JSON.stringify(selectedDays)}&current_id=${currentEventId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Error al verificar conflictos');
+                }
+                
+                const data = await response.json();
+                return {
+                    hasConflicts: data.has_conflicts,
+                    conflicts: data.conflicts || []
+                };
+            } catch (error) {
+                console.error('Error verificando conflictos:', error);
+                return { hasConflicts: false };
+            }
+        }
+        
+        // Función para mostrar conflictos detectados
+        function showConflictError(conflicts) {
+            // Crear tabla HTML con los conflictos
+            let conflictsTable = '<div class="table-responsive mt-3"><table class="table table-sm table-striped"><thead><tr><th>Fecha</th><th>Horario</th><th>Programa</th><th>Instructor</th></tr></thead><tbody>';
+            
+            conflicts.forEach(conflict => {
+                conflictsTable += `<tr>
+                    <td>${conflict.fecha}</td>
+                    <td>${conflict.hora_inicio} - ${conflict.hora_fin}</td>
+                    <td>${conflict.programa}</td>
+                    <td>${conflict.instructor}</td>
+                </tr>`;
+            });
+            
+            conflictsTable += '</tbody></table></div>';
+            
+            // Mostrar SweetAlert con los conflictos
+            return Swal.fire({
+                title: 'No se puede guardar el evento',
+                html: `
+                    <div class="text-start">
+                        <p class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            Este horario ya está ocupado. Por favor, seleccione un horario o ambiente diferente.
+                        </p>
+                        ${conflictsTable}
+                        <p class="mt-3">Para resolver este conflicto, puede:</p>
+                        <ul>
+                            <li>Seleccionar un ambiente diferente</li>
+                            <li>Cambiar el horario del evento</li>
+                            <li>Modificar los días de recurrencia</li>
+                        </ul>
+                    </div>
+                `,
+                icon: 'error',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#28a745',
+                width: '600px'
+            });
+        }
+        
+        // Verificar conflictos en tiempo real cuando cambian los campos críticos
+        const ambienteField = document.querySelector('#id_ambiente');
+        const startField = document.querySelector('#id_start');
+        const endField = document.querySelector('#id_end');
+        const dayCheckboxes = document.querySelectorAll('input[name="dias_recurrencia"]');
+        
+        // Función para verificar conflictos cuando cambian los campos
+        const debouncedCheck = debounce(async () => {
+            // Solo verificar si todos los campos necesarios están completos
+            if (ambienteField.value && startField.value && endField.value) {
+                const hasSelectedDays = Array.from(dayCheckboxes).some(checkbox => checkbox.checked);
+                if (hasSelectedDays) {
+                    // Verificar conflictos
+                    const conflictResult = await checkForConflicts();
+                    
+                    // Si hay conflictos, mostrar una advertencia visual
+                    if (conflictResult.hasConflicts) {
+                        ambienteField.classList.add('is-invalid');
+                        startField.classList.add('is-invalid');
+                        endField.classList.add('is-invalid');
+                        
+                        // Mostrar alerta simple
+                        const formGroup = ambienteField.closest('.form-group');
+                        let errorDiv = formGroup.querySelector('.invalid-feedback');
+                        
+                        if (!errorDiv) {
+                            errorDiv = document.createElement('div');
+                            errorDiv.className = 'invalid-feedback d-block mt-2';
+                            formGroup.appendChild(errorDiv);
+                        }
+                        
+                        errorDiv.innerHTML = '<div class="d-flex align-items-center text-danger"><i class="bi bi-exclamation-circle me-2"></i>Este ambiente ya está ocupado en el horario seleccionado</div>';
+                    } else {
+                        // Quitar marcas de error
+                        ambienteField.classList.remove('is-invalid');
+                        startField.classList.remove('is-invalid');
+                        endField.classList.remove('is-invalid');
+                        
+                        // Quitar mensaje de error
+                        const errorDiv = ambienteField.closest('.form-group').querySelector('.invalid-feedback');
+                        if (errorDiv) {
+                            errorDiv.innerHTML = '';
+                        }
+                    }
+                }
+            }
+        }, 500); // Esperar 500ms después de cambios para no hacer demasiadas peticiones
+        
+        // Añadir evento a los campos
+        ambienteField.addEventListener('change', debouncedCheck);
+        startField.addEventListener('change', debouncedCheck);
+        endField.addEventListener('change', debouncedCheck);
+        dayCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', debouncedCheck);
+        });
+        
+        // Función de debounce para limitar las llamadas
+        function debounce(func, wait) {
+            let timeout;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    func.apply(context, args);
+                }, wait);
+            };
+        }
+        
+        // Modificar el evento de envío del formulario para verificar conflictos finales
+        const form = document.querySelector('form.needs-validation');
+        
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Validar el formulario como antes
+            if (!form.checkValidity()) {
+                e.stopPropagation();
+                
+                // Encontrar el primer campo con error y hacer scroll hasta él
+                const firstInvalidField = form.querySelector(':invalid');
+                if (firstInvalidField) {
+                    firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                // Notificar al usuario
+                Swal.fire({
+                    title: 'Formulario incompleto',
+                    text: 'Por favor, complete todos los campos requeridos correctamente.',
+                    icon: 'warning',
+                    confirmButtonColor: '#28a745'
+                });
+                
+                form.classList.add('was-validated');
+                return false;
+            }
+            
+            // Verificar conflictos
+            Swal.fire({
+                title: 'Verificando disponibilidad...',
+                text: 'Comprobando disponibilidad del ambiente',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            const conflictResult = await checkForConflicts();
+            
+            // Si hay conflictos, bloquear el envío y mostrar error
+            if (conflictResult.hasConflicts) {
+                Swal.close();
+                await showConflictError(conflictResult.conflicts);
+                return false;
+            }
+            
+            // Si no hay conflictos, mostrar mensaje de carga y enviar
+            Swal.fire({
+                title: 'Guardando...',
+                text: 'Procesando los datos del calendario',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Enviar el formulario
+            form.submit();
+        });
+    });
 document.addEventListener("DOMContentLoaded", function() {
     // Efecto visual para los checkboxes de días
     const dayCheckboxes = document.querySelectorAll('.day-checkbox input[type="checkbox"]');

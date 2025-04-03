@@ -1,5 +1,3 @@
-
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.urls import reverse_lazy, reverse
@@ -155,26 +153,11 @@ def obtener_notificaciones(request):
                     elif notif.tipo == 'horario':
                         icono = "bi-calendar-week"
                     print(f"📢 Icono determinado manualmente: {icono}")
+                
+                # IMPORTANTE: Ya no determinamos URL de destino
+                # En su lugar, establecemos un valor fijo que nunca será utilizado
+                url_destino = "javascript:void(0)"  # URL que no hace nada
                     
-                # Determinar la URL de destino según el tipo y la acción
-                url_destino = reverse('admin_dashboard')  # URL por defecto
-                
-                if notif.elemento_id:
-                    try:
-                        if notif.tipo == 'instructor':
-                            url_destino = reverse('instructor_edit', args=[notif.elemento_id])
-                        elif notif.tipo == 'programa':
-                            url_destino = reverse('programa_formacion_edit', args=[notif.elemento_id])
-                        elif notif.tipo == 'competencia':
-                            url_destino = reverse('competencia_edit', args=[notif.elemento_id])
-                        elif notif.tipo == 'ambiente':
-                            url_destino = reverse('ambiente_edit', args=[notif.elemento_id])
-                        elif notif.tipo == 'horario':
-                            url_destino = reverse('calendar_edit', args=[notif.elemento_id])
-                    except Exception as e:
-                        print(f"❌ Error al determinar URL para {notif.tipo} id={notif.elemento_id}: {str(e)}")
-                        # Mantenemos la URL por defecto
-                
                 # Verificar si tiene el atributo leido, si no, asumimos false
                 try:
                     leido = notif.leido
@@ -203,7 +186,7 @@ def obtener_notificaciones(request):
                     'leido': leido,
                     'tipo': notif.tipo,
                     'accion': notif.accion,
-                    'url': url_destino
+                    'url': url_destino  # Esto no será utilizado por el cliente
                 })
                 print(f"📢 Notificación formateada ID {notif.id}: {notif.descripcion[:30]}...")
             except Exception as e:
