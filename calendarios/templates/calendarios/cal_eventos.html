@@ -104,6 +104,7 @@
         
         .card-body {
             padding: 1.5rem;
+            overflow: hidden; /* Evitar desbordamiento */
         }
         
         /* Toggle para filtros en móvil */
@@ -197,6 +198,7 @@
         /* Mejoras del calendario */
         #calendar {
             height: 100%;
+            overflow: hidden; /* Evitar desbordamiento */
         }
         
         /* Personalización de FullCalendar */
@@ -207,6 +209,8 @@
             --fc-neutral-bg-color: var(--secondary-color);
             --fc-event-border-color: transparent;
             height: 100%;
+            max-height: 100%; /* Limitar altura máxima */
+            overflow: hidden; /* Evitar desbordamiento */
         }
         
         .fc-theme-standard .fc-scrollgrid {
@@ -546,11 +550,13 @@
         .fc-view-harness {
             min-height: 500px !important;
             max-height: 75vh !important; /* Limitar la altura máxima */
+            overflow: hidden !important; /* Evitar desbordamiento */
         }
         
         /* Ajustar altura de filas en vista de semana */
         .fc-timegrid-body {
             min-height: 0 !important;
+            overflow: hidden !important; /* Evitar desbordamiento */
         }
         
         /* Mejoras para la vista de agenda de tiempo */
@@ -565,6 +571,60 @@
         /* Añadir líneas de guía horizontales más claras */
         .fc-timegrid-slots tr:not(:first-child) td {
             border-top: 1px dashed #eaeaea !important;
+        }
+        
+        /* Estilos para el buscador */
+        .search-container {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 0.95rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            background-color: white;
+        }
+        
+        .search-input:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(57, 181, 74, 0.15);
+            outline: none;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+        
+        .clear-search {
+            position: absolute;
+            right: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1rem;
+            display: none;
+        }
+        
+        .clear-search:hover {
+            color: var(--primary-color);
         }
         
         /* Mejoras responsive */
@@ -684,7 +744,195 @@
             }
             
         }
-    </style>
+    
+    /* Estilos para el botón de volver */
+    .btn-volver {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .btn-volver:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+        color: white;
+    }
+    
+    .btn-volver i {
+        font-size: 1.1rem;
+    }
+    
+    /* Ajustes responsivos para el botón de volver */
+    @media (max-width: 768px) {
+        .card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .card-header > div:last-child {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .btn-volver {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .card-header > div:last-child {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .btn-volver {
+            margin-bottom: 8px;
+        }
+    }
+
+    /* Variables de Colores - Paleta SENA */
+    :root {
+        --primary-color: #39B54A; /* Verde SENA principal actualizado según imagen */
+        --primary-dark: #33a043;  /* Verde SENA oscuro para hover */
+        --primary-light: #e6f5ee; /* Verde SENA claro para fondos */
+        --secondary-color: #f8f9fa;
+        --accent-color: #2d3748;
+        --border-color: #e2e8f0;
+        --hover-color: #f7fafc;
+        --success-color: #39B54A; /* Verde SENA */
+        --warning-color: #f59e0b;
+        --info-color: #3b82f6;
+        --danger-color: #ef4444;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --transition: all 0.3s ease;
+    }
+    
+    /* Mejoras para la visualización de columnas y eventos */
+    .fc-timegrid-col-bg {
+        background-color: transparent !important; /* Eliminar fondos de columnas */
+    }
+    
+    .fc-timegrid-col.fc-day-today {
+        background-color: rgba(57, 181, 74, 0.05) !important; /* Fondo más sutil para el día actual */
+    }
+    
+    /* Mejorar la visualización de eventos */
+    .fc-event {
+        border-radius: 6px !important;
+        padding: 2px 8px !important;
+        border: none !important;
+        font-size: 0.8rem !important;
+        transition: transform 0.2s, box-shadow 0.2s !important;
+        margin-bottom: 2px !important;
+        box-shadow: var(--shadow-sm) !important;
+        font-weight: 500 !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+    
+    /* Mejorar la visualización de eventos largos */
+    .fc-timegrid-event {
+        border-radius: 6px !important;
+        margin-left: 2px !important;
+        margin-right: 2px !important;
+        box-shadow: var(--shadow-sm) !important;
+    }
+    
+    /* Reducir el espacio entre columnas */
+    .fc-timegrid-cols table {
+        border-spacing: 1px !important;
+    }
+    
+    /* Mejorar la visualización de celdas de tiempo */
+    .fc-timegrid-slot {
+        height: 1.5em !important; /* Reducir altura de slots */
+        border-bottom: 1px solid #f0f0f0 !important;
+    }
+    
+    /* Mejorar la visualización de columnas de días */
+    .fc-timegrid-col {
+        border-left: 1px solid #e5e7eb !important;
+        border-right: 1px solid #e5e7eb !important;
+        background-color: white !important;
+    }
+    
+    /* Eliminar el fondo verde claro que se extiende por toda la columna */
+    .fc-highlight, 
+    .fc-timegrid-col-bg .fc-highlight,
+    .fc-bg-event {
+        background-color: transparent !important;
+        opacity: 0 !important;
+    }
+    
+    /* Contener todos los elementos dentro del calendario */
+    .fc-scroller {
+        overflow: hidden !important;
+    }
+    
+    /* Asegurar que las columnas no se desborden */
+    .fc-timegrid-cols {
+        overflow: hidden !important;
+    }
+    
+    /* Contener el fondo de las columnas */
+    .fc-timegrid-col-bg {
+        overflow: hidden !important;
+        position: relative !important;
+        height: 100% !important;
+        max-height: 100% !important;
+    }
+    
+    /* Asegurar que los eventos de día completo no se desborden */
+    .fc-daygrid-body {
+        overflow: hidden !important;
+    }
+    
+    /* Contener el cuerpo del calendario */
+    .fc-view-harness-active {
+        height: auto !important;
+        overflow: hidden !important;
+    }
+    
+    /* Asegurar que el contenedor principal tenga un tamaño fijo */
+    .card-body {
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    
+    /* Eliminar cualquier desbordamiento en las celdas */
+    .fc-scrollgrid-sync-inner {
+        overflow: hidden !important;
+    }
+    
+    /* Asegurar que las columnas de fondo estén contenidas */
+    .fc-timegrid-col-bg .fc-non-business,
+    .fc-timegrid-col-bg .fc-bg-event {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        overflow: hidden !important;
+        clip: rect(0, auto, auto, 0) !important;
+    }
+</style>
 </head>
 
 <body>
@@ -701,6 +949,15 @@
                     </div>
                     <div class="card-body">
                         <form id="event-filter-form">
+                            <!-- Buscador para filtros -->
+                            <div class="search-container mb-3">
+                                <i class="bi bi-search search-icon"></i>
+                                <input type="text" id="searchFilter" class="search-input" placeholder="Buscar instructor, programa o ambiente...">
+                                <button type="button" id="clearSearch" class="clear-search">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </div>
+                            
                             <div class="mb-3">
                                 <label for="instructorFilter" class="form-label">Instructor</label>
                                 <select class="form-select" id="instructorFilter">
@@ -728,17 +985,25 @@
             <!-- Contenido principal con el calendario -->
             <div class="main-content">
                 <div class="card">
-                    <div class="card-header">
-                        <div class="header-icon">
-                            <i class="bi bi-calendar-event"></i>
-                            <h2 class="card-title">Calendario de Eventos</h2>
-                        </div>
-                        <!-- Nuevo elemento para mostrar la fecha y hora colombiana -->
-                        <div id="colombia-datetime" class="colombia-time">
-                            <i class="bi bi-clock"></i>
-                            <span id="current-time">Cargando...</span>
-                        </div>
-                    </div>
+                    
+    <div class="card-header">
+        <div class="header-icon">
+            <i class="bi bi-calendar-event"></i>
+            <h2 class="card-title">Calendario de Eventos</h2>
+        </div>
+        <div class="d-flex align-items-center">
+            <!-- Nuevo botón de volver con la URL correcta -->
+            <a href="{% url 'calendar_list' %}" class="btn-volver me-3">
+                <i class="bi bi-arrow-left-circle"></i>
+                <span>Volver</span>
+            </a>
+            <!-- Elemento existente para mostrar la fecha y hora colombiana -->
+            <div id="colombia-datetime" class="colombia-time">
+                <i class="bi bi-clock"></i>
+                <span id="current-time">Cargando...</span>
+            </div>
+        </div>
+    </div>
                     <div class="card-body">
                         <!-- Botón para móviles -->
                         <button type="button" class="filters-toggle" aria-expanded="false" id="toggleFilters">
@@ -772,6 +1037,27 @@
     
     <!-- Importante: Añadir un parámetro de versión para evitar problemas de caché -->
     <script src='{% static "js/calendar.js" %}?v={% now "U" %}'></script>
+
+<!-- Modificar la inicialización de FullCalendar para asegurar que cargue correctamente -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Asegurarse de que FullCalendar esté completamente cargado
+  if (typeof FullCalendar === 'undefined') {
+    console.error('FullCalendar no está cargado correctamente');
+    return;
+  }
+  
+  // Asegurarse de que el contenedor del calendario tenga un tamaño fijo
+  const calendarContainer = document.getElementById('calendar');
+  if (calendarContainer) {
+    // Establecer un tamaño máximo para evitar desbordamiento
+    calendarContainer.style.maxHeight = '75vh';
+    calendarContainer.style.overflow = 'hidden';
+  }
+  
+  // Resto del código de inicialización...
+});
+</script>
 </body>
 
 </html>

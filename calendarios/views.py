@@ -183,3 +183,6 @@ def get_all_events(request):
     except Exception as e:
         logger.error(f"Error general en get_all_events: {str(e)}")
         return JsonResponse({"error": str(e), "events": []}, status=500)
+    
+    
+    

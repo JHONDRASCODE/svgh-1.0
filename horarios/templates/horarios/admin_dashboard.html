@@ -119,70 +119,32 @@
             </div>
         </div>
 
-        <!-- Calendario y Recursos - 2/3 del ancho (reemplaza Actividad Reciente) -->
+        <!-- Solo Calendario - 2/3 del ancho -->
         <div class="col-lg-8 mb-4">
             <div class="card main-card h-100">
                 <div class="card-header">
                     <h2 class="card-title">
                         <i class="bi bi-calendar3-week me-2"></i>
-                        Calendario y Recursos
+                        Calendario
                     </h2>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <!-- Columna del Calendario -->
-                        <div class="col-md-7">
-                            <div class="calendar-container mb-4">
-                                <div class="calendar-header mb-3">
-                                    <h3 class="calendar-month-year" id="calendar-title">Calendario</h3>
-                                </div>
-                                <div class="calendar-grid" id="calendar-grid">
-                                    <!-- El calendario se generará con JavaScript -->
-                                </div>
-                            </div>
-                            <div class="calendar-legend">
-                                <div class="legend-item">
-                                    <span class="legend-dot current-day"></span>
-                                    <span class="legend-text">Hoy</span>
-                                </div>
-                                <div class="legend-item">
-                                    <span class="legend-dot has-events"></span>
-                                    <span class="legend-text">Eventos programados</span>
-                                </div>
-                            </div>
+                    <div class="calendar-container mb-4">
+                        <div class="calendar-header mb-3">
+                            <h3 class="calendar-month-year" id="calendar-title">Calendario</h3>
                         </div>
-                        
-                        <!-- Columna de Recursos Rápidos -->
-                        <div class="col-md-5">
-                            <div class="resources-container">
-                                <h3 class="resources-title mb-3">Recursos Rápidos</h3>
-                                <div class="resource-links">
-                                    <a href="#" class="resource-link">
-                                        <i class="bi bi-file-earmark-pdf"></i>
-                                        <span>Manual de Usuario</span>
-                                    </a>
-                                    <a href="#" class="resource-link">
-                                        <i class="bi bi-question-circle"></i>
-                                        <span>Preguntas Frecuentes</span>
-                                    </a>
-                                    <a href="#" class="resource-link">
-                                        <i class="bi bi-envelope"></i>
-                                        <span>Contactar Soporte</span>
-                                    </a>
-                                    <a href="#" class="resource-link">
-                                        <i class="bi bi-tools"></i>
-                                        <span>Configuración</span>
-                                    </a>
-                                </div>
-                                
-                                <div class="system-tips mt-4">
-                                    <h3 class="tips-title mb-2">Consejos del Sistema</h3>
-                                    <div class="tip-card">
-                                        <i class="bi bi-lightbulb"></i>
-                                        <p>Usa el icono de campana en la barra superior para ver las notificaciones del sistema.</p>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="calendar-grid" id="calendar-grid">
+                            <!-- El calendario se generará con JavaScript -->
+                        </div>
+                    </div>
+                    <div class="calendar-legend">
+                        <div class="legend-item">
+                            <span class="legend-dot current-day"></span>
+                            <span class="legend-text">Hoy</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot has-events"></span>
+                            <span class="legend-text">Eventos programados</span>
                         </div>
                     </div>
                 </div>
@@ -603,67 +565,6 @@
         background-color: rgba(40, 167, 69, 0.2);
     }
     
-    /* Estilos para los recursos */
-    .resources-container {
-        padding: 1rem;
-    }
-    
-    .resources-title, .tips-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #333;
-    }
-    
-    .resource-links {
-        display: flex;
-        flex-direction: column;
-        gap: 0.8rem;
-        margin-top: 1rem;
-    }
-    
-    .resource-link {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 0.8rem;
-        border-radius: 8px;
-        background-color: #f8f9fa;
-        color: #333;
-        text-decoration: none;
-        transition: all 0.2s ease;
-    }
-    
-    .resource-link:hover {
-        background-color: rgba(40, 167, 69, 0.1);
-        transform: translateX(5px);
-    }
-    
-    .resource-link i {
-        font-size: 1.2rem;
-        color: #28a745;
-    }
-    
-    .tip-card {
-        background-color: #f8f9fa;
-        border-left: 4px solid #28a745;
-        padding: 1rem;
-        border-radius: 0 8px 8px 0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 0.5rem;
-    }
-    
-    .tip-card i {
-        font-size: 1.5rem;
-        color: #ffc107;
-    }
-    
-    .tip-card p {
-        margin: 0;
-        font-size: 0.9rem;
-    }
-    
     /* Animaciones */
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
@@ -692,10 +593,6 @@
         
         .stats-number {
             font-size: 1.5rem;
-        }
-        
-        .resource-link {
-            padding: 0.6rem;
         }
         
         .calendar-day {
