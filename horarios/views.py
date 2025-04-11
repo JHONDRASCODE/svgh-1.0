@@ -12,6 +12,8 @@ from django.views.decorators.http import require_POST
 from django.db.models import Q
 from django.utils import timezone
 from datetime import date, timedelta
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.staticfiles.storage import staticfiles_storage
 import pandas as pd
 import os
 import csv
@@ -366,6 +368,17 @@ class AdministradorUpdateView(LoginRequiredMixin, UpdateView):
         messages.success(self.request, f'¡Éxito! El administrador {administrador.nombres} {administrador.apellidos} ha sido actualizado correctamente.')
         return response
 
+# Add this to your CustomPasswordResetView class
+class CustomPasswordResetView(PasswordResetView):
+    # Set the email field name to match your user model
+    email_field_name = 'correo_institucional'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add full URLs to static files for email templates
+        context['sena_logo_url'] = self.request.build_absolute_uri(staticfiles_storage.url('img/logosena.webp'))
+        context['sgvh_logo_url'] = self.request.build_absolute_uri(staticfiles_storage.url('img/logo_sgvh_negativo.png'))
+        return context
 
 class AdministradorDeleteView(LoginRequiredMixin, DeleteView):
     model = Administrador
@@ -583,6 +596,52 @@ class InstructorDeleteView(LoginRequiredMixin, DeleteView):
                 }, status=400)
         else:
             return self.delete(request, *args, **kwargs)
+        
+        
+@login_required
+def instructor_search(request):
+    """
+    Vista para búsqueda AJAX de instructores.
+    Devuelve resultados en formato JSON para búsquedas en tiempo real.
+    """
+    query = request.GET.get('q', '').strip()
+    
+    # Si la consulta es muy corta, devolver lista vacía para evitar consultas innecesarias
+    if len(query) < 2:
+        return JsonResponse({'results': []})
+    
+    # Buscar en múltiples campos con consulta optimizada
+    instructors = Instructor.objects.filter(
+        Q(nombres__icontains=query) | 
+        Q(apellidos__icontains=query) | 
+        Q(correo_institucional__icontains=query) | 
+        Q(numero_celular__icontains=query) | 
+        Q(numero_cedula__icontains=query)
+    ).distinct()[:50]  # Limitar a 50 resultados para rendimiento
+    
+    # Formatear resultados para JSON
+    results = []
+    for instructor in instructors:
+        results.append({
+            'id': instructor.id,
+            'nombres': instructor.nombres,
+            'apellidos': instructor.apellidos,
+            'correo_institucional': instructor.correo_institucional,
+            'numero_celular': instructor.numero_celular,
+            'numero_cedula': instructor.numero_cedula,
+        })
+    
+    # Añadir información de depuración en modo desarrollo
+    debug_info = {
+        'query': query,
+        'count': len(results),
+        'time': timezone.now().isoformat()
+    }
+    
+    return JsonResponse({
+        'results': results,
+        'debug': debug_info
+    })
 
 
 # Vistas para ProgramaFormacion

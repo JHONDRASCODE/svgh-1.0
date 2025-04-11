@@ -142,10 +142,6 @@
                             <span class="legend-dot current-day"></span>
                             <span class="legend-text">Hoy</span>
                         </div>
-                        <div class="legend-item">
-                            <span class="legend-dot has-events"></span>
-                            <span class="legend-text">Eventos programados</span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -223,10 +219,7 @@
                 diaElement.classList.add('current-day');
             }
             
-            // Simular algunos días con eventos (puedes personalizar esto)
-            if ([5, 10, 15, 20, 25].includes(i)) {
-                diaElement.classList.add('has-events');
-            }
+            // Se eliminó la parte que marcaba días con eventos
             
             diaElement.textContent = i;
             calendarGrid.appendChild(diaElement);
@@ -526,15 +519,7 @@
         cursor: default;
     }
     
-    .calendar-day.has-events {
-        background-color: rgba(40, 167, 69, 0.2);
-        font-weight: 600;
-    }
-    
-    .calendar-day.has-events.current-day {
-        background-color: #28a745;
-        color: white;
-    }
+    /* Se eliminaron los estilos para los días con eventos */
     
     .calendar-legend {
         display: flex;
@@ -559,10 +544,6 @@
     
     .legend-dot.current-day {
         background-color: #28a745;
-    }
-    
-    .legend-dot.has-events {
-        background-color: rgba(40, 167, 69, 0.2);
     }
     
     /* Animaciones */

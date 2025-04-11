@@ -22,7 +22,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
     'rest_framework',
+    'templated_email',
 ]
+
+# Add these settings
+TEMPLATED_EMAIL = {
+    'template_dir': 'email_templates',
+    'file_extension': 'html',
+}
 
 # Middleware
 MIDDLEWARE = [
@@ -148,3 +155,12 @@ SESSION_SAVE_EVERY_REQUEST = True  # Actualiza la cookie de sesión en cada peti
 
 # Archivo predeterminado para claves primarias
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'jhondrasramos@gmail.com'
+EMAIL_HOST_PASSWORD = 'gqmtomiapputvofm'
+DEFAULT_FROM_EMAIL = 'SGVH <jhondrasramos@gmail.com>'  # Update this to match your email

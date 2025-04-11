@@ -1,9 +1,59 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm, PasswordResetForm
+from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+from templated_email import send_templated_mail
+
 from .models import Administrador, Instructor, ProgramaFormacion, Ambiente, Competencia
 from calendarios.models import Calendar
+
+User = get_user_model()
+
+# Fix line 5 in forms.py - remove CustomPasswordResetForm from the import
 from django.contrib.auth.forms import UserCreationForm
+# NOT: from django.contrib.auth.forms import UserCreationForm, CustomPasswordResetForm
+
+# Add this class to your forms.py file
 from django import forms
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth import get_user_model
+
+class CustomPasswordResetForm(PasswordResetForm):
+    def clean_email(self):
+        """
+        Override to use correo_institucional instead of email field
+        """
+        email = self.cleaned_data['email']
+        # Search by correo_institucional instead of email
+        self.users = get_user_model().objects.filter(correo_institucional__iexact=email, is_active=True)
+        if not self.users.exists():
+            raise forms.ValidationError("No existe ningún usuario con ese correo electrónico.")
+        return email
+
+    def send_mail(self, subject_template_name, email_template_name,
+                  context, from_email, to_email, html_email_template_name=None):
+        """
+        Override to use templated_email
+        """
+        # Get the first user (should be only one)
+        user = self.users.first()
+        
+        # Add user to context
+        context['user'] = user
+        
+        # Send templated email
+        send_templated_mail(
+            template_name='password_reset/email',
+            from_email=from_email,
+            recipient_list=[to_email],
+            context=context,
+        )
+    
+    def get_users(self, email):
+        """
+        Override to return users by correo_institucional instead of email
+        """
+        return User.objects.filter(correo_institucional__iexact=email, is_active=True)
 
 class AdministradorForm(UserCreationForm):
     password1 = forms.CharField(

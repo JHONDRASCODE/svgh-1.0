@@ -12,6 +12,35 @@ document.addEventListener("DOMContentLoaded", () => {
     ambiente: [],
   }
 
+  // Mapa de colores para instructores
+  const instructorColors = {
+    // Colores base para instructores (se asignarán dinámicamente)
+    colors: [
+      { bg: "#39B54A", border: "#33a043" }, // Verde SENA principal
+      { bg: "#34A853", border: "#2d9249" }, // Verde más claro
+      { bg: "#138A48", border: "#0f7a3e" }, // Verde medio
+      { bg: "#0E8749", border: "#0a7038" }, // Verde oscuro
+      { bg: "#38B87C", border: "#30a46c" }, // Verde menta
+      { bg: "#4CAF50", border: "#43A047" }, // Verde material
+      { bg: "#009688", border: "#00897B" }, // Verde azulado
+      { bg: "#8BC34A", border: "#7CB342" }, // Verde lima
+      { bg: "#3F51B5", border: "#3949AB" }, // Índigo
+      { bg: "#2196F3", border: "#1E88E5" }, // Azul
+      { bg: "#03A9F4", border: "#039BE5" }, // Azul claro
+      { bg: "#00BCD4", border: "#00ACC1" }, // Cian
+      { bg: "#607D8B", border: "#546E7A" }, // Azul grisáceo
+      { bg: "#9C27B0", border: "#8E24AA" }, // Púrpura
+      { bg: "#E91E63", border: "#D81B60" }, // Rosa
+      { bg: "#F44336", border: "#E53935" }, // Rojo
+      { bg: "#FF5722", border: "#F4511E" }, // Naranja oscuro
+      { bg: "#FF9800", border: "#FB8C00" }, // Naranja
+      { bg: "#FFC107", border: "#FFB300" }, // Ámbar
+      { bg: "#795548", border: "#6D4C41" }, // Marrón
+    ],
+    // Mapa para almacenar la asignación de colores a instructores
+    instructorMap: {},
+  }
+
   // Función para obtener la hora y fecha de Colombia (UTC-5)
   function getColombiaDateTime() {
     const now = new Date()
@@ -99,6 +128,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Función para asignar un color a un instructor
+  function getInstructorColor(instructorId, instructorName) {
+    // Si ya tiene un color asignado, devolverlo
+    if (instructorColors.instructorMap[instructorId]) {
+      return instructorColors.instructorMap[instructorId]
+    }
+
+    // Asignar un nuevo color basado en el ID del instructor
+    const colorIndex = Object.keys(instructorColors.instructorMap).length % instructorColors.colors.length
+    const color = instructorColors.colors[colorIndex]
+
+    // Guardar la asignación
+    instructorColors.instructorMap[instructorId] = {
+      bg: color.bg,
+      border: color.border,
+      name: instructorName,
+    }
+
+    return instructorColors.instructorMap[instructorId]
+  }
+
   // Función mejorada para cargar eventos pero NO mostrarlos automáticamente
   function loadAllEvents() {
     // Mostrar indicador de carga
@@ -150,6 +200,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 endDateOriginal: event.endDate,
               })
 
+              // Obtener color para el instructor desde los colores definidos en el template
+              let backgroundColor = "#39B54A" // Color por defecto
+              let borderColor = "#33a043" // Borde por defecto
+
+              // Usar los colores definidos en el template si existen
+              if (window.instructorColors && window.instructorColors[event.id_instructor]) {
+                backgroundColor = window.instructorColors[event.id_instructor].bg
+                borderColor = window.instructorColors[event.id_instructor].border
+              }
+
               // Crear el evento con el formato correcto para FullCalendar
               return {
                 id: `${event.id_programa}-${event.id_instructor}-${event.id_ambiente}-${startDate.getTime()}`,
@@ -157,6 +217,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 start: startDate,
                 end: endDate,
                 allDay: false, // Asegurarse de que no sea un evento de todo el día
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                textColor: "#ffffff",
+                className: `event-instructor-${event.id_instructor}`,
                 extendedProps: {
                   id_instructor: event.id_instructor,
                   instructor: event.instructor,
@@ -206,6 +270,12 @@ document.addEventListener("DOMContentLoaded", () => {
           loadingIndicator.style.display = "none"
         }
       })
+  }
+
+  // Función para generar la leyenda de instructores - ELIMINADA
+  function generateInstructorLegend() {
+    // Esta función está desactivada completamente
+    return
   }
 
   // Función para guardar las opciones originales de los filtros
@@ -495,26 +565,8 @@ document.addEventListener("DOMContentLoaded", () => {
       info.el.style.textOverflow = "ellipsis"
       info.el.style.whiteSpace = "nowrap"
 
-      // Determinar color según instructor
-      if (info.event.extendedProps.id_instructor) {
-        const instructorId = Number.parseInt(info.event.extendedProps.id_instructor)
-
-        // Agregar una clase base para todos los eventos
-        info.el.classList.add("custom-event")
-
-        // Asignar clase según ID del instructor (Actualizado para usar colores SENA)
-        if (instructorId % 5 === 0) {
-          info.el.classList.add("event-instructor-1") // Verde SENA principal
-        } else if (instructorId % 5 === 1) {
-          info.el.classList.add("event-instructor-2") // Verde más claro
-        } else if (instructorId % 5 === 2) {
-          info.el.classList.add("event-instructor-3") // Verde medio
-        } else if (instructorId % 5 === 3) {
-          info.el.classList.add("event-instructor-4") // Verde oscuro
-        } else {
-          info.el.classList.add("event-instructor-5") // Verde menta
-        }
-      }
+      // Agregar una clase base para todos los eventos
+      info.el.classList.add("custom-event")
 
       // Añadir tooltip para ver información completa al pasar el mouse
       try {
@@ -645,112 +697,132 @@ document.addEventListener("DOMContentLoaded", () => {
       })
     }
 
-    // Determinar color para la cabecera según tipo de evento (Actualizado para usar colores SENA)
-    let headerColor = "#39B54A" // Color SENA por defecto
-    let badgeClass = "bg-success"
+    // Calcular duración del evento
+    const calculateDuration = (start, end) => {
+      if (!start || !end) return "Duración no disponible"
+      const diff = Math.abs(end - start)
+      const hours = Math.floor(diff / (1000 * 60 * 60))
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
 
-    // Personalizar color según tipo de evento (Actualizado para usar tonos verdes)
-    if (extendedProps.id_instructor) {
-      const instructorId = Number.parseInt(extendedProps.id_instructor)
-      if (instructorId % 5 === 0) {
-        headerColor = "#39B54A" // Verde SENA principal
-        badgeClass = "bg-success"
-      } else if (instructorId % 5 === 1) {
-        headerColor = "#34A853" // Verde más claro
-        badgeClass = "bg-success"
-      } else if (instructorId % 5 === 2) {
-        headerColor = "#138A48" // Verde medio
-        badgeClass = "bg-success"
-      } else if (instructorId % 5 === 3) {
-        headerColor = "#0E8749" // Verde oscuro
-        badgeClass = "bg-success"
-      } else {
-        headerColor = "#38B87C" // Verde menta
-        badgeClass = "bg-success"
-      }
+      let duration = ""
+      if (hours > 0) duration += `${hours} hora${hours !== 1 ? "s" : ""}`
+      if (minutes > 0) duration += `${hours > 0 ? " y " : ""}${minutes} minuto${minutes !== 1 ? "s" : ""}`
+      return duration
     }
 
-    // HTML mejorado del modal
+    // Usar un color estándar para todos los eventos
+    const headerColor = "#39B54A" // Color verde SENA estándar
+
+    // HTML mejorado del modal con diseño más limpio y sin duplicaciones
     const eventDetails = `
-            <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content border-0 shadow">
-                        <div class="modal-header" style="background-color: ${headerColor}; color: white;">
-                            <h5 class="modal-title fw-bold" id="eventModalLabel">
-                                ${title || "Evento de Formación"}
-                            </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body p-4">
-                            <div class="d-flex align-items-center mb-4">
-                                <div class="calendar-icon rounded bg-light p-3 me-3 text-center">
-                                    <i class="bi bi-calendar-event fs-3" style="color: ${headerColor};"></i>
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 text-muted fw-normal">Fecha del evento</h6>
-                                    <p class="mb-0 fw-bold fs-5">
-                                        ${formatDate(clickInfo.event.start)}
-                                    </p>
-                                </div>
-                            </div>
-                            
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <div class="info-card p-3 bg-light rounded mb-2">
-                                        <h6 class="text-muted mb-2">
-                                            <i class="bi bi-clock me-2"></i>Horario
-                                        </h6>
-                                        <p class="mb-0 fw-bold">
-                                            ${formatTime(clickInfo.event.start)}
-                                            -
-                                            ${formatTime(clickInfo.event.end)}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="info-card p-3 bg-light rounded mb-2">
-                                        <h6 class="text-muted mb-2">
-                                            <i class="bi bi-geo-alt me-2"></i>Ambiente
-                                        </h6>
-                                        <p class="mb-0 fw-bold">
-                                            ${extendedProps.ambiente || "No especificado"}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="instructor-info border-top border-bottom py-3 my-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="instructor-avatar rounded-circle text-white p-3 me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background-color: ${headerColor};">
-                                        <span class="fw-bold fs-5">${extendedProps.instructor ? extendedProps.instructor.charAt(0).toUpperCase() : "I"}</span>
-                                    </div>
-                                    <div>
-                                        <h6 class="text-muted mb-1">Instructor</h6>
-                                        <p class="mb-0 fw-bold fs-5">${extendedProps.instructor || "No especificado"}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="competencia-info mt-3">
-                                <h6 class="text-muted mb-2">
-                                    <i class="bi bi-book me-2"></i>Competencia
-                                </h6>
-                                <div class="p-3 bg-light rounded">
-                                    <p class="mb-0">${extendedProps.competencia || "No especificada"}</p>
-                                </div>
-                            </div>
-                            
-                            <div class="mt-4">
-                                <span class="badge ${badgeClass} py-2 px-3">Formación</span>
-                                <span class="badge bg-info py-2 px-3">ID: ${extendedProps.id_programa || "N/A"}</span>
-                            </div>
-                        </div>
-                        <div class="modal-footer bg-light">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>`
+  <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header" style="background-color: ${headerColor}; color: white;">
+          <h5 class="modal-title fw-bold" id="eventModalLabel">
+            ${title || "Evento de Formación"}
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-3">
+          <!-- Fecha del evento -->
+          <div class="mb-3 pb-2 border-bottom">
+            <div class="d-flex align-items-center">
+              <div class="rounded-circle bg-light p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                <i class="bi bi-calendar-event" style="color: ${headerColor}; font-size: 1.2rem;"></i>
+              </div>
+              <div>
+                <h6 class="text-muted mb-1 small">Fecha del evento</h6>
+                <p class="mb-0 fw-bold">
+                  ${formatDate(clickInfo.event.start)}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Horario -->
+          <div class="mb-3 pb-2 border-bottom">
+            <div class="d-flex align-items-center">
+              <div class="rounded-circle bg-light p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                <i class="bi bi-clock" style="color: ${headerColor}; font-size: 1.2rem;"></i>
+              </div>
+              <div>
+                <h6 class="text-muted mb-1 small">Horario</h6>
+                <p class="mb-0 fw-bold">
+                  ${formatTime(clickInfo.event.start)} - ${formatTime(clickInfo.event.end)}
+                </p>
+                <p class="mb-0 text-muted small">
+                  Duración: ${calculateDuration(clickInfo.event.start, clickInfo.event.end)}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Ambiente -->
+          <div class="mb-3 pb-2 border-bottom">
+            <div class="d-flex align-items-center">
+              <div class="rounded-circle bg-light p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                <i class="bi bi-geo-alt" style="color: ${headerColor}; font-size: 1.2rem;"></i>
+              </div>
+              <div>
+                <h6 class="text-muted mb-1 small">Ambiente</h6>
+                <p class="mb-0 fw-bold">
+                  ${extendedProps.ambiente || "No especificado"}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Instructor -->
+          <div class="mb-3 pb-2 border-bottom">
+            <div class="d-flex align-items-center">
+              <div class="rounded-circle text-white p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: ${headerColor};">
+                <span class="fw-bold">${extendedProps.instructor ? extendedProps.instructor.charAt(0).toUpperCase() : "I"}</span>
+              </div>
+              <div>
+                <h6 class="text-muted mb-1 small">Instructor</h6>
+                <p class="mb-0 fw-bold">${extendedProps.instructor || "No especificado"}</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Competencia -->
+          <div class="mb-3 pb-2 border-bottom">
+            <div class="d-flex align-items-start">
+              <div class="rounded-circle bg-light p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; margin-top: 2px;">
+                <i class="bi bi-book" style="color: ${headerColor}; font-size: 1.2rem;"></i>
+              </div>
+              <div>
+                <h6 class="text-muted mb-1 small">Competencia</h6>
+                <p class="mb-0">
+                  ${extendedProps.competencia || "No especificada"}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Programa de Formación -->
+          <div class="mb-2">
+            <div class="d-flex align-items-start">
+              <div class="rounded-circle bg-light p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; margin-top: 2px;">
+                <i class="bi bi-journal-text" style="color: ${headerColor}; font-size: 1.2rem;"></i>
+              </div>
+              <div>
+                <h6 class="text-muted mb-1 small">Programa de Formación</h6>
+                <p class="mb-0 fw-bold">
+                  ${title || "No especificado"}
+                </p>
+                <p class="mb-0 small text-muted">ID: ${extendedProps.id_programa || "N/A"}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>`
 
     // Eliminar modal anterior si existe
     const existingModal = document.getElementById("eventModal")

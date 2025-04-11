@@ -168,7 +168,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .search-btn {
     position: absolute;
-    right: 8px;
+    right: 12px; /* Ajustado de 8px a 12px para moverlo más a la izquierda */
     top: 50%;
     transform: translateY(-50%);
     background: var(--color-success);
@@ -726,6 +726,145 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
         border-radius: var(--border-radius-sm);
     }
 }
+
+/* Estilos para la búsqueda en tiempo real */
+#search-status {
+    display: none;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    background-color: var(--color-success-lighter);
+    color: var(--color-success);
+    font-size: 0.9rem;
+    animation: fadeIn 0.3s ease;
+}
+
+#search-status.searching {
+    background-color: var(--color-gray-lighter);
+    color: var(--color-gray);
+}
+
+#search-status.error {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: var(--color-danger);
+}
+
+.search-status-icon {
+    margin-right: 0.5rem;
+}
+
+/* Animación de carga */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.spin {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
+
+/* Resaltado de coincidencias */
+mark {
+    background-color: rgba(255, 193, 7, 0.3);
+    padding: 0.1em 0.2em;
+    border-radius: 3px;
+    font-weight: 500;
+}
+
+/* Indicador de carga para la tabla */
+.table-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    border-radius: var(--border-radius);
+}
+
+.table-loading-content {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.table-loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(40, 167, 69, 0.2);
+    border-top-color: var(--color-success);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.table-loading-text {
+    font-weight: 500;
+    color: var(--color-success);
+}
+
+/* Atajos de teclado */
+.keyboard-shortcut {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.5rem;
+    color: var(--color-gray);
+    font-size: 0.8rem;
+}
+
+.key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 4px;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    margin: 0 2px;
+    font-family: monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Tooltip personalizado */
+.custom-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.custom-tooltip .tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.custom-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
 </style>
 {% endblock extra_css %}
 
@@ -751,28 +890,30 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
             <div class="row mb-4">
                 <!-- Buscador -->
                 <div class="col-md-7">
-                    <form method="get" action="{% url 'instructor_list' %}" class="search-form" autocomplete="off" role="search">
-                        <div class="search-wrapper">
-                            <input type="text" 
-                                   name="search" 
-                                   class="custom-search-input" 
-                                   placeholder="Buscar por nombre, apellido, correo, celular o cédula..."
-                                   value="{{ search|default:'' }}"
-                                   aria-label="Buscar instructores"
-                                   autocomplete="off"
-                                   autocorrect="off"
-                                   autocapitalize="off"
-                                   spellcheck="false">
-                            {% if search %}
-                                <button type="button" class="clear-btn" onclick="window.location.href='{% url 'instructor_list' %}'" aria-label="Limpiar búsqueda">
-                                    <i class="bi bi-x-lg" aria-hidden="true"></i>
-                                </button>
-                            {% endif %}
-                            <button type="submit" class="search-btn" aria-label="Buscar">
-                                <i class="bi bi-search" aria-hidden="true"></i>
-                            </button>
+                    <div class="search-wrapper">
+                        <input type="text" 
+                               id="live-search-input"
+                               class="custom-search-input" 
+                               placeholder="Buscar por nombre, apellido, correo, celular o cédula..."
+                               value="{{ search|default:'' }}"
+                               aria-label="Buscar instructores"
+                               autocomplete="off"
+                               autocorrect="off"
+                               autocapitalize="off"
+                               spellcheck="false">
+                        <button type="button" id="clear-search-btn" class="clear-btn" aria-label="Limpiar búsqueda">
+                            <i class="bi bi-x-lg" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" id="search-btn" class="search-btn" aria-label="Buscar">
+                            <i class="bi bi-search" aria-hidden="true"></i>
+                        </button>
+                        <div class="keyboard-shortcut">
                         </div>
-                    </form>
+                    </div>
+                    <div id="search-status">
+                        <i class="bi bi-info-circle search-status-icon"></i>
+                        <span id="search-status-text"></span>
+                    </div>
                 </div>
 
                 <!-- Carga Masiva -->
@@ -817,7 +958,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
                         <div>
                             {% if paginator.count %}
                                 <div class="badge badge-success">
-                                    {{ paginator.count }} instructores en total
+                                    <span id="total-count">{{ paginator.count }}</span> instructores en total
                                 </div>
                             {% endif %}
                         </div>
@@ -832,6 +973,14 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
             <!-- Tabla de Instructores -->
             <div class="table-container">
+                <!-- Indicador de carga para la tabla -->
+                <div id="table-loading" class="table-loading" style="display: none;">
+                    <div class="table-loading-content">
+                        <div class="table-loading-spinner"></div>
+                        <div class="table-loading-text">Cargando resultados...</div>
+                    </div>
+                </div>
+                
                 <div class="table-responsive">
                     <table class="table table-hover align-middle" aria-label="Listado de instructores">
                         <thead>
@@ -864,7 +1013,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
                                 <th scope="col" class="text-center">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="instructors-table-body">
                             {% for instructor in page_obj %}
                             <tr class="animate-row" data-id="{{ instructor.id }}">
                                 <td class="text-center">{{ instructor.nombres }}</td>
@@ -939,11 +1088,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
             {% if page_obj.has_other_pages %}
             <div class="pagination-container">
                 <div class="pagination-info">
-                    Mostrando {{ page_obj.start_index }} a {{ page_obj.end_index }} de {{ paginator.count }} instructores
-                    {% if search %} para la búsqueda "{{ search }}"{% endif %}
+                    Mostrando <span id="start-index">{{ page_obj.start_index }}</span> a <span id="end-index">{{ page_obj.end_index }}</span> de <span id="total-items">{{ paginator.count }}</span> instructores
+                    {% if search %} para la búsqueda "<span id="search-term">{{ search }}</span>"{% endif %}
                 </div>
                 <nav aria-label="Paginación de instructores">
-                    <ul class="pagination">
+                    <ul class="pagination" id="pagination">
                         {% if page_obj.has_previous %}
                             <li class="page-item">
                                 <a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}" aria-label="Primera página">
@@ -1059,7 +1208,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Restablecer otros iconos
             sortIcons.forEach(function(otherIcon) {
-                if (otherIcon !== icon) {  // Usar 'icon' en lugar de 'this'
+                if (otherIcon !== icon) {
                     otherIcon.classList.replace('bi-arrow-down', 'bi-arrow-down-up');
                     otherIcon.classList.replace('bi-arrow-up', 'bi-arrow-down-up');
                     otherIcon.removeAttribute('data-order');
@@ -1205,94 +1354,458 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Búsqueda en tiempo real - versión simplificada
+    // ===== BÚSQUEDA EN TIEMPO REAL =====
+    
+    // Configuración
+    const config = {
+        useAjaxSearch: true, // Cambiar a false para usar búsqueda del lado del cliente
+        minChars: 2, // Mínimo de caracteres para iniciar la búsqueda
+        debounceTime: 300, // Tiempo de espera entre pulsaciones de teclas (ms)
+        highlightResults: true, // Resaltar coincidencias en los resultados
+        searchEndpoint: '{% url "instructor_search" %}', // URL para búsqueda AJAX
+    };
+    
+    // Elementos DOM
     const searchInput = document.getElementById('live-search-input');
-    if (searchInput) {
-        // Aplicar búsqueda cuando ya hay texto en la carga inicial
-        if (searchInput.value.trim()) {
-            performSearch();
-        }
-
-        // Función principal de búsqueda en tiempo real
-        function performSearch() {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            const rows = document.querySelectorAll('table tbody tr:not([colspan])');
-            let matchCount = 0;
+    const clearButton = document.getElementById('clear-search-btn');
+    const searchButton = document.getElementById('search-btn');
+    const searchStatus = document.getElementById('search-status');
+    const searchStatusText = document.getElementById('search-status-text');
+    const tableBody = document.getElementById('instructors-table-body');
+    const tableLoading = document.getElementById('table-loading');
+    
+    // Almacenar todas las filas originales para búsqueda del lado del cliente
+    let allRows = [];
+    if (!config.useAjaxSearch) {
+        allRows = Array.from(tableBody.querySelectorAll('tr:not([id="no-results-row"])'));
+    }
+    
+    // Función para debounce (evitar múltiples llamadas rápidas)
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+    
+    // Función para resaltar texto coincidente
+    function highlightText(text, query) {
+        if (!config.highlightResults || !query) return text;
+        
+        const regex = new RegExp(`(${query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
+        return text.replace(regex, '<mark>$1</mark>');
+    }
+    
+    // Función para mostrar mensaje de "no hay resultados"
+    function showNoResults(query) {
+        // Eliminar mensaje existente si hay
+        const existingMessage = document.getElementById('no-results-row');
+        if (existingMessage) existingMessage.remove();
+        
+        // Crear y mostrar nuevo mensaje
+        const noResults = document.createElement('tr');
+        noResults.id = 'no-results-row';
+        noResults.innerHTML = `
+            <td colspan="6" class="text-center">
+                <div class="empty-state" style="padding: 2rem 1rem;">
+                    <div class="empty-state-icon" style="font-size: 2rem;">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="empty-state-title">No se encontraron resultados</h3>
+                    <p class="empty-state-message">
+                        No hay instructores que coincidan con "${query}"
+                    </p>
+                </div>
+            </td>
+        `;
+        tableBody.appendChild(noResults);
+    }
+    
+    // Función para actualizar el estado de la búsqueda
+    function updateSearchStatus(message, isSearching = false, isError = false) {
+        if (message) {
+            searchStatusText.innerHTML = message;
+            searchStatus.style.display = 'block';
             
-            rows.forEach(function(row) {
-                let found = false;
-                
-                // Buscar en todas las celdas de la fila
-                const cells = row.querySelectorAll('td');
-                for (let i = 0; i < cells.length - 1; i++) { // Excluir la columna de acciones
-                    const cellText = cells[i].textContent.toLowerCase();
-                    if (cellText.includes(searchTerm)) {
-                        found = true;
-                        break;
+            // Actualizar clases según el estado
+            searchStatus.classList.remove('searching', 'error');
+            
+            if (isSearching) {
+                searchStatus.classList.add('searching');
+                searchStatusText.innerHTML = `<i class="bi bi-arrow-repeat spin me-1"></i> ${message}`;
+            } else if (isError) {
+                searchStatus.classList.add('error');
+                searchStatusText.innerHTML = `<i class="bi bi-exclamation-triangle me-1"></i> ${message}`;
+            } else {
+                searchStatusText.innerHTML = `<i class="bi bi-info-circle me-1"></i> ${message}`;
+            }
+        } else {
+            searchStatus.style.display = 'none';
+        }
+    }
+    
+    // Función para búsqueda del lado del cliente
+    function clientSideSearch(query) {
+        query = query.toLowerCase().trim();
+        
+        // Ocultar todas las filas primero
+        let visibleCount = 0;
+        
+        allRows.forEach(row => {
+            let found = false;
+            
+            // Buscar en todas las celdas excepto la última (acciones)
+            const cells = row.querySelectorAll('td:not(:last-child)');
+            cells.forEach(cell => {
+                const text = cell.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    found = true;
+                    
+                    // Resaltar coincidencias si está habilitado
+                    if (config.highlightResults && query.length > 0) {
+                        const originalHTML = cell.innerHTML;
+                        // Solo resaltar texto, no HTML
+                        const textNodes = Array.from(cell.childNodes).filter(node => 
+                            node.nodeType === Node.TEXT_NODE || 
+                            (node.nodeType === Node.ELEMENT_NODE && !node.querySelector('i'))
+                        );
+                        
+                        textNodes.forEach(node => {
+                            if (node.nodeType === Node.TEXT_NODE) {
+                                const newText = highlightText(node.textContent, query);
+                                if (newText !== node.textContent) {
+                                    const span = document.createElement('span');
+                                    span.innerHTML = newText;
+                                    node.parentNode.replaceChild(span, node);
+                                }
+                            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                                // Para elementos como enlaces, etc.
+                                node.innerHTML = highlightText(node.innerHTML, query);
+                            }
+                        });
                     }
-                }
-                
-                // Mostrar u ocultar la fila según resultado
-                if (found || searchTerm === '') {
-                    row.style.display = '';
-                    matchCount++;
-                } else {
-                    row.style.display = 'none';
                 }
             });
             
-            // Mostrar mensaje cuando no hay resultados
-            const emptyMessage = document.getElementById('no-results-row');
-            if (matchCount === 0 && searchTerm !== '') {
-                if (!emptyMessage) {
-                    const tableBody = document.querySelector('table tbody');
-                    const noResults = document.createElement('tr');
-                    noResults.id = 'no-results-row';
-                    noResults.innerHTML = 
-                        '<td colspan="6" class="text-center">' +
-                            '<div class="empty-state" style="padding: 2rem 1rem;">' +
-                                '<div class="empty-state-icon" style="font-size: 2rem; width: 70px; height: 70px;">' +
-                                    '<i class="bi bi-search" aria-hidden="true"></i>' +
-                                '</div>' +
-                                '<h3 class="empty-state-title">No se encontraron resultados</h3>' +
-                                '<p class="empty-state-message">' +
-                                    'No hay instructores que coincidan con "' + searchTerm + '"' +
-                                '</p>' +
-                            '</div>' +
-                        '</td>';
-                    tableBody.appendChild(noResults);
+            // Mostrar u ocultar la fila según el resultado
+            if (found || query === '') {
+                row.style.display = '';
+                visibleCount++;
+                
+                // Añadir clase para animación
+                row.classList.add('animate-row');
+                row.style.animationDelay = (visibleCount * 0.05) + 's';
+            } else {
+                row.style.display = 'none';
+                row.classList.remove('animate-row');
+            }
+        });
+        
+        // Mostrar mensaje si no hay resultados
+        if (visibleCount === 0 && query !== '') {
+            showNoResults(query);
+            updateSearchStatus(`No se encontraron resultados para "${query}"`);
+        } else if (query !== '') {
+            updateSearchStatus(`Se encontraron ${visibleCount} resultados para "${query}"`);
+        } else {
+            updateSearchStatus('');
+        }
+        
+        return visibleCount;
+    }
+    
+    // Función para búsqueda AJAX del lado del servidor
+    async function serverSideSearch(query) {
+        try {
+            // Mostrar indicador de carga
+            tableLoading.style.display = 'flex';
+            updateSearchStatus('Buscando...', true);
+            
+            // Realizar petición AJAX
+            const response = await fetch(`${config.searchEndpoint}?q=${encodeURIComponent(query)}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
                 }
-            } else if (emptyMessage && (matchCount > 0 || searchTerm === '')) {
-                emptyMessage.remove();
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
             }
             
-            // Actualizar estado del botón de limpiar
-            const clearButton = document.getElementById('clear-search-btn');
-            if (clearButton) {
-                clearButton.style.display = searchTerm ? 'flex' : 'none';
+            const data = await response.json();
+            
+            // Limpiar tabla actual
+            const existingRows = tableBody.querySelectorAll('tr');
+            existingRows.forEach(row => row.remove());
+            
+            // Mostrar resultados o mensaje de no resultados
+            if (data.results && data.results.length > 0) {
+                // Crear filas para cada resultado
+                data.results.forEach((instructor, index) => {
+                    const row = document.createElement('tr');
+                    row.className = 'animate-row';
+                    row.dataset.id = instructor.id;
+                    row.style.animationDelay = (index * 0.05) + 's';
+                    
+                    // Crear celdas con datos del instructor
+                                       // Crear celdas con datos del instructor
+                                       row.innerHTML = `
+                                       <td class="text-center">${highlightText(instructor.nombres, query)}</td>
+                                       <td class="text-center">${highlightText(instructor.apellidos, query)}</td>
+                                       <td class="text-center">
+                                           <div class="email-cell justify-content-center">
+                                               <i class="bi bi-envelope" aria-hidden="true"></i>
+                                               <a href="mailto:${instructor.correo_institucional}" class="email-link">
+                                                   ${highlightText(instructor.correo_institucional, query)}
+                                               </a>
+                                           </div>
+                                       </td>
+                                       <td class="text-center">
+                                           <div class="phone-cell justify-content-center">
+                                               <i class="bi bi-telephone" aria-hidden="true"></i>
+                                               ${highlightText(instructor.numero_celular, query)}
+                                           </div>
+                                       </td>
+                                       <td class="text-center">${highlightText(instructor.numero_cedula, query)}</td>
+                                       <td class="text-center">
+                                           <div class="action-buttons">
+                                               <a href="/instructores/${instructor.id}/edit/" 
+                                                  class="action-btn edit-btn" 
+                                                  aria-label="Editar ${instructor.nombres} ${instructor.apellidos}"
+                                                  data-bs-toggle="tooltip" 
+                                                  data-bs-title="Editar">
+                                                   <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                                               </a>
+                                               <button type="button"
+                                                       class="action-btn delete-btn delete-instructor" 
+                                                       data-id="${instructor.id}"
+                                                       data-nombre="${instructor.nombres} ${instructor.apellidos}"
+                                                       aria-label="Eliminar ${instructor.nombres} ${instructor.apellidos}"
+                                                       data-bs-toggle="tooltip" 
+                                                       data-bs-title="Eliminar">
+                                                   <i class="bi bi-trash" aria-hidden="true"></i>
+                                               </button>
+                                           </div>
+                                       </td>
+                                   `;
+                    
+                    tableBody.appendChild(row);
+                });
+                
+                // Reinicializar tooltips para los nuevos botones
+                const newTooltips = tableBody.querySelectorAll('[data-bs-toggle="tooltip"]');
+                newTooltips.forEach(el => {
+                    new bootstrap.Tooltip(el, {
+                        delay: { show: 300, hide: 100 },
+                        placement: 'top'
+                    });
+                });
+                
+                // Reinicializar manejadores de eventos para botones de eliminar
+                const newDeleteButtons = tableBody.querySelectorAll('.delete-instructor');
+                newDeleteButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        const instructorId = this.getAttribute('data-id');
+                        const instructorNombre = this.getAttribute('data-nombre');
+                        
+                        Swal.fire({
+                            title: '¿Estás seguro?',
+                            html: '¿Deseas eliminar al instructor <strong>' + instructorNombre + '</strong>?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#6c757d',
+                            confirmButtonText: 'Sí, eliminar',
+                            cancelButtonText: 'Cancelar',
+                            reverseButtons: true,
+                            showLoaderOnConfirm: true,
+                            focusConfirm: false,
+                            allowOutsideClick: function() { return !Swal.isLoading(); },
+                            preConfirm: function() {
+                                return new Promise(function(resolve) {
+                                    document.body.classList.add('processing');
+                                    
+                                    const form = document.createElement('form');
+                                    form.method = 'POST';
+                                    form.action = '/instructores/' + instructorId + '/delete/';
+                                    
+                                    const csrf = document.createElement('input');
+                                    csrf.type = 'hidden';
+                                    csrf.name = 'csrfmiddlewaretoken';
+                                    csrf.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                                    
+                                    form.appendChild(csrf);
+                                    document.body.appendChild(form);
+                                    form.submit();
+                                });
+                            }
+                        });
+                    });
+                });
+                
+                // Actualizar información de paginación
+                updatePaginationInfo(data.results.length, query);
+                
+                // Actualizar mensaje de estado
+                updateSearchStatus(`Se encontraron ${data.results.length} resultados para "${query}"`);
+            } else {
+                showNoResults(query);
+                updateSearchStatus(`No se encontraron resultados para "${query}"`);
+                updatePaginationInfo(0, query);
+            }
+            
+            // Ocultar indicador de carga
+            tableLoading.style.display = 'none';
+            
+            return data.results ? data.results.length : 0;
+            
+        } catch (error) {
+            console.error('Error en la búsqueda:', error);
+            updateSearchStatus(`Error al buscar: ${error.message}`, false, true);
+            tableLoading.style.display = 'none';
+            return 0;
+        }
+    }
+    
+    // Función para actualizar la información de paginación
+    function updatePaginationInfo(count, query) {
+        const totalCountElement = document.getElementById('total-count');
+        const totalItemsElement = document.getElementById('total-items');
+        const startIndexElement = document.getElementById('start-index');
+        const endIndexElement = document.getElementById('end-index');
+        const searchTermElement = document.getElementById('search-term');
+        const paginationContainer = document.querySelector('.pagination-container');
+        
+        if (totalCountElement) totalCountElement.textContent = count;
+        if (totalItemsElement) totalItemsElement.textContent = count;
+        
+        if (startIndexElement && endIndexElement) {
+            if (count > 0) {
+                startIndexElement.textContent = '1';
+                endIndexElement.textContent = count;
+            } else {
+                startIndexElement.textContent = '0';
+                endIndexElement.textContent = '0';
             }
         }
         
-        // Eventos de búsqueda
+        if (searchTermElement && query) {
+            searchTermElement.textContent = query;
+        }
+        
+        // Mostrar u ocultar la paginación según si hay resultados
+        if (paginationContainer) {
+            paginationContainer.style.display = count > 0 ? 'flex' : 'none';
+        }
+        
+        // Simplificar la paginación para resultados de búsqueda
+        const pagination = document.getElementById('pagination');
+        if (pagination && query) {
+            // Simplificar a solo "primera página" cuando se está buscando
+            pagination.innerHTML = `
+                <li class="page-item">
+                    <a class="page-link" href="{% url 'instructor_list' %}" aria-label="Volver a la lista completa">
+                        <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                    </a>
+                </li>
+            `;
+        }
+    }
+    
+       // Función principal de búsqueda
+       const performSearch = debounce(async function() {
+        const query = searchInput.value.trim();
+        
+        // Actualizar estado del botón de limpiar
+        clearButton.style.display = query ? 'flex' : 'none';
+        
+        // Si la consulta está vacía, mostrar todos los instructores
+        if (query === '') {
+            if (config.useAjaxSearch) {
+                // Para búsqueda AJAX, redirigir a la página sin filtros
+                window.location.href = window.location.pathname;
+                return;
+            } else {
+                // Para búsqueda del lado del cliente, mostrar todas las filas
+                allRows.forEach(row => {
+                    row.style.display = '';
+                    // Eliminar resaltados previos
+                    row.querySelectorAll('mark').forEach(mark => {
+                        const parent = mark.parentNode;
+                        parent.replaceChild(document.createTextNode(mark.textContent), mark);
+                        parent.normalize(); // Unir nodos de texto adyacentes
+                    });
+                });
+                
+                // Eliminar mensaje de no resultados si existe
+                const noResultsRow = document.getElementById('no-results-row');
+                if (noResultsRow) noResultsRow.remove();
+                
+                updateSearchStatus('');
+                return;
+            }
+        }
+        
+        // Si la consulta es muy corta, no realizar búsqueda
+        if (query.length < config.minChars) {
+            updateSearchStatus(`Ingrese al menos ${config.minChars} caracteres para buscar`);
+            return;
+        }
+        
+        // Ejecutar búsqueda según configuración
+        if (config.useAjaxSearch) {
+            await serverSideSearch(query);
+        } else {
+            clientSideSearch(query);
+        }
+     }, config.debounceTime);
+    
+    // Eventos para la búsqueda
+    if (searchInput) {
+        // Evento de entrada de texto
         searchInput.addEventListener('input', performSearch);
+        
+        // Evento de tecla Escape para limpiar
         searchInput.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 this.value = '';
+                clearButton.style.display = 'none';
                 performSearch();
             }
         });
         
-        // Botón para limpiar búsqueda
-        const clearButton = document.getElementById('clear-search-btn');
-        if (clearButton) {
-            clearButton.addEventListener('click', function() {
-                searchInput.value = '';
-                searchInput.focus();
+        // Evento para el botón de búsqueda
+        if (searchButton) {
+            searchButton.addEventListener('click', function() {
                 performSearch();
             });
         }
+        
+             // Evento para el botón de limpiar
+             if (clearButton) {
+                clearButton.addEventListener('click', function() {
+                    searchInput.value = '';
+                    clearButton.style.display = 'none';
+                    searchInput.focus();
+                    
+                    // Redirigir a la página principal sin parámetros de búsqueda
+                    if (config.useAjaxSearch) {
+                        window.location.href = window.location.pathname;
+                    } else {
+                        performSearch();
+                    }
+                });
+            }
+        
+        // Realizar búsqueda inicial si hay texto
+        if (searchInput.value.trim()) {
+            performSearch();
+        }
     }
-
+    
     // Atajos de teclado
     document.addEventListener('keydown', function(e) {
         // Ctrl/Cmd + K para enfocar el campo de búsqueda
@@ -1308,4 +1821,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<script src="{% static 'js/instructor-search.js' %}"></script>
 {% endblock scripts %}
