@@ -16,12 +16,19 @@
                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                     <tr>
                         <td align="center">
-                            <img src="{{ protocol }}://{{ domain }}/static/img/logosena.webp" alt="SENA Logo" style="height: 60px; margin-bottom: 10px;">
+                            <!-- Enhanced SENA logo with shadow and better styling -->
+                            <img src="{{ protocol }}://{{ domain }}/static/img/logosena.webp" alt="SENA Logo" style="height: 60px; margin-bottom: 15px; filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.2));">
                         </td>
                     </tr>
                     <tr>
                         <td align="center">
-                            <h1 style="margin: 0; font-size: 24px; font-weight: bold;">Sistema de Gestión de Horarios SGVH</h1>
+                            <!-- Enhanced SGVH logo with better visibility -->
+                            <img src="{{ protocol }}://{{ domain }}/static/img/logoSGVH.png" alt="SGVH Logo" style="height: 80px; margin: 10px 0; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3)); background-color: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <h1 style="margin: 0; font-size: 24px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">Sistema de Gestión de Horarios SGVH</h1>
                         </td>
                     </tr>
                 </table>
@@ -45,7 +52,7 @@
                         <td align="center" style="padding: 20px 0;">
                             <table cellpadding="0" cellspacing="0" border="0">
                                 <tr>
-                                    <td align="center" bgcolor="#00A650" style="padding: 12px 30px; border-radius: 4px;">
+                                    <td align="center" bgcolor="#00A650" style="padding: 12px 30px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                                         <a href="{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}" target="_blank" style="color: #ffffff; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; display: inline-block;">Restablecer Contraseña</a>
                                     </td>
                                 </tr>
@@ -56,7 +63,7 @@
                 
                 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px;">
                     <tr>
-                        <td style="background-color: #f5f5f5; padding: 12px; border-left: 3px solid #00A650; font-size: 14px; color: #555555;">
+                        <td style="background-color: #f5f5f5; padding: 12px; border-left: 3px solid #00A650; font-size: 14px; color: #555555; border-radius: 0 4px 4px 0;">
                             Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:<br>
                             <a href="{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}" style="color: #00A650; word-break: break-all;">{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}</a>
                         </td>
@@ -70,7 +77,7 @@
                 </table>
                 
                 <!-- Important Notes -->
-                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f5f5f5; margin-bottom: 20px;">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f5f5f5; margin-bottom: 20px; border-radius: 4px;">
                     <tr>
                         <td style="padding: 15px;">
                             <p style="font-weight: bold; color: #333333; margin-top: 0; font-size: 16px;">Información Importante:</p>
@@ -91,7 +98,7 @@
                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                     <tr>
                         <td align="center" style="padding-bottom: 10px;">
-                            <img src="{{ protocol }}://{{ domain }}/static/img/logo_sgvh_negativo.png" alt="SGVH Logo" style="height: 40px;">
+                            <img src="{{ protocol }}://{{ domain }}/static/img/logo_sgvh_negativo.png" alt="SGVH Logo" style="height: 40px; filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.3));">
                         </td>
                     </tr>
                     <tr>
