@@ -6,8 +6,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Seguridad
 SECRET_KEY = 'django-insecure-*jbj*g(^k==yk!xc#ylgld1w+@mp3h87+(cpoj9gg8c+a=w)!r'
-DEBUG = True  # Cambiar a False en producción
+DEBUG = False    # Cambiar a False en producción
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['S3bastian.pythonanywhere.com']
 
 # Aplicaciones instaladas
 INSTALLED_APPS = [
