@@ -1,7 +1,7 @@
 ﻿asgiref==3.8.1
 diff-match-patch==20241021
 Django==4.2.12
-django-cors-headers==4.7.0
+django-cors-headers==3.14.0
 django-crispy-forms==2.3
 django-filter==25.1
 django-import-export==4.3.7
