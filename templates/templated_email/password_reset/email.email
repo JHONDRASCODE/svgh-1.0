@@ -10,50 +10,46 @@
 </head>
 <body style="font-family: Arial, Helvetica, sans-serif; line-height: 1.6; color: #333333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border: 1px solid #dddddd; border-radius: 8px; background-color: #ffffff;">
-        <!-- Header -->
+        <!-- Header Mejorado -->
         <tr>
-            <td style="background-color: #00A650; color: #ffffff; padding: 20px; text-align: center; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+            <td style="background-color: #39A900; color: #ffffff; padding: 20px; text-align: center; border-top-left-radius: 8px; border-top-right-radius: 8px;">
                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                     <tr>
-                        <td align="center">
-                            <!-- Enhanced SENA logo with shadow and better styling -->
-                            <img src="{{ protocol }}://{{ domain }}/static/img/logosena.webp" alt="SENA Logo" style="height: 60px; margin-bottom: 15px; filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.2));">
+                        <td align="center" style="padding-bottom: 20px;">
+                            <img src="{{ protocol }}://{{ domain }}/static/img/logoSGVH.png" alt="SENA Logo" style="height: 80px; margin-bottom: 15px; filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.2)); background-color: #ffffff;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" style="padding-bottom: 20px;">
+                            <img src="{{ protocol }}://{{ domain }}/static/img/logo_sgvh_negativo.png" alt="SGVH Logo" style="height: 100px; margin: 10px 0; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));">
                         </td>
                     </tr>
                     <tr>
                         <td align="center">
-                            <!-- Enhanced SGVH logo with better visibility -->
-                            <img src="{{ protocol }}://{{ domain }}/static/img/logoSGVH.png" alt="SGVH Logo" style="height: 80px; margin: 10px 0; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3)); background-color: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px;">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center">
-                            <h1 style="margin: 0; font-size: 24px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">Sistema de Gestión de Horarios SGVH</h1>
+                            <h1 style="margin: 0; font-size: 28px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">Sistema de Gestión de Horarios SGVH</h1>
                         </td>
                     </tr>
                 </table>
             </td>
         </tr>
         
-        <!-- Content -->
+        <!-- Contenido Mejorado -->
         <tr>
-            <td style="padding: 30px; background-color: #ffffff;">
-                <h2 style="color: #00A650; margin-top: 0; font-size: 20px; border-bottom: 1px solid #eeeeee; padding-bottom: 10px;">Restablecimiento de Contraseña</h2>
+            <td style="padding: 40px 30px; background-color: #ffffff;">
+                <h2 style="color: #39A900; margin-top: 0; font-size: 24px; border-bottom: 2px solid #39A900; padding-bottom: 10px;">Restablecimiento de Contraseña</h2>
                 
-                <p style="font-size: 16px;">Hola {{ user.nombres|default:"" }},</p>
+                <p style="font-size: 16px; margin-bottom: 25px;">Hola {{ user.nombres|default:"Usuario" }},</p>
                 
-                <p style="font-size: 16px; margin-bottom: 20px;">Has recibido este correo porque solicitaste restablecer la contraseña para tu cuenta en el <strong>Sistema de Gestión de Horarios SGVH</strong>.</p>
+                <p style="font-size: 16px; margin-bottom: 25px;">Has solicitado restablecer la contraseña para tu cuenta en el <strong>Sistema de Gestión de Horarios SGVH</strong>. Para crear una nueva contraseña segura, por favor haz clic en el siguiente botón:</p>
                 
-                <p style="font-size: 16px; margin-bottom: 20px;">Para crear una nueva contraseña, haz clic en el siguiente botón:</p>
-                
-                <!-- Button - Usando una tabla para mayor compatibilidad -->
+                <!-- Botón Mejorado -->
                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                     <tr>
-                        <td align="center" style="padding: 20px 0;">
+                        <td align="center" style="padding: 30px 0;">
                             <table cellpadding="0" cellspacing="0" border="0">
                                 <tr>
-                                    <td align="center" bgcolor="#00A650" style="padding: 12px 30px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                                        <a href="{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}" target="_blank" style="color: #ffffff; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; display: inline-block;">Restablecer Contraseña</a>
+                                    <td align="center" bgcolor="#39A900" style="padding: 15px 35px; border-radius: 6px; box-shadow: 0 3px 6px rgba(0,0,0,0.2);">
+                                        <a href="{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}" target="_blank" style="color: #ffffff; font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; text-decoration: none; display: inline-block;">Restablecer Contraseña</a>
                                     </td>
                                 </tr>
                             </table>
@@ -61,30 +57,25 @@
                     </tr>
                 </table>
                 
-                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px;">
+                <!-- Enlace Alternativo Mejorado -->
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0;">
                     <tr>
-                        <td style="background-color: #f5f5f5; padding: 12px; border-left: 3px solid #00A650; font-size: 14px; color: #555555; border-radius: 0 4px 4px 0;">
+                        <td style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid #39A900; font-size: 14px; color: #555555; border-radius: 0 4px 4px 0;">
                             Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:<br>
-                            <a href="{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}" style="color: #00A650; word-break: break-all;">{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}</a>
+                            <a href="{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}" style="color: #39A900; word-break: break-all; display: inline-block; margin-top: 10px;">{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}</a>
                         </td>
                     </tr>
                 </table>
                 
-                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0;">
+                <!-- Información de Seguridad Mejorada -->
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8f8f8; margin: 30px 0; border-radius: 6px;">
                     <tr>
-                        <td style="height: 1px; background-color: #eeeeee;"></td>
-                    </tr>
-                </table>
-                
-                <!-- Important Notes -->
-                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f5f5f5; margin-bottom: 20px; border-radius: 4px;">
-                    <tr>
-                        <td style="padding: 15px;">
-                            <p style="font-weight: bold; color: #333333; margin-top: 0; font-size: 16px;">Información Importante:</p>
+                        <td style="padding: 20px;">
+                            <p style="font-weight: bold; color: #333333; margin-top: 0; font-size: 18px;">Información Importante de Seguridad:</p>
                             <ul style="padding-left: 20px; margin-bottom: 0;">
-                                <li style="margin-bottom: 8px;">Este enlace solo puede usarse una vez.</li>
-                                <li style="margin-bottom: 8px;">Si necesitas restablecer tu contraseña nuevamente, visita <a href="{{ protocol }}://{{ domain }}{% url 'password_reset' %}" style="color: #00A650;">la página de restablecimiento</a> y solicita un nuevo enlace.</li>
-                                <li>Si no solicitaste este restablecimiento de contraseña, puedes ignorar este correo.</li>
+                                <li style="margin-bottom: 10px; color: #555555;">Este enlace es válido solo por 24 horas y puede usarse una única vez.</li>
+                                <li style="margin-bottom: 10px; color: #555555;">Si necesitas un nuevo enlace, visita <a href="{{ protocol }}://{{ domain }}{% url 'password_reset' %}" style="color: #39A900;">la página de restablecimiento</a>.</li>
+                                <li style="color: #555555;">Si no solicitaste este cambio de contraseña, puedes ignorar este correo de forma segura.</li>
                             </ul>
                         </td>
                     </tr>
@@ -92,19 +83,20 @@
             </td>
         </tr>
         
-        <!-- Footer -->
+        <!-- Footer Mejorado -->
         <tr>
-            <td style="background-color: #333333; padding: 20px; text-align: center; color: #ffffff; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+            <td style="background-color: #333333; padding: 30px; text-align: center; color: #ffffff; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                     <tr>
-                        <td align="center" style="padding-bottom: 10px;">
-                            <img src="{{ protocol }}://{{ domain }}/static/img/logo_sgvh_negativo.png" alt="SGVH Logo" style="height: 40px; filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.3));">
+                        <td align="center" style="padding-bottom: 20px;">
+                            <img src="{{ protocol }}://{{ domain }}/static/img/logo_sgvh_negativo.png" alt="SGVH Logo" style="height: 50px; filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.3));">
                         </td>
                     </tr>
                     <tr>
                         <td align="center">
-                            <p style="margin-top: 10px; margin-bottom: 10px; font-size: 14px;">Atentamente,<br><strong>El equipo de SGVH</strong></p>
-                            <p style="margin-bottom: 0; font-size: 12px; color: #cccccc;">Servicio Nacional de Aprendizaje SENA – Dirección General<br>Calle 57 No. 8-69, Bogotá D.C – PBX (57 1) 5461500<br>© 2024 Todos los derechos reservados.</p>
+                            <p style="margin: 15px 0; font-size: 16px;">Atentamente,<br><strong>Equipo SGVH</strong></p>
+                            <p style="margin: 15px 0; font-size: 14px; color: #cccccc;">Servicio Nacional de Aprendizaje SENA<br>Regional Huila - Centro de Gestión y Desarrollo Sostenible Surcolombiano</p>
+                            <p style="margin: 0; font-size: 12px; color: #999999;">© {% now "Y" %} SENA - Todos los derechos reservados</p>
                         </td>
                     </tr>
                 </table>
@@ -116,17 +108,18 @@
 {% endblock %}
 
 {% block plain %}
-Hola {{ user.nombres|default:"" }},
+Hola {{ user.nombres|default:"Usuario" }},
 
-Has recibido este correo porque solicitaste restablecer la contraseña para tu cuenta en el Sistema de Gestión de Horarios SGVH.
+Has solicitado restablecer la contraseña para tu cuenta en el Sistema de Gestión de Horarios SGVH.
 
 Para crear una nueva contraseña, haz clic en el siguiente enlace:
 {{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
 
-Este enlace solo puede usarse una vez. Si necesitas restablecer tu contraseña nuevamente, visita {{ protocol }}://{{ domain }}{% url 'password_reset' %} y solicita un nuevo enlace.
+Este enlace es válido por 24 horas y solo puede usarse una vez. Si necesitas un nuevo enlace, visita {{ protocol }}://{{ domain }}{% url 'password_reset' %}.
 
-Si no solicitaste este restablecimiento de contraseña, puedes ignorar este correo.
+Si no solicitaste este cambio de contraseña, puedes ignorar este correo de forma segura.
 
 Atentamente,
-El equipo de SGVH
+Equipo SGVH
+SENA - Regional Huila
 {% endblock %}

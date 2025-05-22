@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -476,11 +477,10 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-7 d-flex align-items-center">
-                    <img src="/api/placeholder/150/60" alt="SGVH Logo" class="logo me-3">
+                    <img src="{% static 'img/logosena.webp' %}" alt="Logo SENA" class="ministerio-logo" style="margin-right: 25px; margin-left: 15px;">
                     <h1 class="text-white mb-0 fs-4">Sistema de Gestión de Horarios</h1>
                 </div>
                 <div class="col-md-4 text-end">
-                    <img src="/api/placeholder/120/50" alt="Ministerio de Trabajo Logo" class="ministerio-logo">
                 </div>
                 <div class="col-md-1 text-end d-flex align-items-center justify-content-end">
                     <a href="{% url 'login' %}" class="btn btn-outline-light" title="Volver al inicio de sesión">
@@ -511,31 +511,13 @@
                             <!-- Sección de Usuario -->
                             <h3 class="mb-3 border-bottom pb-2"><i class="bi bi-person-fill me-2"></i>Funcionalidad para Usuarios</h3>
                             <ul class="topic-list mb-4">
-                                <li class="topic-item" data-bs-toggle="modal" data-bs-target="#userLoginModal">
-                                    <div class="topic-icon">
-                                        <i class="bi bi-box-arrow-in-right"></i>
-                                    </div>
-                                    <div class="topic-content">
-                                        <h3 class="topic-title">Inicio de Sesión</h3>
-                                        <p class="topic-desc">Cómo acceder al sistema con tu cuenta de usuario</p>
-                                    </div>
-                                </li>
                                 <li class="topic-item" data-bs-toggle="modal" data-bs-target="#userCalendarModal">
                                     <div class="topic-icon">
                                         <i class="bi bi-calendar3"></i>
                                     </div>
                                     <div class="topic-content">
                                         <h3 class="topic-title">Visualización de Horarios</h3>
-                                        <p class="topic-desc">Cómo consultar y filtrar los horarios disponibles</p>
-                                    </div>
-                                </li>
-                                <li class="topic-item" data-bs-toggle="modal" data-bs-target="#userNotificationsModal">
-                                    <div class="topic-icon">
-                                        <i class="bi bi-bell-fill"></i>
-                                    </div>
-                                    <div class="topic-content">
-                                        <h3 class="topic-title">Sistema de Notificaciones</h3>
-                                        <p class="topic-desc">Gestión de alertas y notificaciones importantes</p>
+                                        <p class="topic-desc">Cómo consultar y filtrar los horarios disponibles en el sistema</p>
                                     </div>
                                 </li>
                             </ul>
@@ -543,6 +525,15 @@
                             <!-- Sección de Administrador -->
                             <h3 class="mb-3 border-bottom pb-2"><i class="bi bi-shield-fill-check me-2"></i>Funcionalidad para Administradores</h3>
                             <ul class="topic-list">
+                                <li class="topic-item" data-bs-toggle="modal" data-bs-target="#adminLoginModal">
+                                    <div class="topic-icon">
+                                        <i class="bi bi-key-fill"></i>
+                                    </div>
+                                    <div class="topic-content">
+                                        <h3 class="topic-title">Inicio de Sesión y Gestión de Cuenta</h3>
+                                        <p class="topic-desc">Acceso al sistema y administración de credenciales</p>
+                                    </div>
+                                </li>
                                 <li class="topic-item" data-bs-toggle="modal" data-bs-target="#adminInstructorsModal">
                                     <div class="topic-icon">
                                         <i class="bi bi-person-badge-fill"></i>
@@ -568,6 +559,24 @@
                                     <div class="topic-content">
                                         <h3 class="topic-title">Crear/Editar Horarios</h3>
                                         <p class="topic-desc">Cómo gestionar el calendario del sistema</p>
+                                    </div>
+                                </li>
+                                <li class="topic-item" data-bs-toggle="modal" data-bs-target="#adminAmbientesModal">
+                                    <div class="topic-icon">
+                                        <i class="bi bi-building-fill"></i>
+                                    </div>
+                                    <div class="topic-content">
+                                        <h3 class="topic-title">Gestión de Ambientes</h3>
+                                        <p class="topic-desc">Administración de espacios y recursos físicos</p>
+                                    </div>
+                                </li>
+                                <li class="topic-item" data-bs-toggle="modal" data-bs-target="#adminCompetenciasModal">
+                                    <div class="topic-icon">
+                                        <i class="bi bi-journal-check"></i>
+                                    </div>
+                                    <div class="topic-content">
+                                        <h3 class="topic-title">Gestión de Competencias</h3>
+                                        <p class="topic-desc">Administración de competencias y resultados de aprendizaje</p>
                                     </div>
                                 </li>
                             </ul>
@@ -1364,6 +1373,342 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modales para cada sección -->
+
+    <!-- Modal para Visualización de Horarios (Usuario) -->
+    <div class="modal fade" id="userCalendarModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Visualización de Horarios</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>Guía de Visualización de Horarios</h4>
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Acceso al Calendario</h5>
+                                <p class="step-desc">Ingrese a la página principal del sistema para ver el calendario de horarios.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Filtros de Búsqueda</h5>
+                                <p class="step-desc">Utilice los filtros disponibles para encontrar horarios específicos:</p>
+                                <ul>
+                                    <li>Por programa de formación</li>
+                                    <li>Por instructor</li>
+                                    <li>Por ambiente</li>
+                                    <li>Por fecha</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Visualización Detallada</h5>
+                                <p class="step-desc">Haga clic en cualquier evento del calendario para ver más detalles sobre la clase programada.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Inicio de Sesión (Administrador) -->
+    <div class="modal fade" id="adminLoginModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Inicio de Sesión y Gestión de Cuenta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>Acceso al Sistema</h4>
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Inicio de Sesión</h5>
+                                <p class="step-desc">Ingrese sus credenciales de administrador:</p>
+                                <ul>
+                                    <li>Usuario asignado</li>
+                                    <li>Contraseña</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Gestión de Contraseña</h5>
+                                <p class="step-desc">Opciones disponibles para la gestión de su cuenta:</p>
+                                <ul>
+                                    <li>Cambio de contraseña</li>
+                                    <li>Recuperación de contraseña</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-info mt-3">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        <strong>Nota:</strong> Por seguridad, cambie su contraseña periódicamente.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Gestión de Instructores -->
+    <div class="modal fade" id="adminInstructorsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Gestión de Instructores</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>Administración de Instructores</h4>
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Registro de Instructores</h5>
+                                <p class="step-desc">Proceso para agregar nuevos instructores:</p>
+                                <ul>
+                                    <li>Información personal</li>
+                                    <li>Asignación de competencias</li>
+                                    <li>Configuración de disponibilidad</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Gestión de Horarios</h5>
+                                <p class="step-desc">Administre los horarios de los instructores:</p>
+                                <ul>
+                                    <li>Asignación de horarios</li>
+                                    <li>Control de disponibilidad</li>
+                                    <li>Gestión de carga académica</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Programas de Formación -->
+    <div class="modal fade" id="adminProgramsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Programas de Formación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>Gestión de Programas</h4>
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Registro de Programas</h5>
+                                <p class="step-desc">Pasos para crear nuevos programas:</p>
+                                <ul>
+                                    <li>Información del programa</li>
+                                    <li>Asignación de competencias</li>
+                                    <li>Configuración de duración</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Gestión de Competencias</h5>
+                                <p class="step-desc">Administre las competencias del programa:</p>
+                                <ul>
+                                    <li>Asignación de resultados de aprendizaje</li>
+                                    <li>Control de horas por competencia</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Crear/Editar Horarios -->
+    <div class="modal fade" id="adminCalendarModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Crear/Editar Horarios</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>Gestión del Calendario</h4>
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Creación de Horarios</h5>
+                                <p class="step-desc">Proceso para crear nuevos horarios:</p>
+                                <ul>
+                                    <li>Selección de programa</li>
+                                    <li>Asignación de instructor</li>
+                                    <li>Selección de ambiente</li>
+                                    <li>Definición de horario</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Edición de Horarios</h5>
+                                <p class="step-desc">Opciones de edición disponibles:</p>
+                                <ul>
+                                    <li>Modificar horarios existentes</li>
+                                    <li>Reasignar recursos</li>
+                                    <li>Gestionar conflictos</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Gestión de Ambientes -->
+    <div class="modal fade" id="adminAmbientesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Gestión de Ambientes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>Administración de Ambientes</h4>
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Registro de Ambientes</h5>
+                                <p class="step-desc">Proceso para agregar nuevos ambientes:</p>
+                                <ul>
+                                    <li>Información del ambiente</li>
+                                    <li>Capacidad y recursos</li>
+                                    <li>Tipo de ambiente</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Gestión de Disponibilidad</h5>
+                                <p class="step-desc">Administre la disponibilidad de ambientes:</p>
+                                <ul>
+                                    <li>Control de ocupación</li>
+                                    <li>Mantenimiento programado</li>
+                                    <li>Reservas especiales</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Gestión de Competencias -->
+    <div class="modal fade" id="adminCompetenciasModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Gestión de Competencias</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>Administración de Competencias</h4>
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Registro de Competencias</h5>
+                                <p class="step-desc">Proceso para crear competencias:</p>
+                                <ul>
+                                    <li>Información de la competencia</li>
+                                    <li>Resultados de aprendizaje</li>
+                                    <li>Horas requeridas</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Asignación a Programas</h5>
+                                <p class="step-desc">Gestione las competencias en programas:</p>
+                                <ul>
+                                    <li>Vinculación a programas</li>
+                                    <li>Distribución de horas</li>
+                                    <li>Seguimiento de avance</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Reportes y Estadísticas -->
+    <div class="modal fade" id="adminReportesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reportes y Estadísticas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>Generación de Informes</h4>
+                    <div class="steps-container">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Tipos de Reportes</h5>
+                                <p class="step-desc">Reportes disponibles en el sistema:</p>
+                                <ul>
+                                    <li>Horarios por programa</li>
+                                    <li>Carga académica de instructores</li>
+                                    <li>Ocupación de ambientes</li>
+                                    <li>Avance de competencias</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5 class="step-title">Exportación de Datos</h5>
+                                <p class="step-desc">Opciones de exportación:</p>
+                                <ul>
+                                    <li>Formato PDF</li>
+                                    <li>Formato Excel</li>
+                                    <li>Visualización en pantalla</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
