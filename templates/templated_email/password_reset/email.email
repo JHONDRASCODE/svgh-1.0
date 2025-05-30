@@ -43,7 +43,7 @@
                                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 24px;">
                                             <tr>
                                                 <td align="center" style="display: inline-block; padding: 16px; background-color: #ffffff; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
-                                                    <img src="https://files.fm/u/qz3k8phaps" alt="SGVH Logo" style="height: 80px; width: auto; display: block;">
+                                                    <img src="https://i.ibb.co/tw5PJRNL/logoSGVH.png" alt="SGVH Logo" style="height: 80px; width: auto; display: block;">
                                                 </td>
                                             </tr>
                                         </table>
@@ -98,8 +98,9 @@
                                 <tr>
                                     <td>
                                         <p style="margin: 0; font-size: 18px; color: #374151;">
-                                            Hola <span style="font-weight: 600; color: #39A900;">{{ user.nombres|default:"Usuario" }}</span> 👋
+                                            Hola <span style="font-weight: 600; color: #39A900;">{{ user.username|default:"Usuario" }}</span> 👋
                                         </p>
+                                        
                                     </td>
                                 </tr>
                             </table>
@@ -248,7 +249,7 @@
                                 <!-- Logo -->
                                 <tr>
                                     <td align="center" style="padding-bottom: 24px;">
-                                        <img src="https://files.fm/u/qz3k8phaps" 
+                                        <img src="https://i.ibb.co/tw5PJRNL/logoSGVH.png" 
                                              alt="SGVH Logo" 
                                              style="height: 48px; opacity: 0.8; filter: brightness(0) invert(1);">
                                     </td>
@@ -309,7 +310,7 @@
 {% block plain %}
 🔐 RESTABLECIMIENTO DE CONTRASEÑA - SGVH
 
-Hola {{ user.nombres|default:"Usuario" }},
+Hola {{ user.first_name|default:"Usuario" }},
 
 Has solicitado restablecer la contraseña para tu cuenta en el Sistema de Gestión de Horarios SGVH.
 
