@@ -21,6 +21,7 @@ class CalendarSerializer(serializers.ModelSerializer):
             'competencia',
             'start',
             'end',
+            'dias_recurrencia',
             'nombres_instructor',
             'apellidos_instructor',
             'codigo_programa',
